@@ -11,6 +11,7 @@
 package me.voguh.unichat.adapter;
 
 import me.voguh.unichat.adapter.config.CommonConfig;
+import me.voguh.unichat.adapter.server.ServerBootstrap;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,16 +30,8 @@ public final class UniChatAdapter {
     public UniChatAdapter(FMLJavaModLoadingContext ctx) {
         ctx.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
 
-        ServerStartedEvent.BUS.addListener(UniChatAdapter::onServerStarted);
-        ServerStoppingEvent.BUS.addListener(UniChatAdapter::onServerStopping);
-    }
-
-    private static void onServerStarted(ServerStartedEvent serverStartedEvent) {
-        LOGGER.info("[UniChat Adapter] Server started...");
-    }
-
-    private static void onServerStopping(ServerStoppingEvent serverStoppingEvent) {
-        LOGGER.info("[UniChat Adapter] Server stopping...");
+        ServerStartedEvent.BUS.addListener(ServerBootstrap::onServerStarted);
+        ServerStoppingEvent.BUS.addListener(ServerBootstrap::onServerStopping);
     }
 
 }
