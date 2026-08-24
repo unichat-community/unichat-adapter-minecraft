@@ -1,0 +1,38 @@
+name: setup gradle environment
+description: Set up the Gradle and ForgeGradle environment
+
+inputs:
+  java-version:
+    description: Java version to install
+    required: true
+  java-distribution:
+    description: Java distribution to install
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install JDK
+      uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.java-distribution }}
+
+    - name: Cache gradle user home
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-home-${{ runner.os }}-${{ hashFiles('build.gradle', 'settings.gradle', 'gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: |
+          gradle-home-${{ runner.os }}-
+
+    - name: Cache forgegradle mavenizer
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: |
+          .gradle/mavenizer
+        key: forgegradle-mavenizer-${{ runner.os }}-${{ hashFiles('build.gradle') }}
+        restore-keys: |
+          forgegradle-mavenizer-${{ runner.os }}-

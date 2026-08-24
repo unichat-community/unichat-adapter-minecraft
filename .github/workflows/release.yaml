@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Check version consistency
+        run: |
+          export MOD_VERSION="$(grep -oP '^mod_version=\K.*' gradle.properties)"
+          TAG_NAME="${{ github.ref_name }}"
+          if [ "$MOD_VERSION" != "$TAG_NAME" ]; then
+            echo "Error: The version in gradle.properties ($MOD_VERSION) does not match the release tag ($TAG_NAME)."
+            exit 1
+          fi
+
+  package:
+    needs: [prepare-release]
+    uses: ./.github/workflows/package.yaml
+
+  publish:
+    runs-on: ubuntu-24.04
+    needs: [package]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: mod-jars
+          path: build/libs
+
+      - name: Move build artifacts
+        run: |
+          export MOD_ID="$(grep -oP '^mod_id=\K.*' gradle.properties)"
+          export VERSION="${{ github.ref_name }}"
+          mkdir -p dist
+          cp build/libs/$MOD_ID-$VERSION.jar dist/
+          for file in dist/*; do
+            if [ -f "$file" ]; then
+              (cd "$(dirname "$file")" && sha256sum "$(basename "$file")" > "$(basename "$file").sha256")
+            fi
+          done
+
+      - name: Create and upload Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export VERSION="${{ github.ref_name }}"
+          if [[ "$VERSION" == *"-"* || "$VERSION" == *"+"* ]]; then
+            gh release create "$VERSION" dist/* --prerelease
+          else
+            gh release create "$VERSION" dist/*
+          fi
