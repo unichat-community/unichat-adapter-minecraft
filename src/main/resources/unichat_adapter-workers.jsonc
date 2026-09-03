@@ -1,0 +1,30 @@
+// Runs server commands when a UniChat event matches every condition.
+[
+  // {
+  //     "name": "Spawn creeper on donate over 100 dollars",
+  //     "onEvent": "unichat:donate",
+  //     "conditions": [
+  //         { "property": "value", "operator": "GREATER_THAN_OR_EQUAL", "value": 100 },
+  //         { "property": "currency", "operator": "EQUALS", "value": "USD" }
+  //     ],
+  //     "actions": {
+  //         "execCommands": [
+  //             "/execute as @a at @s run summon minecraft:creeper ~ ~ ~"
+  //         ]
+  //     }
+  // },
+  //
+  // {
+  //     "name": "Firework when someone says the magic word",
+  //     "onEvent": "unichat:message",
+  //     "conditions": [
+  //         { "property": "messageText", "operator": "CONTAINS", "value": "poggers" }
+  //     ],
+  //     "actions": {
+  //         "execCommands": [
+  //             "/say {authorDisplayName} said it",
+  //             "/execute as @a at @s run summon minecraft:firework_rocket ~ ~1 ~"
+  //         ]
+  //     }
+  // }
+]

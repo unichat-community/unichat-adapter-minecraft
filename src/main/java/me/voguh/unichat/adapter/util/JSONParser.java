@@ -12,17 +12,31 @@ package me.voguh.unichat.adapter.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import me.voguh.unichat.adapter.event.UniChatEvent;
+import org.jspecify.annotations.Nullable;
+
+import java.lang.reflect.Type;
 
 public final class JSONParser {
 
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(UniChatEvent.class, new UniChatEventDeserializer())
-            .create();
+        .registerTypeAdapter(UniChatEvent.class, new UniChatEventDeserializer())
+        .create();
 
-    public static <T> T fromJson(String json, Class<T> clazz) {
+    public static <T> @Nullable T fromJson(String json, Type typeToken) {
+        return GSON.fromJson(json, typeToken);
+    }
+
+    public static <T> @Nullable T fromJson(String json, Class<T> clazz) {
         return GSON.fromJson(json, clazz);
     }
+
+    public static <T> @Nullable T fromJson(JsonElement json, Class<T> clazz) {
+        return GSON.fromJson(json, clazz);
+    }
+
+    /* ====================================================================== */
 
     public static String toJson(Object obj) {
         return GSON.toJson(obj);
