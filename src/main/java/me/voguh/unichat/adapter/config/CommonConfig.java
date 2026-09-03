@@ -19,7 +19,7 @@ public class CommonConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static final ForgeConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
-            .define("websocketUrl", "ws://localhost:9527/ws", CommonConfig::isWebSocketUrl);
+        .define("websocketUrl", "ws://localhost:9527/ws", CommonConfig::isWebSocketUrl);
 
     private static final ForgeConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", true);
 

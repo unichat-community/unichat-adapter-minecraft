@@ -15,12 +15,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 public record UniChatEventRemoveAuthor(
-        String channelId,
-        @Nullable String channelName,
-        String platform,
-        Map<String, @Nullable String> flags,
-        String authorId,
-        long timestamp
+    String channelId,
+    @Nullable String channelName,
+    String platform,
+    Map<String, @Nullable String> flags,
+    String authorId,
+    long timestamp
 ) implements UniChatEvent {
 
     public static final String TYPE = "unichat:remove_author";

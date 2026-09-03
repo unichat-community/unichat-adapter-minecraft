@@ -16,25 +16,25 @@ import java.util.List;
 import java.util.Map;
 
 public record UniChatEventDonate(
-        String channelId,
-        @Nullable String channelName,
-        String platform,
-        Map<String, @Nullable String> flags,
-        String authorId,
-        @Nullable String authorUsername,
-        String authorDisplayName,
-        String authorDisplayColor,
-        @Nullable String authorProfilePictureUrl,
-        List<UniChatBadge> authorBadges,
-        String authorType,
-        double value,
-        String currency,
-        @Nullable Double originalValue,
-        @Nullable String originalCurrency,
-        String messageId,
-        @Nullable String messageText,
-        List<UniChatEmote> emotes,
-        long timestamp
+    String channelId,
+    @Nullable String channelName,
+    String platform,
+    Map<String, @Nullable String> flags,
+    String authorId,
+    @Nullable String authorUsername,
+    String authorDisplayName,
+    String authorDisplayColor,
+    @Nullable String authorProfilePictureUrl,
+    List<UniChatBadge> authorBadges,
+    String authorType,
+    double value,
+    String currency,
+    @Nullable Double originalValue,
+    @Nullable String originalCurrency,
+    String messageId,
+    @Nullable String messageText,
+    List<UniChatEmote> emotes,
+    long timestamp
 ) implements UniChatEvent {
 
     public static final String TYPE = "unichat:donate";

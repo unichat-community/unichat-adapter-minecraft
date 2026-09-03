@@ -16,26 +16,26 @@ import java.util.List;
 import java.util.Map;
 
 public record UniChatEventGift(
-        String channelId,
-        @Nullable String channelName,
-        String platform,
-        Map<String, @Nullable String> flags,
-        String authorId,
-        @Nullable String authorUsername,
-        String authorDisplayName,
-        String authorDisplayColor,
-        @Nullable String authorProfilePictureUrl,
-        List<UniChatBadge> authorBadges,
-        String authorType,
-        @Nullable String giftId,
-        @Nullable String giftTitle,
-        @Nullable String giftDescription,
-        @Nullable Long giftCost,
-        @Nullable String giftIconUrl,
-        String messageId,
-        @Nullable String messageText,
-        List<UniChatEmote> emotes,
-        long timestamp
+    String channelId,
+    @Nullable String channelName,
+    String platform,
+    Map<String, @Nullable String> flags,
+    String authorId,
+    @Nullable String authorUsername,
+    String authorDisplayName,
+    String authorDisplayColor,
+    @Nullable String authorProfilePictureUrl,
+    List<UniChatBadge> authorBadges,
+    String authorType,
+    @Nullable String giftId,
+    @Nullable String giftTitle,
+    @Nullable String giftDescription,
+    @Nullable Long giftCost,
+    @Nullable String giftIconUrl,
+    String messageId,
+    @Nullable String messageText,
+    List<UniChatEmote> emotes,
+    long timestamp
 ) implements UniChatEvent {
 
     public static final String TYPE = "unichat:gift";

@@ -11,17 +11,17 @@
 package me.voguh.unichat.adapter.event;
 
 public sealed interface UniChatEvent permits
-        UniChatEventClear,
-        UniChatEventRemoveMessage,
-        UniChatEventRemoveAuthor,
-        UniChatEventMessage,
-        UniChatEventDonate,
-        UniChatEventSponsor,
-        UniChatEventSponsorGift,
-        UniChatEventRaid,
-        UniChatEventRedemption,
-        UniChatEventGift,
-        UniChatEventUserstoreUpdate,
-        UniChatEventCustom {
+    UniChatEventClear,
+    UniChatEventRemoveMessage,
+    UniChatEventRemoveAuthor,
+    UniChatEventMessage,
+    UniChatEventDonate,
+    UniChatEventSponsor,
+    UniChatEventSponsorGift,
+    UniChatEventRaid,
+    UniChatEventRedemption,
+    UniChatEventGift,
+    UniChatEventUserstoreUpdate,
+    UniChatEventCustom {
 
 }

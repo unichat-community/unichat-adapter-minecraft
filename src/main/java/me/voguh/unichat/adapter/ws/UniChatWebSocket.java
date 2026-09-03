@@ -88,23 +88,23 @@ public enum UniChatWebSocket {
         this.url = url;
         this.keepAlive = keepAlive;
         client.newWebSocketBuilder().buildAsync(URI.create(url), new SocketHandler(gen))
-                .whenComplete((ws, error) -> {
-                    synchronized (this) {
-                        if (gen != generation) {
-                            if (ws != null) {
-                                ws.abort();
-                            }
-
-                            return;
+            .whenComplete((ws, error) -> {
+                synchronized (this) {
+                    if (gen != generation) {
+                        if (ws != null) {
+                            ws.abort();
                         }
 
-                        if (error != null) {
-                            onError(gen, error);
-                        } else {
-                            socket = ws;
-                        }
+                        return;
                     }
-                });
+
+                    if (error != null) {
+                        onError(gen, error);
+                    } else {
+                        socket = ws;
+                    }
+                }
+            });
     }
 
     public synchronized void disconnect() {
@@ -121,13 +121,13 @@ public enum UniChatWebSocket {
         }
 
         ws.sendClose(WebSocket.NORMAL_CLOSURE, "Disconnecting")
-                .whenComplete((_ws, error) -> {
-                    if (error != null) {
-                        ws.abort();
-                    } else {
-                        scheduler.schedule(ws::abort, CLOSE_GRACE_SECONDS, TimeUnit.SECONDS);
-                    }
-                });
+            .whenComplete((_ws, error) -> {
+                if (error != null) {
+                    ws.abort();
+                } else {
+                    scheduler.schedule(ws::abort, CLOSE_GRACE_SECONDS, TimeUnit.SECONDS);
+                }
+            });
     }
 
     /* ====================================================================== */
