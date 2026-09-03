@@ -16,7 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.event.UniChatEventCustom;
-import me.voguh.unichat.adapter.event.UniChatEventTypes;
+import me.voguh.unichat.adapter.event.UniChatEventUtils;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public final class UniChatEventDeserializer implements JsonDeserializer<UniChatE
             return new UniChatEventCustom(data);
         }
 
-        return context.deserialize(data, UniChatEventTypes.classOf(eventType));
+        return context.deserialize(data, UniChatEventUtils.getEventClass(eventType));
     }
 
 }
