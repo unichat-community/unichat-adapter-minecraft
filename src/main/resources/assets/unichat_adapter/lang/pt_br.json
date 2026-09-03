@@ -1,0 +1,5 @@
+{
+    "actionbar.unichat_adapter.connected": "UniChat conectado",
+    "actionbar.unichat_adapter.disconnected": "UniChat desconectado",
+    "commands.unichat_adapter.reload": "%s workers carregados"
+}

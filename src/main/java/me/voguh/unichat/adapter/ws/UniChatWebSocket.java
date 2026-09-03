@@ -10,6 +10,7 @@
 
 package me.voguh.unichat.adapter.ws;
 
+import me.voguh.unichat.adapter.server.ServerEventHandler;
 import me.voguh.unichat.adapter.util.Strings;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public enum UniChatWebSocket {
 
     private @Nullable WebSocket socket;
     private @Nullable ScheduledFuture<?> pendingReconnect;
-    private long generation;
+    private volatile long generation;
     private String url;
     private boolean keepAlive;
 
@@ -56,8 +57,22 @@ public enum UniChatWebSocket {
 
     /* ====================================================================== */
 
+    public boolean isConnected() {
+        return isConnected(socket);
+    }
+
+    private boolean isConnected(@Nullable WebSocket ws) {
+        return ws != null && !ws.isInputClosed() && !ws.isOutputClosed();
+    }
+
+    boolean isCurrent(long gen) {
+        return this.generation == gen;
+    }
+
+    /* ====================================================================== */
+
     public synchronized void connect(String url, boolean keepAlive) {
-        if (socket != null && !socket.isInputClosed() && !socket.isOutputClosed()) {
+        if (isConnected(socket)) {
             if (this.url.equals(url)) {
                 return;
             }
@@ -101,8 +116,7 @@ public enum UniChatWebSocket {
         final WebSocket ws = socket;
         socket = null;
         this.keepAlive = false;
-
-        if (ws == null || (ws.isInputClosed() && ws.isOutputClosed())) {
+        if (!isConnected(ws)) {
             return;
         }
 
@@ -123,15 +137,25 @@ public enum UniChatWebSocket {
             return;
         }
 
-        LOGGER.info("[UniChat Adapter] WebSocket connected");
+        try {
+            ServerEventHandler.INSTANCE.handleConnected();
+        } catch (Exception e) {
+            LOGGER.error("[UniChat Adapter] Error handling open: {}", e.getMessage(), e);
+        } finally {
+            LOGGER.info("[UniChat Adapter] WebSocket connected");
+        }
     }
 
-    synchronized void onMessage(long gen, String raw) {
+    void onMessage(long gen, String raw) {
         if (!isCurrent(gen)) {
             return;
         }
 
-        LOGGER.info("[UniChat Adapter] Received message: {}", raw);
+        try {
+            ServerEventHandler.INSTANCE.handleEvent(raw);
+        } catch (Exception e) {
+            LOGGER.error("[UniChat Adapter] Error handling message: {}", e.getMessage(), e);
+        }
     }
 
     synchronized void onClose(long gen, int statusCode, String reason) {
@@ -139,9 +163,14 @@ public enum UniChatWebSocket {
             return;
         }
 
-        LOGGER.info("[UniChat Adapter] WebSocket closed with status code {} and reason: {}", statusCode, reason);
-        socket = null;
-        scheduleReconnect();
+        try {
+            ServerEventHandler.INSTANCE.handleDisconnected();
+        } catch (Exception e) {
+            LOGGER.error("[UniChat Adapter] Error handling close: {}", e.getMessage(), e);
+        } finally {
+            scheduleReconnect();
+            LOGGER.info("[UniChat Adapter] WebSocket closed with status code {} and reason: {}", statusCode, reason);
+        }
     }
 
     synchronized void onError(long gen, Throwable error) {
@@ -149,9 +178,14 @@ public enum UniChatWebSocket {
             return;
         }
 
-        LOGGER.error("[UniChat Adapter] WebSocket error: {}", error.getMessage(), error);
-        socket = null;
-        scheduleReconnect();
+        try {
+            ServerEventHandler.INSTANCE.handleDisconnected();
+        } catch (Exception e) {
+            LOGGER.error("[UniChat Adapter] Error handling error: {}", e.getMessage(), e);
+        } finally {
+            scheduleReconnect();
+            LOGGER.error("[UniChat Adapter] WebSocket error: {}", error.getMessage(), error);
+        }
     }
 
     /* ====================================================================== */
@@ -172,10 +206,6 @@ public enum UniChatWebSocket {
 
         LOGGER.info("[UniChat Adapter] Attempting to reconnect in {} seconds...", RECONNECT_DELAY_SECONDS);
         this.pendingReconnect = scheduler.schedule(() -> connect(currentUrl, true), RECONNECT_DELAY_SECONDS, TimeUnit.SECONDS);
-    }
-
-    private boolean isCurrent(long gen) {
-        return generation == gen;
     }
 
 }
