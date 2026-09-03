@@ -71,7 +71,7 @@ tasks.named('processResources', ProcessResources) {
     var replaceProperties = [mod_id: mod_id, mod_version: mod_version]
     inputs.properties replaceProperties
 
-    filesMatching(['pack.mcmeta', 'META-INF/mods.toml']) {
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }
