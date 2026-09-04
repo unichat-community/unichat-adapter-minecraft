@@ -38,6 +38,7 @@ public enum UniChatNetwork {
             .build();
     }
 
+    /* <=======================================[ SERVER ]=======================================> */
     public void broadcast(MinecraftServer server, CustomPacketPayload payload) {
         if (channel == null) {
             throw new IllegalStateException("Channel is not registered");
@@ -56,9 +57,12 @@ public enum UniChatNetwork {
 
         return channel.isRemotePresent(player.connection.getConnection());
     }
+    /* <=====================================[ END SERVER ]=====================================> */
 
+    /* <=======================================[ CLIENT ]=======================================> */
     private void onChatMessage(ChatMessagePayload payload, CustomPayloadEvent.Context context) {
         ChatMessages.accept(payload);
     }
+    /* <=====================================[ END CLIENT ]=====================================> */
 
 }

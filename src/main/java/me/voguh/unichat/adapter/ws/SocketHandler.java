@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 import java.net.http.WebSocket;
 import java.util.concurrent.CompletionStage;
 
-class SocketHandler implements WebSocket.Listener {
+final class SocketHandler implements WebSocket.Listener {
 
     private static final int MAX_BUFFER_SIZE = 1 << 20;
 
