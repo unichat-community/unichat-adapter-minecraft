@@ -16,6 +16,7 @@ import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.Worker;
 import me.voguh.unichat.adapter.worker.WorkerCommand;
+import me.voguh.unichat.adapter.worker.WorkerCondition;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -78,7 +79,7 @@ public class WorkerLoader {
     private static Worker buildWorker(RawWorker entry) {
         String name = Strings.requiresNonNullOrEmpty(entry.name(), "Property 'name' is missing or blank");
         String eventType = parseEventType(entry.onEvent());
-        List<Worker.Condition> conditions = RawCondition.parse(eventType, entry.conditions());
+        List<WorkerCondition> conditions = RawCondition.parse(eventType, entry.conditions());
         List<WorkerCommand> execCommands = RawAction.parse(eventType, entry.actions());
 
         return new Worker(name, eventType, conditions, execCommands);

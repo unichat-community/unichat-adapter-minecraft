@@ -14,7 +14,7 @@ import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.util.Kind;
 import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
-import me.voguh.unichat.adapter.worker.Worker;
+import me.voguh.unichat.adapter.worker.WorkerCondition;
 import me.voguh.unichat.adapter.worker.WorkerOperator;
 import org.jspecify.annotations.Nullable;
 
@@ -24,12 +24,12 @@ import java.util.Optional;
 
 record RawCondition(@Nullable String property, @Nullable String operator, @Nullable Object value) {
 
-    public static List<Worker.Condition> parse(String eventType, @Nullable List<@Nullable RawCondition> rawConditions) {
+    public static List<WorkerCondition> parse(String eventType, @Nullable List<@Nullable RawCondition> rawConditions) {
         if (rawConditions == null) {
             throw new IllegalArgumentException("Property 'conditions' is missing");
         }
 
-        List<Worker.Condition> conditions = new ArrayList<>();
+        List<WorkerCondition> conditions = new ArrayList<>();
         for (int i = 0; i < rawConditions.size(); i++) {
             RawCondition rawCondition = rawConditions.get(i);
             if (rawCondition == null) {
@@ -39,7 +39,7 @@ record RawCondition(@Nullable String property, @Nullable String operator, @Nulla
             Property property = parseConditionProperty(eventType, rawCondition.property(), i);
             WorkerOperator operator = parseConditionOperator(property, rawCondition.operator(), i);
             Object value = parseConditionValue(property, rawCondition.value(), i);
-            conditions.add(new Worker.Condition(property, operator, value));
+            conditions.add(new WorkerCondition(property, operator, value));
         }
 
         return conditions;

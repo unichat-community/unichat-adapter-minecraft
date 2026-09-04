@@ -11,32 +11,15 @@
 package me.voguh.unichat.adapter.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
-import me.voguh.unichat.adapter.util.Property;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public record Worker(String name, String eventType, List<Condition> conditions, List<WorkerCommand> execCommands) {
-
-    public record Condition(Property property, WorkerOperator operator, @Nullable Object value) {
-
-        public boolean matches(UniChatEvent event) {
-            Object evtValue = property.getValue(event);
-
-            return switch (property.kind()) {
-                case NUMBER -> operator.matchesNumber(toDouble(evtValue), toDouble(value));
-                case STRING -> operator.matchesString((String) evtValue, (String) value);
-                case BOOLEAN -> operator.matchesBoolean((Boolean) evtValue, (Boolean) value);
-            };
-        }
-
-        private static @Nullable Double toDouble(@Nullable Object raw) {
-            return raw == null ? null : ((Number) raw).doubleValue();
-        }
-
-    }
-
-    /* ====================================================================== */
+public record Worker(
+    String name,
+    String eventType,
+    List<WorkerCondition> conditions,
+    List<WorkerCommand> execCommands
+) {
 
     public boolean matches(String eventType, UniChatEvent event) {
         if (!this.eventType.equals(eventType)) {
