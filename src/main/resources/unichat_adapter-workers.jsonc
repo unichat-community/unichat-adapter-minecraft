@@ -19,7 +19,7 @@
 //        "conditions": [],
 //        "actions": {
 //            "execCommands": [
-//                "/title @a title [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}]",
+//                "/title @a title [{\"text\":\"${authorDisplayName}\",\"color\":\"${authorDisplayColor}\"}]",
 //                "/title @a subtitle [{\"text\":\"Acabou de chegar com seus espectadores\"}]",
 //                "/execute as @a at @s run playsound ui.toast.challenge_complete master @s ~ ~ ~ 1 1"
 //            ]
@@ -33,11 +33,11 @@
 //        ],
 //        "actions": {
 //            "execCommands": [
-//                "/title @a actionbar [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" {currency} {value}\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 0.8",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.2",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.4"
+//                "/title @a actionbar [{\"text\":\"${authorDisplayName}\",\"color\":\"${authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" ${currency} ${value}\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 0.8",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1.2",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1.4"
 //            ]
 //        }
 //    },
@@ -49,11 +49,11 @@
 //        ],
 //        "actions": {
 //            "execCommands": [
-//                "/title @a actionbar [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" {value} bits\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 0.8",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.2",
-//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.4"
+//                "/title @a actionbar [{\"text\":\"${authorDisplayName}\",\"color\":\"${authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" ${round(value)} bits\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 0.8",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1.2",
+//                "/execute as @a at @s run playsound entity.player.levelup master @s ~ ~ ~ 1 1.4"
 //            ]
 //        }
 //    }

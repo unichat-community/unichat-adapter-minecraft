@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public record Worker(String name, String eventType, List<Condition> conditions, Action actions) {
+public record Worker(String name, String eventType, List<Condition> conditions, List<WorkerCommand> execCommands) {
 
     public record Condition(Property property, WorkerOperator operator, @Nullable Object value) {
 
@@ -33,10 +33,6 @@ public record Worker(String name, String eventType, List<Condition> conditions, 
         private static @Nullable Double toDouble(@Nullable Object raw) {
             return raw == null ? null : ((Number) raw).doubleValue();
         }
-
-    }
-
-    public record Action(List<String> execCommands) {
 
     }
 

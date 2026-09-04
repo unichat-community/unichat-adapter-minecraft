@@ -10,8 +10,10 @@
 
 package me.voguh.unichat.adapter.worker.loader;
 
+import me.voguh.unichat.adapter.event.UniChatEventUtils;
+import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
-import me.voguh.unichat.adapter.worker.Worker;
+import me.voguh.unichat.adapter.worker.WorkerCommand;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,28 +22,29 @@ import java.util.List;
 
 record RawAction(@Nullable List<@Nullable String> execCommands) {
 
-    static Worker.Action parse(String eventType, @Nullable RawAction rawActions) {
+    public static List<WorkerCommand> parse(String eventType, @Nullable RawAction rawActions) {
         if (rawActions == null) {
             throw new IllegalArgumentException("Property 'actions' is missing");
         }
 
-        List<String> commands = parseCommands(eventType, rawActions.execCommands());
-
-        return new Worker.Action(commands);
+        return parseCommands(eventType, rawActions.execCommands());
     }
 
-    private static List<String> parseCommands(String eventType, @Nullable List<@Nullable String> rawCommands) {
+    private static List<WorkerCommand> parseCommands(String eventType, @Nullable List<@Nullable String> rawCommands) {
         if (rawCommands == null || rawCommands.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<String> commands = new ArrayList<>();
-        for (String rawCommand : rawCommands) {
+        List<Property> properties = UniChatEventUtils.getEventProperties(eventType);
+
+        List<WorkerCommand> commands = new ArrayList<>();
+        for (int i = 0; i < rawCommands.size(); i++) {
+            String rawCommand = rawCommands.get(i);
             if (Strings.isNullOrEmpty(rawCommand)) {
                 continue;
             }
 
-            commands.add(rawCommand);
+            commands.add(CommandParser.parse("Property 'actions.execCommands[" + i + "]'", properties, rawCommand));
         }
 
         return List.copyOf(commands);
