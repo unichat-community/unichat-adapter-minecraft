@@ -10,31 +10,19 @@
 
 package me.voguh.unichat.adapter.server.dispatch;
 
+import me.voguh.unichat.adapter.network.UniChatEventPayload;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 
-public final class ConnectionNoticeDispatch {
+public final class NetworkEventDispatch {
 
-    public static void connected(ServerPlayer player) {
-        send(player, "connected");
-    }
-
-    public static void disconnected(ServerPlayer player) {
-        send(player, "disconnected");
-    }
-
-    private static void send(ServerPlayer player, String key) {
-        if (!UniChatNetwork.INSTANCE.hasChannel(player)) {
-            return;
-        }
-
-        player.displayClientMessage(Component.translatable("actionbar.unichat_adapter." + key), true);
+    public static void dispatch(MinecraftServer server, String raw) {
+        server.execute(() -> UniChatNetwork.INSTANCE.broadcast(server, new UniChatEventPayload(raw)));
     }
 
     /* ====================================================================== */
 
-    private ConnectionNoticeDispatch() {
+    private NetworkEventDispatch() {
         throw new IllegalStateException("Utility class");
     }
 

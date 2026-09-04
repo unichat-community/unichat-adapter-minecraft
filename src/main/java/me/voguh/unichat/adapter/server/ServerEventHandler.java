@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.server.dispatch.ConnectionNoticeDispatch;
+import me.voguh.unichat.adapter.server.dispatch.NetworkEventDispatch;
 import me.voguh.unichat.adapter.server.dispatch.ServerCommandDispatch;
 import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.worker.Workers;
@@ -62,8 +63,12 @@ public enum ServerEventHandler {
             return;
         }
 
+        NetworkEventDispatch.dispatch(server, raw);
+
         UniChatEvent eventData = JSONParser.fromJson(envelope, UniChatEvent.class);
-        ServerCommandDispatch.dispatch(server, Workers.INSTANCE.commandsFor(eventType, eventData));
+        if (eventData != null) {
+            ServerCommandDispatch.dispatch(server, Workers.INSTANCE.commandsFor(eventType, eventData));
+        }
     }
 
 }
