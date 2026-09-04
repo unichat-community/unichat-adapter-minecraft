@@ -63,12 +63,13 @@ public enum ServerEventHandler {
             return;
         }
 
-        NetworkEventDispatch.dispatch(server, raw);
-
         UniChatEvent eventData = JSONParser.fromJson(envelope, UniChatEvent.class);
-        if (eventData != null) {
-            ServerCommandDispatch.dispatch(server, Workers.INSTANCE.commandsFor(eventType, eventData));
+        if (eventData == null) {
+            return;
         }
+
+        NetworkEventDispatch.dispatch(server, eventData);
+        ServerCommandDispatch.dispatch(server, Workers.INSTANCE.commandsFor(eventType, eventData));
     }
 
 }

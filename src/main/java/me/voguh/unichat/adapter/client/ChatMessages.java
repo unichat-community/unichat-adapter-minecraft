@@ -10,9 +10,7 @@
 
 package me.voguh.unichat.adapter.client;
 
-import me.voguh.unichat.adapter.event.UniChatEvent;
-import me.voguh.unichat.adapter.event.UniChatEventMessage;
-import me.voguh.unichat.adapter.util.JSONParser;
+import me.voguh.unichat.adapter.network.ChatMessagePayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -24,14 +22,9 @@ public final class ChatMessages {
     private static final Pattern COLOR_PATTERN = Pattern.compile("^#[0-9a-fA-F]{6}$");
     private static final int DEFAULT_COLOR = 0xFFFFFF;
 
-    public static void accept(String raw) {
-        UniChatEvent event = JSONParser.fromJson(raw, UniChatEvent.class);
-        if (!(event instanceof UniChatEventMessage message)) {
-            return;
-        }
-
-        Component author = buildAuthor(message.authorDisplayName(), message.authorDisplayColor());
-        Component line = Component.empty().append(author).append(": ").append(withoutFormatting(message.messageText()));
+    public static void accept(ChatMessagePayload payload) {
+        Component author = buildAuthor(payload.authorDisplayName(), payload.authorDisplayColor());
+        Component line = Component.empty().append(author).append(": ").append(withoutFormatting(payload.messageText()));
 
         Minecraft.getInstance().gui.getChat().addMessage(line);
     }

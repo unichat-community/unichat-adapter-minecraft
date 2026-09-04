@@ -34,7 +34,7 @@ public enum UniChatNetwork {
     public void register() {
         Identifier identifier = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "main");
         channel = ChannelBuilder.named(identifier).optional().payloadChannel().protocol(NetworkProtocol.PLAY)
-            .clientbound().addMain(UniChatEventPayload.TYPE, UniChatEventPayload.CODEC, this::onEvent)
+            .clientbound().addMain(ChatMessagePayload.TYPE, ChatMessagePayload.CODEC, this::onChatMessage)
             .build();
     }
 
@@ -57,8 +57,8 @@ public enum UniChatNetwork {
         return channel.isRemotePresent(player.connection.getConnection());
     }
 
-    private void onEvent(UniChatEventPayload payload, CustomPayloadEvent.Context context) {
-        ChatMessages.accept(payload.raw());
+    private void onChatMessage(ChatMessagePayload payload, CustomPayloadEvent.Context context) {
+        ChatMessages.accept(payload);
     }
 
 }
