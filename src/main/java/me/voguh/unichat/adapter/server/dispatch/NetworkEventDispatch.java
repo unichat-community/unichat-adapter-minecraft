@@ -30,12 +30,12 @@ public final class NetworkEventDispatch {
         List<ChatImage> emotes = message.emotes().stream().map(emote -> new ChatImage(emote.code(), emote.url())).toList();
 
         ChatMessagePayload payload = new ChatMessagePayload(
-                message.authorDisplayName(),
-                message.authorDisplayColor(),
-                message.messageText(),
-                badges,
-                emotes
-            );
+            message.authorDisplayName(),
+            message.authorDisplayColor(),
+            message.messageText(),
+            badges,
+            emotes
+        );
 
         server.execute(() -> UniChatNetwork.INSTANCE.broadcast(server, payload));
     }
