@@ -14,7 +14,6 @@ import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.util.Property;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public record Worker(String name, String eventType, List<Condition> conditions, Action actions) {
@@ -22,17 +21,17 @@ public record Worker(String name, String eventType, List<Condition> conditions, 
     public record Condition(Property property, WorkerOperator operator, @Nullable Object value) {
 
         public boolean matches(UniChatEvent event) {
-            try {
-                Object evtValue = event.getClass().getMethod(property.name()).invoke(event);
+            Object evtValue = property.getValue(event);
 
-                return switch (property.kind()) {
-                    case NUMBER -> operator.matchesNumber((Double) evtValue, (Double) value);
-                    case STRING -> operator.matchesString((String) evtValue, (String) value);
-                    case BOOLEAN -> operator.matchesBoolean((Boolean) evtValue, (Boolean) value);
-                };
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                return false;
-            }
+            return switch (property.kind()) {
+                case NUMBER -> operator.matchesNumber(toDouble(evtValue), toDouble(value));
+                case STRING -> operator.matchesString((String) evtValue, (String) value);
+                case BOOLEAN -> operator.matchesBoolean((Boolean) evtValue, (Boolean) value);
+            };
+        }
+
+        private static @Nullable Double toDouble(@Nullable Object raw) {
+            return raw == null ? null : ((Number) raw).doubleValue();
         }
 
     }

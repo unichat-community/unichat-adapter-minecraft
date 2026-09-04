@@ -1,30 +1,60 @@
 // Runs server commands when a UniChat event matches every condition.
-[
-  // {
-  //     "name": "Spawn creeper on donate over 100 dollars",
-  //     "onEvent": "unichat:donate",
-  //     "conditions": [
-  //         { "property": "value", "operator": "GREATER_THAN_OR_EQUAL", "value": 100 },
-  //         { "property": "currency", "operator": "EQUALS", "value": "USD" }
-  //     ],
-  //     "actions": {
-  //         "execCommands": [
-  //             "/execute as @a at @s run summon minecraft:creeper ~ ~ ~"
-  //         ]
-  //     }
-  // },
-  //
-  // {
-  //     "name": "Firework when someone says the magic word",
-  //     "onEvent": "unichat:message",
-  //     "conditions": [
-  //         { "property": "messageText", "operator": "CONTAINS", "value": "poggers" }
-  //     ],
-  //     "actions": {
-  //         "execCommands": [
-  //             "/say {authorDisplayName} said it",
-  //             "/execute as @a at @s run summon minecraft:firework_rocket ~ ~1 ~"
-  //         ]
-  //     }
-  // }
-]
+//[
+//    {
+//        "name": "Spawn creeper on donate over 100 dollars",
+//        "onEvent": "unichat:donate",
+//        "conditions": [
+//            { "property":  "platform", "operator": "EQUALS", "value": "youtube" },
+//            { "property": "value", "operator": "GREATER_THAN_OR_EQUAL", "value": 100 }
+//        ],
+//        "actions": {
+//            "execCommands": [
+//                "/execute as @a at @s run summon minecraft:creeper ~ ~ ~"
+//            ]
+//        }
+//    },
+//    {
+//        "name": "Shoutout raid",
+//        "onEvent": "unichat:raid",
+//        "conditions": [],
+//        "actions": {
+//            "execCommands": [
+//                "/title @a title [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}]",
+//                "/title @a subtitle [{\"text\":\"Acabou de chegar com seus espectadores\"}]",
+//                "/execute as @a at @s run playsound ui.toast.challenge_complete master @s ~ ~ ~ 1 1"
+//            ]
+//        }
+//    },
+//    {
+//        "name": "Shoutout donation",
+//        "onEvent": "unichat:donate",
+//        "conditions": [
+//            { "property":  "platform", "operator": "NOT_EQUALS", "value": "twitch" }
+//        ],
+//        "actions": {
+//            "execCommands": [
+//                "/title @a actionbar [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" {currency} {value}\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 0.8",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.2",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.4"
+//            ]
+//        }
+//    },
+//    {
+//        "name": "Shoutout twitch donation",
+//        "onEvent": "unichat:donate",
+//        "conditions": [
+//            { "property":  "platform", "operator": "EQUALS", "value": "twitch" }
+//        ],
+//        "actions": {
+//            "execCommands": [
+//                "/title @a actionbar [{\"text\":\"{authorDisplayName}\",\"color\":\"{authorDisplayColor}\"}, {\"text\":\" acabou de doar\", \"color\":\"white\"}, {\"text\":\" {value} bits\", \"color\":\"yellow\"}, {\"text\":\"!\", \"color\":\"white\"}]",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 0.8",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.2",
+//                "/execute as @a at @s run playsound entity.player.levelup master @a ~ ~ ~ 1 1.4"
+//            ]
+//        }
+//    }
+//]

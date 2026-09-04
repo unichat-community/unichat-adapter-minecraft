@@ -84,13 +84,13 @@ public final class UniChatEventUtils {
 
     private static List<Property> initializeGetEventProperties(Class<? extends UniChatEvent> aClass) {
         List<Property> properties = new ArrayList<>();
-        for (RecordComponent component : aClass.getRecordComponents()) {
-            Kind kind = Kind.fromClass(component.getType());
+        for (RecordComponent rc : aClass.getRecordComponents()) {
+            Kind kind = Kind.fromClass(rc.getType());
             if (kind == null) {
                 continue;
             }
 
-            properties.add(new Property(component.getName(), kind));
+            properties.add(new Property(rc.getName(), kind, rc.getAccessor()));
         }
 
         return List.copyOf(properties);
@@ -151,6 +151,15 @@ public final class UniChatEventUtils {
         }
 
         return properties.stream().filter(p -> p.name().equals(property)).findFirst();
+    }
+
+    public static List<Property> getEventProperties(String eventType) {
+        List<Property> properties = EVENT_PROPERTIES_BY_TYPE.get(eventType);
+        if (properties == null) {
+            throw new IllegalArgumentException("Unknown event kind '" + eventType + "'");
+        }
+
+        return properties;
     }
 
     /* ====================================================================== */

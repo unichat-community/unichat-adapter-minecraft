@@ -10,6 +10,20 @@
 
 package me.voguh.unichat.adapter.util;
 
-public record Property(String name, Kind kind) {
+import me.voguh.unichat.adapter.event.UniChatEvent;
+import org.jspecify.annotations.Nullable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public record Property(String name, Kind kind, Method accessor) {
+
+    public @Nullable Object getValue(UniChatEvent instance) {
+        try {
+            return accessor.invoke(instance);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new AssertionError("Failed to access property '" + name + "' on instance of " + instance.getClass().getSimpleName(), e);
+        }
+    }
 
 }
