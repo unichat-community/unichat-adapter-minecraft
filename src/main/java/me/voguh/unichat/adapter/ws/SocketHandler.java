@@ -24,7 +24,7 @@ class SocketHandler implements WebSocket.Listener {
 
     /* ====================================================================== */
 
-    SocketHandler(long generation) {
+    public SocketHandler(long generation) {
         this.generation = generation;
     }
 

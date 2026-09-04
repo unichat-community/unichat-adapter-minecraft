@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public record RawWorker(
+record RawWorker(
     @Nullable String name,
     @Nullable String onEvent,
     @Nullable List<@Nullable RawCondition> conditions,

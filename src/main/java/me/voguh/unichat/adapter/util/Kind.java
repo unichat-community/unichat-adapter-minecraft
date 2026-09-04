@@ -15,21 +15,9 @@ import org.jspecify.annotations.Nullable;
 import java.lang.invoke.MethodType;
 
 public enum Kind {
-    NUMBER(Number.class),
-    STRING(String.class),
-    BOOLEAN(Boolean.class);
-
-    private final Class<?> aClass;
-
-    public Class<?> javaKind() {
-        return aClass;
-    }
-
-    /* ====================================================================== */
-
-    private Kind(Class<?> aClass) {
-        this.aClass = aClass;
-    }
+    NUMBER,
+    STRING,
+    BOOLEAN;
 
     /* ====================================================================== */
 

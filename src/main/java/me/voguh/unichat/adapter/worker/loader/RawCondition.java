@@ -24,7 +24,7 @@ import java.util.Optional;
 
 record RawCondition(@Nullable String property, @Nullable String operator, @Nullable Object value) {
 
-    static List<Worker.Condition> parse(String eventType, @Nullable List<@Nullable RawCondition> rawConditions) {
+    public static List<Worker.Condition> parse(String eventType, @Nullable List<@Nullable RawCondition> rawConditions) {
         if (rawConditions == null) {
             throw new IllegalArgumentException("Property 'conditions' is missing");
         }
