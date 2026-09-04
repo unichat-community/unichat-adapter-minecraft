@@ -17,7 +17,8 @@ import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.Worker;
 import me.voguh.unichat.adapter.worker.WorkerCommand;
 import me.voguh.unichat.adapter.worker.WorkerCondition;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelResource;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +31,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WorkerLoader {
+public final class WorkerLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkerLoader.class);
 
     private static final String FILE_NAME = "unichat_adapter-workers.jsonc";
 
-    public static List<Worker> load() {
-        Path file = FMLPaths.CONFIGDIR.get().resolve(FILE_NAME);
+    public static List<Worker> load(MinecraftServer server) {
+        Path file = server.getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
 
         try {
             if (Files.notExists(file)) {

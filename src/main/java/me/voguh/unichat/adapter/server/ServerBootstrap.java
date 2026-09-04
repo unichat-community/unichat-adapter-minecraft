@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.server;
 
-import me.voguh.unichat.adapter.config.CommonConfig;
 import me.voguh.unichat.adapter.server.dispatch.ConnectionNoticeDispatch;
 import me.voguh.unichat.adapter.worker.Workers;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
@@ -19,14 +18,14 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 
-public class ServerBootstrap {
+public final class ServerBootstrap {
 
     public static void onServerStarted(ServerStartedEvent event) {
         ServerEventHandler.INSTANCE.setServer(event.getServer());
-        Workers.INSTANCE.reload();
+        Workers.INSTANCE.reload(event.getServer());
 
-        if (CommonConfig.autoConnect()) {
-            UniChatWebSocket.INSTANCE.connect(CommonConfig.websocketUrl(), CommonConfig.autoConnect());
+        if (ServerConfig.autoConnect()) {
+            UniChatWebSocket.INSTANCE.connect(ServerConfig.websocketUrl(), ServerConfig.autoConnect());
         }
     }
 

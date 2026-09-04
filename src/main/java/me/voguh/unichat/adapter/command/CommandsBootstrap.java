@@ -28,7 +28,7 @@ public final class CommandsBootstrap {
     }
 
     private static int reload(CommandContext<CommandSourceStack> context) {
-        int count = Workers.INSTANCE.reload();
+        int count = Workers.INSTANCE.reload(context.getSource().getServer());
         context.getSource().sendSuccess(() -> Component.translatable("commands.unichat_adapter.reload", count), true);
 
         return count;

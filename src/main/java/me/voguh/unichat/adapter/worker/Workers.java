@@ -12,6 +12,7 @@ package me.voguh.unichat.adapter.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.worker.loader.WorkerLoader;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +22,8 @@ public enum Workers {
 
     private volatile List<Worker> workers = Collections.emptyList();
 
-    public int reload() {
-        workers = WorkerLoader.load();
+    public int reload(MinecraftServer server) {
+        workers = WorkerLoader.load(server);
 
         return workers.size();
     }

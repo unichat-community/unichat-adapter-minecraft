@@ -10,11 +10,12 @@
 
 package me.voguh.unichat.adapter;
 
+import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.command.CommandsBootstrap;
-import me.voguh.unichat.adapter.config.CommonConfig;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.server.ServerBootstrap;
+import me.voguh.unichat.adapter.server.ServerConfig;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -34,7 +35,8 @@ public final class UniChatAdapter {
 
     public UniChatAdapter(FMLJavaModLoadingContext ctx) {
         UniChatEventUtils.initialize();
-        ctx.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
+        ctx.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        ctx.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
         UniChatNetwork.INSTANCE.register();
 

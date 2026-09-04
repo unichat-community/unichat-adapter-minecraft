@@ -23,6 +23,10 @@ public final class ChatMessages {
     private static final int DEFAULT_COLOR = 0xFFFFFF;
 
     public static void accept(ChatMessagePayload payload) {
+        if (!ClientConfig.renderMessages()) {
+            return;
+        }
+
         Component author = buildAuthor(payload.authorDisplayName(), payload.authorDisplayColor());
         Component line = Component.empty().append(author).append(": ").append(withoutFormatting(payload.messageText()));
 

@@ -8,18 +8,18 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.config;
+package me.voguh.unichat.adapter.server;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.net.URI;
 
-public class CommonConfig {
+public final class ServerConfig {
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
-        .define("websocketUrl", "ws://localhost:9527/ws", CommonConfig::isWebSocketUrl);
+    private static final ForgeConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
+        .define("websocketUrl", "ws://localhost:9527/ws", ServerConfig::isWebSocketUrl);
 
     private static final ForgeConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", true);
 
