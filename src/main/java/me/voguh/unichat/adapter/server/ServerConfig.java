@@ -50,4 +50,13 @@ public final class ServerConfig {
         return AUTO_CONNECT_SPEC.get();
     }
 
+    public static void updateSettings(String websocketUrl, boolean autoConnect) {
+        if (!isWebSocketUrl(websocketUrl)) {
+            throw new IllegalArgumentException("Invalid WebSocket URL: " + websocketUrl);
+        }
+
+        WEBSOCKET_URL_SPEC.set(websocketUrl);
+        AUTO_CONNECT_SPEC.set(autoConnect);
+    }
+
 }

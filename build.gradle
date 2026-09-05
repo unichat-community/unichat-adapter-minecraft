@@ -30,7 +30,7 @@ minecraft {
         }
 
         register('client') {
-            args '--width', '1280', '--height', '720'
+            args '--width', '1280', '--height', '720', '--quickPlaySingleplayer', 'DevWorld'
         }
 
         register('server') {

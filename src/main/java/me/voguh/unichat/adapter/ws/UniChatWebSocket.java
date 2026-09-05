@@ -11,6 +11,7 @@
 package me.voguh.unichat.adapter.ws;
 
 import me.voguh.unichat.adapter.server.ServerEventHandler;
+import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.util.Strings;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ public enum UniChatWebSocket {
 
     /* ====================================================================== */
 
-    public synchronized void connect(String url, boolean keepAlive) {
+    public synchronized void connect(String url) {
         if (isConnected(socket)) {
             if (this.url.equals(url)) {
                 return;
@@ -86,7 +87,9 @@ public enum UniChatWebSocket {
 
         final long gen = ++generation;
         this.url = url;
-        this.keepAlive = keepAlive;
+        this.keepAlive = true;
+
+        ServerEventHandler.INSTANCE.handleConnectionStatus(ConnectionStatus.CONNECTING);
         client.newWebSocketBuilder().buildAsync(URI.create(url), new SocketHandler(gen))
             .whenComplete((ws, error) -> {
                 synchronized (this) {
@@ -138,7 +141,7 @@ public enum UniChatWebSocket {
         }
 
         try {
-            ServerEventHandler.INSTANCE.handleConnected();
+            ServerEventHandler.INSTANCE.handleConnectionStatus(ConnectionStatus.CONNECTED);
         } catch (Exception e) {
             LOGGER.error("[UniChat Adapter] Error handling open: {}", e.getMessage(), e);
         } finally {
@@ -164,7 +167,7 @@ public enum UniChatWebSocket {
         }
 
         try {
-            ServerEventHandler.INSTANCE.handleDisconnected();
+            ServerEventHandler.INSTANCE.handleConnectionStatus(ConnectionStatus.DISCONNECTED);
         } catch (Exception e) {
             LOGGER.error("[UniChat Adapter] Error handling close: {}", e.getMessage(), e);
         } finally {
@@ -179,7 +182,7 @@ public enum UniChatWebSocket {
         }
 
         try {
-            ServerEventHandler.INSTANCE.handleDisconnected();
+            ServerEventHandler.INSTANCE.handleConnectionStatus(ConnectionStatus.DISCONNECTED);
         } catch (Exception e) {
             LOGGER.error("[UniChat Adapter] Error handling error: {}", e.getMessage(), e);
         } finally {
@@ -205,7 +208,7 @@ public enum UniChatWebSocket {
         }
 
         LOGGER.info("[UniChat Adapter] Attempting to reconnect in {} seconds...", RECONNECT_DELAY_SECONDS);
-        this.pendingReconnect = scheduler.schedule(() -> connect(currentUrl, true), RECONNECT_DELAY_SECONDS, TimeUnit.SECONDS);
+        this.pendingReconnect = scheduler.schedule(() -> connect(currentUrl), RECONNECT_DELAY_SECONDS, TimeUnit.SECONDS);
     }
 
 }

@@ -12,6 +12,7 @@ package me.voguh.unichat.adapter.worker.loader;
 
 import com.google.gson.JsonParseException;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
+import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.Worker;
@@ -37,7 +38,8 @@ public final class WorkerLoader {
 
     private static final String FILE_NAME = "unichat_adapter-workers.jsonc";
 
-    public static List<Worker> load(MinecraftServer server) {
+    public static List<Worker> load() {
+        MinecraftServer server = MinecraftServerHolder.getInstance();
         Path file = server.getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
 
         try {

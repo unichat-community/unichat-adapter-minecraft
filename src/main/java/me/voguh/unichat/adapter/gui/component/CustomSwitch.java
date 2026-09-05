@@ -1,0 +1,71 @@
+package me.voguh.unichat.adapter.gui.component;
+
+import me.voguh.unichat.adapter.UniChatAdapter;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+
+import java.util.function.BiConsumer;
+
+public final class CustomSwitch extends AbstractButton {
+
+    private static final Identifier UNCKECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/off");
+    private static final Identifier CHECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/on");
+
+    private boolean selected;
+
+    private final Font font;
+    private final BiConsumer<CustomSwitch, Boolean> onPress;
+
+    /* ====================================================================== */
+
+    public CustomSwitch(Font font, int x, int y, int width, int height, Component msg, BiConsumer<CustomSwitch, Boolean> onPress, boolean initialState) {
+        super(x, y, width, height, msg);
+        this.selected = initialState;
+        this.font = font;
+        this.onPress = onPress;
+    }
+
+    /* ====================================================================== */
+
+    @Override
+    public void onPress(InputWithModifiers inputWithModifiers) {
+        selected = !selected;
+        onPress.accept(this, selected);
+    }
+
+    @Override
+    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        int x = getX();
+        int y = getY();
+
+        /* ================================================================== */
+
+        int wSwitch = 32;
+        int hSwitch = 16;
+        int xSwitch = x;
+        int ySwitch = y + (getHeight() - height) / 2;
+
+        Identifier texture = selected ? CHECKED : UNCKECKED;
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, xSwitch, ySwitch, wSwitch, hSwitch);
+
+        /* ================================================================== */
+
+        int xText = x + wSwitch + 4;
+        int yText = y + (height - font.lineHeight) / 2;
+        graphics.drawString(font, getMessage(), xText, yText, 0xFFFFFFFF);
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput out) {
+        out.add(NarratedElementType.TITLE, createNarrationMessage());
+        out.add(NarratedElementType.USAGE, Component.translatable(selected ? "narration.checkbox.usage.checked" : "narration.checkbox.usage.unchecked"));
+    }
+
+}

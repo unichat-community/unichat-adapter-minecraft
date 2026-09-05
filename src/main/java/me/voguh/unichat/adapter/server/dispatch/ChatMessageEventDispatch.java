@@ -13,15 +13,14 @@ package me.voguh.unichat.adapter.server.dispatch;
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.event.UniChatEventMessage;
 import me.voguh.unichat.adapter.network.ChatImage;
-import me.voguh.unichat.adapter.network.ChatMessagePayload;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
-import net.minecraft.server.MinecraftServer;
+import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 
 import java.util.List;
 
-public final class NetworkEventDispatch {
+public final class ChatMessageEventDispatch {
 
-    public static void dispatch(MinecraftServer server, UniChatEvent event) {
+    public static void dispatch(UniChatEvent event) {
         if (!(event instanceof UniChatEventMessage message)) {
             return;
         }
@@ -29,7 +28,7 @@ public final class NetworkEventDispatch {
         List<ChatImage> badges = message.authorBadges().stream().map(badge -> new ChatImage(badge.code(), badge.url())).toList();
         List<ChatImage> emotes = message.emotes().stream().map(emote -> new ChatImage(emote.code(), emote.url())).toList();
 
-        ChatMessagePayload payload = new ChatMessagePayload(
+        SendChatMessagePayload payload = new SendChatMessagePayload(
             message.authorDisplayName(),
             message.authorDisplayColor(),
             message.messageText(),
@@ -37,12 +36,12 @@ public final class NetworkEventDispatch {
             emotes
         );
 
-        server.execute(() -> UniChatNetwork.INSTANCE.broadcast(server, payload));
+        UniChatNetwork.INSTANCE.sendToPlayers(payload);
     }
 
     /* ====================================================================== */
 
-    private NetworkEventDispatch() {
+    private ChatMessageEventDispatch() {
         throw new IllegalStateException("Utility class");
     }
 

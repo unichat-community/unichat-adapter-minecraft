@@ -10,7 +10,7 @@
 
 package me.voguh.unichat.adapter.client;
 
-import me.voguh.unichat.adapter.network.ChatMessagePayload;
+import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ public final class ChatMessages {
     private static final Pattern COLOR_PATTERN = Pattern.compile("^#[0-9a-fA-F]{6}$");
     private static final int DEFAULT_COLOR = 0xFFFFFF;
 
-    public static void accept(ChatMessagePayload payload) {
+    public static void accept(SendChatMessagePayload payload) {
         if (!ClientConfig.renderMessages()) {
             return;
         }

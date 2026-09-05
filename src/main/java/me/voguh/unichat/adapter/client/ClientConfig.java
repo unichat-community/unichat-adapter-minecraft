@@ -26,4 +26,8 @@ public final class ClientConfig {
         return RENDER_MESSAGES.get();
     }
 
+    public static void updateSettings(boolean renderMessages) {
+        RENDER_MESSAGES.set(renderMessages);
+    }
+
 }

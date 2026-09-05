@@ -10,22 +10,26 @@
 
 package me.voguh.unichat.adapter.server;
 
-import me.voguh.unichat.adapter.server.dispatch.ConnectionNoticeDispatch;
+import me.voguh.unichat.adapter.network.UniChatNetwork;
+import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
+import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
+import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.worker.Workers;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 
 public final class ServerBootstrap {
 
     public static void onServerStarted(ServerStartedEvent event) {
-        ServerEventHandler.INSTANCE.setServer(event.getServer());
-        Workers.INSTANCE.reload(event.getServer());
+        MinecraftServerHolder.set(event.getServer());
+        Workers.INSTANCE.reload();
 
         if (ServerConfig.autoConnect()) {
-            UniChatWebSocket.INSTANCE.connect(ServerConfig.websocketUrl(), ServerConfig.autoConnect());
+            UniChatWebSocket.INSTANCE.connect(ServerConfig.websocketUrl());
         }
     }
 
@@ -33,9 +37,15 @@ public final class ServerBootstrap {
         UniChatWebSocket.INSTANCE.disconnect();
     }
 
+    public static void onServerStopped(ServerStoppedEvent event) {
+        MinecraftServerHolder.set(null);
+    }
+
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (UniChatWebSocket.INSTANCE.isConnected() && event.getEntity() instanceof ServerPlayer player) {
-            ConnectionNoticeDispatch.connected(player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            ConnectionStatus status = UniChatWebSocket.INSTANCE.isConnected() ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED;
+            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendConnectionStatusPayload(status));
+            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendServerSettingsPayload(ServerConfig.websocketUrl(), ServerConfig.autoConnect()));
         }
     }
 

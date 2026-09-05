@@ -10,19 +10,19 @@
 
 package me.voguh.unichat.adapter.server.dispatch;
 
+import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.MinecraftServer;
 
 import java.util.List;
 
 public final class ServerCommandDispatch {
 
-    public static void dispatch(MinecraftServer server, List<String> commands) {
+    public static void dispatch(List<String> commands) {
         if (commands.isEmpty()) {
             return;
         }
 
-        server.execute(() -> {
+        MinecraftServerHolder.execute((server) -> {
             CommandSourceStack source = server.createCommandSourceStack();
             commands.forEach(command -> server.getCommands().performPrefixedCommand(source, command));
         });

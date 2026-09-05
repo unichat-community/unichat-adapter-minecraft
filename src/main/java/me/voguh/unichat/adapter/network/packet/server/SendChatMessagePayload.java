@@ -8,10 +8,11 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.network;
+package me.voguh.unichat.adapter.network.packet.server;
 
 import io.netty.buffer.ByteBuf;
 import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.network.ChatImage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -20,7 +21,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
-public record ChatMessagePayload(
+public record SendChatMessagePayload(
     String authorDisplayName,
     String authorDisplayColor,
     String messageText,
@@ -30,19 +31,19 @@ public record ChatMessagePayload(
 
     private static final StreamCodec<ByteBuf, List<ChatImage>> IMAGES_CODEC = ChatImage.CODEC.apply(ByteBufCodecs.list());
 
-    public static final Type<ChatMessagePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "chat_message"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ChatMessagePayload> CODEC = StreamCodec.composite(
+    public static final Type<SendChatMessagePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "send_chat_message"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SendChatMessagePayload> CODEC = StreamCodec.composite(
         ByteBufCodecs.STRING_UTF8,
-        ChatMessagePayload::authorDisplayName,
+        SendChatMessagePayload::authorDisplayName,
         ByteBufCodecs.STRING_UTF8,
-        ChatMessagePayload::authorDisplayColor,
+        SendChatMessagePayload::authorDisplayColor,
         ByteBufCodecs.STRING_UTF8,
-        ChatMessagePayload::messageText,
+        SendChatMessagePayload::messageText,
         IMAGES_CODEC,
-        ChatMessagePayload::authorBadges,
+        SendChatMessagePayload::authorBadges,
         IMAGES_CODEC,
-        ChatMessagePayload::emotes,
-        ChatMessagePayload::new
+        SendChatMessagePayload::emotes,
+        SendChatMessagePayload::new
     );
 
     @Override
