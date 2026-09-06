@@ -13,15 +13,17 @@ package me.voguh.unichat.adapter.network;
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ChatMessages;
 import me.voguh.unichat.adapter.client.ClientServerSettingsHolder;
+import me.voguh.unichat.adapter.gui.UniChatToast;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.server.ServerConfig;
+import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -39,6 +41,8 @@ import java.util.List;
 
 public enum UniChatNetwork {
     INSTANCE;
+
+    private static final String STATUS_PREFIX = "gui.unichat_adapter.status_";
 
     private @Nullable Channel<CustomPacketPayload> channel;
 
@@ -117,14 +121,21 @@ public enum UniChatNetwork {
     }
 
     private void onConnectionStatus(SendConnectionStatusPayload payload, CustomPayloadEvent.Context context) {
-        Gui gui = Minecraft.getInstance().gui;
-        String prefix = "actionbar.unichat_adapter";
+        ClientServerSettingsHolder.INSTANCE.setConnectionStatus(payload.connectionStatus());
 
-        switch (payload.connectionStatus()) {
-            case CONNECTING -> gui.setOverlayMessage(Component.translatable(prefix + ".connecting"), false);
-            case CONNECTED -> gui.setOverlayMessage(Component.translatable(prefix + ".connected"), false);
-            case DISCONNECTED -> gui.setOverlayMessage(Component.translatable(prefix + ".disconnected"), false);
-        }
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.execute(() -> {
+            Component msg = Component.translatable(STATUS_PREFIX + "disconnected");
+            if (payload.connectionStatus() == ConnectionStatus.CONNECTED) {
+                msg = Component.translatable(STATUS_PREFIX + "connected");
+            } else if (payload.connectionStatus() == ConnectionStatus.CONNECTING) {
+                msg = Component.translatable(STATUS_PREFIX + "connecting");
+            }
+
+            ToastManager toastManager = minecraft.getToastManager();
+            UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
+            toastManager.addToast(toast);
+        });
     }
 
     private void onServerSettings(SendServerSettingsPayload payload, CustomPayloadEvent.Context context) {

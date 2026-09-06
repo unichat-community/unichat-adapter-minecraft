@@ -1,10 +1,10 @@
 {
-    "actionbar.unichat_adapter.connecting": "UniChat conectando...",
-    "actionbar.unichat_adapter.connected": "UniChat conectado",
-    "actionbar.unichat_adapter.disconnected": "UniChat desconectado",
     "commands.unichat_adapter.reload": "%s workers carregados",
     "key.category.unichat_adapter.unichat_adapter": "UniChat Adapter",
     "key.unichat_adapter.open_screen": "Abrir tela do UniChat",
+    "gui.unichat_adapter.status_connecting": "Conectando...",
+    "gui.unichat_adapter.status_connected": "Conectado",
+    "gui.unichat_adapter.status_disconnected": "Disconectado",
     "gui.unichat_adapter.menu_title": "Configurações do UniChat",
     "gui.unichat_adapter.btn_client": "Cliente",
     "gui.unichat_adapter.btn_server": "Servidor",
