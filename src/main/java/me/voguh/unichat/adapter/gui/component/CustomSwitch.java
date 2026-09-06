@@ -69,7 +69,9 @@ public final class CustomSwitch extends AbstractButton {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput out) {
         out.add(NarratedElementType.TITLE, createNarrationMessage());
-        out.add(NarratedElementType.USAGE, Component.translatable(selected ? "narration.checkbox.usage.checked" : "narration.checkbox.usage.unchecked"));
+
+        String usage = selected ? "narration.checkbox.usage.checked" : "narration.checkbox.usage.unchecked";
+        out.add(NarratedElementType.USAGE, Component.translatable(usage));
     }
 
 }
