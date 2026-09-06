@@ -33,8 +33,6 @@ public final class UniChatClientSettingsScreen extends Screen {
 
     private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
 
-    private static final int BUTTON_HEIGHT = 20;
-
     private static final int TITLE_COLOR = 0xFFFFFFFF;
 
     /* ====================================================================== */
@@ -62,7 +60,8 @@ public final class UniChatClientSettingsScreen extends Screen {
         left = (width - PANEL_WIDTH) / 2;
         top = (height - PANEL_HEIGHT) / 2;
 
-        int titleSpacingY = font.lineHeight + SPACING;
+        int glyph = font.lineHeight - 1;
+        int titleSpacingY = glyph + SPACING;
         int xPos = left + MARGIN;
         int yPos = top + MARGIN + titleSpacingY;
 
@@ -71,7 +70,7 @@ public final class UniChatClientSettingsScreen extends Screen {
         addRenderableWidget(
             new CustomSwitch(font,
                 xPos, yPos,
-                INNER_WIDTH, BUTTON_HEIGHT,
+                INNER_WIDTH,
                 Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.display_chat_messages"),
                 this::onDisplayChatMessages,
                 displayChatMessages
@@ -80,13 +79,14 @@ public final class UniChatClientSettingsScreen extends Screen {
 
         /* ================================================================== */
 
+        yPos = top + PANEL_HEIGHT - CustomSwitch.HEIGHT - MARGIN;
         int btnWidth = (INNER_WIDTH / 2) - (SPACING / 2);
 
-        yPos = top + PANEL_HEIGHT - BUTTON_HEIGHT - MARGIN;
         addRenderableWidget(
             new CustomButton(font,
                 xPos, yPos,
-                btnWidth, BUTTON_HEIGHT,
+                btnWidth,
+                CustomButton.Variant.SUCCESS,
                 CommonComponents.GUI_DONE,
                 this::apply
             )
@@ -96,7 +96,7 @@ public final class UniChatClientSettingsScreen extends Screen {
         addRenderableWidget(
             new CustomButton(font,
                 xPos, yPos,
-                btnWidth, BUTTON_HEIGHT,
+                btnWidth,
                 CommonComponents.GUI_BACK,
                 this::cancel
             )

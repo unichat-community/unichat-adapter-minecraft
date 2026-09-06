@@ -8,25 +8,22 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.network.packet.server;
+package me.voguh.unichat.adapter.network.packet.client;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
-import me.voguh.unichat.adapter.util.ConnectionStatus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
-public record SendConnectionStatusPayload(ConnectionStatus status) implements CustomPacketPayload {
+public record ToggleWebSocketConnectionPayload(boolean state) implements CustomPacketPayload {
 
-    private static final ConnectionStatus[] VALUES = ConnectionStatus.values();
-
-    public static final Type<SendConnectionStatusPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "send_connection_status"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SendConnectionStatusPayload> CODEC = StreamCodec.composite(
-        ByteBufCodecs.idMapper(i -> VALUES[i], ConnectionStatus::ordinal),
-        SendConnectionStatusPayload::status,
-        SendConnectionStatusPayload::new
+    public static final Type<ToggleWebSocketConnectionPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "toggle_websocket_connection"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ToggleWebSocketConnectionPayload> CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL,
+        ToggleWebSocketConnectionPayload::state,
+        ToggleWebSocketConnectionPayload::new
     );
 
     @Override

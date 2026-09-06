@@ -17,6 +17,7 @@ public final class CustomSwitch extends AbstractButton {
 
     private static final Identifier UNCKECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/off");
     private static final Identifier CHECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/on");
+    public static final int HEIGHT = 20;
 
     private boolean selected;
 
@@ -25,8 +26,8 @@ public final class CustomSwitch extends AbstractButton {
 
     /* ====================================================================== */
 
-    public CustomSwitch(Font font, int x, int y, int width, int height, Component msg, BiConsumer<CustomSwitch, Boolean> onPress, boolean initialState) {
-        super(x, y, width, height, msg);
+    public CustomSwitch(Font font, int x, int y, int width, Component msg, BiConsumer<CustomSwitch, Boolean> onPress, boolean initialState) {
+        super(x, y, width, HEIGHT, msg);
         this.selected = initialState;
         this.font = font;
         this.onPress = onPress;
@@ -44,13 +45,16 @@ public final class CustomSwitch extends AbstractButton {
     protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int x = getX();
         int y = getY();
+        int width = getWidth();
+        int height = getHeight();
+        int glyph = font.lineHeight - 1;
 
         /* ================================================================== */
 
         int wSwitch = 32;
         int hSwitch = 16;
         int xSwitch = x;
-        int ySwitch = y + (getHeight() - height) / 2;
+        int ySwitch = y + (height - hSwitch) / 2;
 
         Identifier texture = selected ? CHECKED : UNCKECKED;
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, xSwitch, ySwitch, wSwitch, hSwitch);
@@ -58,7 +62,7 @@ public final class CustomSwitch extends AbstractButton {
         /* ================================================================== */
 
         int xText = x + wSwitch + 4;
-        int yText = y + (height - font.lineHeight) / 2;
+        int yText = y + (height - glyph) / 2;
         graphics.drawString(font, getMessage(), xText, yText, 0xFFFFFFFF);
     }
 

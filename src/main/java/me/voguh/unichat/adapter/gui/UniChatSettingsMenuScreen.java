@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
@@ -29,11 +30,10 @@ public final class UniChatSettingsMenuScreen extends Screen {
     private static final int MARGIN = 16;
 
     private static final int PANEL_WIDTH = 175;
-    private static final int PANEL_OPERATOR_HEIGHT = 97;
-    private static final int PANEL_CLIENT_HEIGHT = 69;
+    private static final int PANEL_OPERATOR_HEIGHT = (CustomButton.HEIGHT + SPACING) * 2 + (MARGIN * 2) + (CustomButton.HEIGHT + SPACING) * 2;
+    private static final int PANEL_CLIENT_HEIGHT = (CustomButton.HEIGHT + SPACING) + (MARGIN * 2) + (CustomButton.HEIGHT + SPACING) * 2;
 
-    private static final int BUTTON_WIDTH = PANEL_WIDTH - MARGIN * 2;
-    private static final int BUTTON_HEIGHT = 20;
+    private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
 
     private static final int TITLE_COLOR = 0xFFFFFFFF;
 
@@ -66,28 +66,49 @@ public final class UniChatSettingsMenuScreen extends Screen {
         left = (width - panelWidth) / 2;
         top = (height - panelHeight) / 2;
 
-        int titleSpacingY = font.lineHeight + SPACING;
+        int glyph = font.lineHeight - 1;
+        int titleSpacingY = glyph + SPACING;
         int xPos = left + MARGIN;
         int yPos = top + MARGIN + titleSpacingY;
+
+        /* ================================================================== */
 
         addRenderableWidget(
             new CustomButton(font,
                 xPos, yPos,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
+                INNER_WIDTH,
                 Component.translatable("gui." + UniChatAdapter.MODID + ".btn_client"),
                 this::onClientTabClick
             )
         );
 
+        /* ================================================================== */
+
         if (isOperator) {
-            CustomButton serverSettings = new CustomButton(font,
-                xPos, yPos + BUTTON_HEIGHT + SPACING,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".btn_server"),
-                this::onServerTabClick
+            yPos += CustomButton.HEIGHT + SPACING;
+
+            addRenderableWidget(
+                new CustomButton(font,
+                    xPos, yPos,
+                    INNER_WIDTH,
+                    Component.translatable("gui." + UniChatAdapter.MODID + ".btn_server"),
+                    this::onServerTabClick
+                )
             );
-            addRenderableWidget(serverSettings);
         }
+
+        /* ================================================================== */
+
+        yPos = top + panelHeight - (CustomButton.HEIGHT + MARGIN);
+
+        addRenderableWidget(
+            new CustomButton(font,
+                xPos, yPos,
+                INNER_WIDTH,
+                CommonComponents.GUI_BACK,
+                (btn) -> onClose()
+            )
+        );
     }
 
     @Override

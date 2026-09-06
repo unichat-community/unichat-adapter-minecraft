@@ -1,9 +1,12 @@
 package me.voguh.unichat.adapter.client;
 
-public enum ClientServerSettingsHolder {
+import me.voguh.unichat.adapter.util.ConnectionStatus;
+
+public enum ServerStateHolder {
     INSTANCE;
 
     private volatile ServerSettings settings;
+    private volatile ConnectionStatus connectionStatus;
 
     public String websocketUrl() {
         return settings.websocketUrl;
@@ -13,8 +16,16 @@ public enum ClientServerSettingsHolder {
         return settings.autoConnect;
     }
 
-    public void set(String websocketUrl, boolean autoConnect) {
+    public ConnectionStatus connectionStatus() {
+        return connectionStatus;
+    }
+
+    public void setSettings(String websocketUrl, boolean autoConnect) {
         this.settings = new ServerSettings(websocketUrl, autoConnect);
+    }
+
+    public void setConnectionStatus(ConnectionStatus connectionStatus) {
+        this.connectionStatus = connectionStatus;
     }
 
     /* ====================================================================== */
@@ -27,8 +38,9 @@ public enum ClientServerSettingsHolder {
 
     /* ====================================================================== */
 
-    private ClientServerSettingsHolder() {
+    private ServerStateHolder() {
         this.settings = ServerSettings.DEFAULT;
+        this.connectionStatus = ConnectionStatus.DISCONNECTED;
     }
 
 }

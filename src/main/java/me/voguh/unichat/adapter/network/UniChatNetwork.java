@@ -12,8 +12,9 @@ package me.voguh.unichat.adapter.network;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ChatMessages;
-import me.voguh.unichat.adapter.client.ClientServerSettingsHolder;
+import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.UniChatToast;
+import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
@@ -55,6 +56,7 @@ public enum UniChatNetwork {
             .addMain(SendServerSettingsPayload.TYPE, SendServerSettingsPayload.CODEC, this::onServerSettings)
             .serverbound()
             .addMain(UpdateServerSettingsPayload.TYPE, UpdateServerSettingsPayload.CODEC, this::updateServerSettings)
+            .addMain(ToggleWebSocketConnectionPayload.TYPE, ToggleWebSocketConnectionPayload.CODEC, this::toggleWebSocketConnection)
             .build();
     }
 
@@ -105,6 +107,21 @@ public enum UniChatNetwork {
             UniChatWebSocket.INSTANCE.connect(payload.websocketUrl());
         }
     }
+
+    private void toggleWebSocketConnection(ToggleWebSocketConnectionPayload payload, CustomPayloadEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player == null) {
+            throw new IllegalStateException("Method must be called from the server");
+        } else if (!player.permissions().hasPermission(Permissions.COMMANDS_ADMIN)) {
+            return;
+        }
+
+        if (payload.state()) {
+            UniChatWebSocket.INSTANCE.connect(ServerConfig.websocketUrl());
+        } else {
+            UniChatWebSocket.INSTANCE.disconnect();
+        }
+    }
     /* <=====================================[ END SERVER ]=====================================> */
 
     /* <=======================================[ CLIENT ]=======================================> */
@@ -121,25 +138,28 @@ public enum UniChatNetwork {
     }
 
     private void onConnectionStatus(SendConnectionStatusPayload payload, CustomPayloadEvent.Context context) {
-        ClientServerSettingsHolder.INSTANCE.setConnectionStatus(payload.connectionStatus());
+        ServerStateHolder.INSTANCE.setConnectionStatus(payload.status());
 
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.execute(() -> {
-            Component msg = Component.translatable(STATUS_PREFIX + "disconnected");
-            if (payload.connectionStatus() == ConnectionStatus.CONNECTED) {
+            Component msg = null;
+            if (payload.status() == ConnectionStatus.CONNECTED) {
                 msg = Component.translatable(STATUS_PREFIX + "connected");
-            } else if (payload.connectionStatus() == ConnectionStatus.CONNECTING) {
-                msg = Component.translatable(STATUS_PREFIX + "connecting");
+            } else if (payload.status() == ConnectionStatus.DISCONNECTED) {
+                msg = Component.translatable(STATUS_PREFIX + "disconnected");
             }
 
-            ToastManager toastManager = minecraft.getToastManager();
-            UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
-            toastManager.addToast(toast);
+            if (msg != null) {
+                ToastManager toastManager = minecraft.getToastManager();
+                UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
+                toastManager.addToast(toast);
+            }
+
         });
     }
 
     private void onServerSettings(SendServerSettingsPayload payload, CustomPayloadEvent.Context context) {
-        ClientServerSettingsHolder.INSTANCE.set(payload.websocketUrl(), payload.autoConnect());
+        ServerStateHolder.INSTANCE.setSettings(payload.websocketUrl(), payload.autoConnect());
     }
     /* <=====================================[ END CLIENT ]=====================================> */
 

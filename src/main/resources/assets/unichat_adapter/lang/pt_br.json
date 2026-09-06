@@ -12,5 +12,7 @@
     "gui.unichat_adapter.screen_server_settings": "Configurações do Servidor",
     "gui.unichat_adapter.screen_server_settings.websocket_url": "WebSocket URL",
     "gui.unichat_adapter.screen_server_settings.auto_connect": "Conectar automaticamente",
+    "gui.unichat_adapter.screen_server_settings.disconnect": "Desconectar",
+    "gui.unichat_adapter.screen_server_settings.connect": "Conectar",
     "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Imprimir mensagens no chat"
 }

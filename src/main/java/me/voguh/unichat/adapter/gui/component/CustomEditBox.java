@@ -14,11 +14,12 @@ import java.util.function.BiConsumer;
 public class CustomEditBox extends EditBox {
 
     private static final Identifier BOX = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "editbox/background");
+    public static final int HEIGHT = 20;
     private static final int PADDING_X = 6;
     private static final int PADDING_Y = 6;
 
-    public CustomEditBox(Font font, int x, int y, int width, int height, Component msg, BiConsumer<CustomEditBox, String> onPress, String initialState) {
-        super(font, x + PADDING_X, y + PADDING_Y, width - PADDING_X * 2, height - PADDING_Y * 2, msg);
+    public CustomEditBox(Font font, int x, int y, int width, Component msg, BiConsumer<CustomEditBox, String> onPress, String initialState) {
+        super(font, x + PADDING_X, y + PADDING_Y, width - PADDING_X * 2, HEIGHT - PADDING_Y * 2, msg);
         this.setValue(initialState);
         this.setResponder((text) -> onPress.accept(this, text));
         setBordered(false);
