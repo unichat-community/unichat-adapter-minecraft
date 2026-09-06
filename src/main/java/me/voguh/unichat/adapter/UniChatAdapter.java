@@ -19,7 +19,6 @@ import me.voguh.unichat.adapter.server.ServerBootstrap;
 import me.voguh.unichat.adapter.server.ServerConfig;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;

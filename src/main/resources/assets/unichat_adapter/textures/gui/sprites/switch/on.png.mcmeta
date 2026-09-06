@@ -1,7 +1,7 @@
 {
-  "gui": {
-    "scaling": {
-      "type": "stretch"
+    "gui": {
+        "scaling": {
+            "type": "stretch"
+        }
     }
-  }
 }
