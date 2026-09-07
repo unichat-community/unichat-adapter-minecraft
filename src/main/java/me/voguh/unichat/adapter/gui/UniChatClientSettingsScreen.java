@@ -13,23 +13,33 @@ package me.voguh.unichat.adapter.gui;
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
+import me.voguh.unichat.adapter.gui.component.CustomOptionGroup;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public final class UniChatClientSettingsScreen extends Screen {
 
     private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
+
+    private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_1 = new CustomOptionGroup.State<>(Component.literal("1x"), 1);
+    private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_2 = new CustomOptionGroup.State<>(Component.literal("2x"), 2);
+    private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_3 = new CustomOptionGroup.State<>(Component.literal("3x"), 3);
+    private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_4 = new CustomOptionGroup.State<>(Component.literal("4x"), 4);
+    private static final List<CustomOptionGroup.State<Integer>> SUPERSAMPLE_OPTIONS = List.of(SUPERSAMPLE_1, SUPERSAMPLE_2, SUPERSAMPLE_3, SUPERSAMPLE_4);
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;
 
     private static final int PANEL_WIDTH = 225;
-    private static final int PANEL_HEIGHT = 100;
+    private static final int PANEL_HEIGHT = 150;
 
     private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
 
@@ -38,6 +48,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     /* ====================================================================== */
 
     private Boolean displayChatMessages;
+    private Integer supersample;
     private int left;
     private int top;
 
@@ -48,6 +59,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     public UniChatClientSettingsScreen(Screen parent) {
         super(Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings"));
         this.displayChatMessages = ClientConfig.renderMessages();
+        this.supersample = ClientConfig.supersample();
 
         this.parent = parent;
     }
@@ -74,6 +86,32 @@ public final class UniChatClientSettingsScreen extends Screen {
                 Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.display_chat_messages"),
                 this::onDisplayChatMessages,
                 displayChatMessages
+            )
+        );
+
+        /* ================================================================== */
+
+        yPos += CustomSwitch.HEIGHT + SPACING;
+
+        addRenderableOnly(new StringWidget(
+            xPos, yPos,
+            INNER_WIDTH, font.lineHeight,
+            Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.supersample"),
+            font
+        ));
+
+        /* ================================================================== */
+
+        yPos += font.lineHeight;
+
+        addRenderableWidget(
+            new CustomOptionGroup<>(font,
+                xPos, yPos,
+                INNER_WIDTH,
+                Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.supersample"),
+                this::onSupersampleChange,
+                SUPERSAMPLE_OPTIONS.stream().filter(state -> state.value().equals(supersample)).findFirst().orElse(SUPERSAMPLE_1),
+                SUPERSAMPLE_OPTIONS
             )
         );
 
@@ -127,7 +165,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     }
 
     private void apply(CustomButton button) {
-        ClientConfig.updateSettings(displayChatMessages);
+        ClientConfig.updateSettings(displayChatMessages, supersample);
         onClose();
     }
 
@@ -135,6 +173,10 @@ public final class UniChatClientSettingsScreen extends Screen {
 
     private void onDisplayChatMessages(CustomSwitch checkbox, boolean newValue) {
         displayChatMessages = newValue;
+    }
+
+    private void onSupersampleChange(CustomOptionGroup<Integer> group, Integer newValue) {
+        supersample = newValue;
     }
 
 }

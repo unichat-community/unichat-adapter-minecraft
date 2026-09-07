@@ -17,6 +17,7 @@ public final class ClientConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     private static final ForgeConfigSpec.BooleanValue RENDER_MESSAGES = BUILDER.define("renderMessages", true);
+    private static final ForgeConfigSpec.IntValue SUPERSAMPLE = BUILDER.defineInRange("supersample", 4, 1, 4);
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
@@ -26,8 +27,13 @@ public final class ClientConfig {
         return RENDER_MESSAGES.get();
     }
 
-    public static void updateSettings(boolean renderMessages) {
+    public static int supersample() {
+        return SUPERSAMPLE.get();
+    }
+
+    public static void updateSettings(boolean renderMessages, int supersample) {
         RENDER_MESSAGES.set(renderMessages);
+        SUPERSAMPLE.set(supersample);
     }
 
 }

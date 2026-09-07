@@ -14,5 +14,6 @@
     "gui.unichat_adapter.screen_server_settings.auto_connect": "Auto connect",
     "gui.unichat_adapter.screen_server_settings.disconnect": "Disconnect",
     "gui.unichat_adapter.screen_server_settings.connect": "Connect",
-    "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Print messages in chat"
+    "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Print messages in chat",
+    "gui.unichat_adapter.screen_client_settings.supersample": "Images resolution"
 }

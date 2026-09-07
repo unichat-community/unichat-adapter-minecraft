@@ -11,6 +11,7 @@
 package me.voguh.unichat.adapter.gui.chat.image.decoder;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.gui.chat.ImageFont;
 import me.voguh.unichat.adapter.gui.chat.image.DecodedImage;
 
@@ -25,13 +26,13 @@ public abstract class AbstractDecoder {
     protected static final int MAX_FRAMES = 200;
     protected static final int DEFAULT_DELAY_MILLIS = 100;
 
-    private static final int SUPERSAMPLE = 1;
-
+    private final int supersample;
     protected final ImageReader reader;
 
     /* ====================================================================== */
 
     protected AbstractDecoder(ImageReader reader) {
+        this.supersample = ClientConfig.supersample();
         this.reader = reader;
     }
 
@@ -42,7 +43,7 @@ public abstract class AbstractDecoder {
         int[] delays = new int[count];
 
         Frame first = frame(0);
-        int height = ImageFont.MAX_HEIGHT * SUPERSAMPLE;
+        int height = ImageFont.MAX_HEIGHT * supersample;
         int width = Math.max(1, Math.round(height * first.image().getWidth() / (float) first.image().getHeight()));
         BufferedImage atlas = new BufferedImage(width, height * count, BufferedImage.TYPE_INT_ARGB);
 
