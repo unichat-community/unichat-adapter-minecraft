@@ -29,6 +29,7 @@ import java.util.List;
 public final class UniChatClientSettingsScreen extends Screen {
 
     private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
+    private static final Identifier WARNING = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/warning");
 
     private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_1 = new CustomOptionGroup.State<>(Component.literal("1x"), 1);
     private static final CustomOptionGroup.State<Integer> SUPERSAMPLE_2 = new CustomOptionGroup.State<>(Component.literal("2x"), 2);
@@ -40,7 +41,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     private static final int MARGIN = 16;
 
     private static final int PANEL_WIDTH = 225;
-    private static final int PANEL_HEIGHT = 150;
+    private static final int PANEL_HEIGHT = 200;
 
     private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
 
@@ -94,12 +95,14 @@ public final class UniChatClientSettingsScreen extends Screen {
 
         yPos += CustomSwitch.HEIGHT + SPACING;
 
-        addRenderableOnly(new StringWidget(
-            xPos, yPos,
-            INNER_WIDTH, font.lineHeight,
-            Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.supersample"),
-            font
-        ));
+        addRenderableOnly(
+            new StringWidget(
+                xPos, yPos,
+                INNER_WIDTH, font.lineHeight,
+                Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.supersample"),
+                font
+            )
+        );
 
         /* ================================================================== */
 
@@ -113,6 +116,20 @@ public final class UniChatClientSettingsScreen extends Screen {
                 this::onSupersampleChange,
                 SUPERSAMPLE_OPTIONS.stream().filter(state -> state.value().equals(supersample)).findFirst().orElse(SUPERSAMPLE_1),
                 SUPERSAMPLE_OPTIONS
+            )
+        );
+
+        /* ================================================================== */
+
+        yPos += CustomOptionGroup.HEIGHT + SPACING;
+
+        addRenderableWidget(
+            new CustomButton(font,
+                xPos, yPos,
+                INNER_WIDTH,
+                CustomButton.Variant.DANGER,
+                Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache"),
+                this::onClearCacheClick
             )
         );
 
@@ -160,6 +177,10 @@ public final class UniChatClientSettingsScreen extends Screen {
     }
 
     /* ====================================================================== */
+
+    private void onClearCacheClick(CustomButton button) {
+        minecraft.setScreen(new UniChatDeleteCacheScreen(this));
+    }
 
     private void cancel(CustomButton button) {
         onClose();

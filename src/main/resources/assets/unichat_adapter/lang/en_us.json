@@ -5,6 +5,7 @@
     "gui.unichat_adapter.status_connecting": "Connecting...",
     "gui.unichat_adapter.status_connected": "Connected",
     "gui.unichat_adapter.status_disconnected": "Disconnected",
+    "gui.unichat_adapter.clear": "Clear",
     "gui.unichat_adapter.menu_title": "UniChat Settings",
     "gui.unichat_adapter.btn_client": "Client",
     "gui.unichat_adapter.btn_server": "Server",
@@ -15,5 +16,8 @@
     "gui.unichat_adapter.screen_server_settings.disconnect": "Disconnect",
     "gui.unichat_adapter.screen_server_settings.connect": "Connect",
     "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Print messages in chat",
-    "gui.unichat_adapter.screen_client_settings.supersample": "Images resolution"
+    "gui.unichat_adapter.screen_client_settings.supersample": "Images resolution",
+    "gui.unichat_adapter.screen_client_settings.clear_cache": "Clear cache",
+    "gui.unichat_adapter.screen_client_settings.clear_cache_warning_title": "Caution!",
+    "gui.unichat_adapter.screen_client_settings.clear_cache_warning_message": "This will delete all image cache (badges and emotes), it will be rebuilt automatically as needed."
 }
