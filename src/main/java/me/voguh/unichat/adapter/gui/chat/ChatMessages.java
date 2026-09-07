@@ -79,6 +79,38 @@ public enum ChatMessages {
         }
     }
 
+    public void reloadImages() {
+        List<String> urls = ImageTextures.INSTANCE.urls();
+
+        CompletableFuture.runAsync(() -> {
+            Queue<Loaded> loaded = new ConcurrentLinkedQueue<>();
+            CountDownLatch done = new CountDownLatch(urls.size());
+
+            for (String url : urls) {
+                imagesExecutor.execute(() -> {
+                    Loaded value = decode(url);
+                    if (value != null) {
+                        loaded.add(value);
+                    }
+
+                    done.countDown();
+                });
+            }
+
+            try {
+                done.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            Minecraft.getInstance().execute(() -> {
+                for (Loaded value : loaded) {
+                    ImageTextures.INSTANCE.upload(value.url(), value.file(), value.decoded());
+                }
+            });
+        });
+    }
+
     /* ====================================================================== */
 
     private void processNext(SendChatMessagePayload payload) {
@@ -130,6 +162,10 @@ public enum ChatMessages {
             return null;
         }
 
+        return decode(url);
+    }
+
+    private static @Nullable Loaded decode(String url) {
         try {
             Path file = ImageStore.INSTANCE.retrieve(url);
             return new Loaded(url, file, ImageDecoder.decode(file));

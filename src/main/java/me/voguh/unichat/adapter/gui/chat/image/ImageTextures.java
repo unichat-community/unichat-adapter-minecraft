@@ -20,6 +20,7 @@ import org.jspecify.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum ImageTextures {
@@ -53,6 +54,12 @@ public enum ImageTextures {
 
     public @Nullable ImageTexture get(String url) {
         return uploaded.get(url);
+    }
+
+    public List<String> urls() {
+        synchronized (uploaded) {
+            return List.copyOf(uploaded.keySet());
+        }
     }
 
     public void upload(String url, Path file, DecodedImage decoded) {

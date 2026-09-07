@@ -12,6 +12,7 @@ package me.voguh.unichat.adapter.gui;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ClientConfig;
+import me.voguh.unichat.adapter.gui.chat.ChatMessages;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomOptionGroup;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
@@ -165,7 +166,13 @@ public final class UniChatClientSettingsScreen extends Screen {
     }
 
     private void apply(CustomButton button) {
+        boolean rescaled = ClientConfig.supersample() != supersample;
+
         ClientConfig.updateSettings(displayChatMessages, supersample);
+        if (rescaled) {
+            ChatMessages.INSTANCE.reloadImages();
+        }
+
         onClose();
     }
 
