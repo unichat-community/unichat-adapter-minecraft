@@ -34,12 +34,14 @@ public enum UniChatWebSocket {
 
     private static final long CLOSE_GRACE_SECONDS = 5;
     private static final long RECONNECT_DELAY_SECONDS = 5;
+    private static final int MAX_RECONNECT_ATTEMPTS = 5;
 
     private @Nullable WebSocket socket;
     private @Nullable ScheduledFuture<?> pendingReconnect;
     private volatile long generation;
     private String url;
     private boolean keepAlive;
+    private int attempts;
 
     private final HttpClient client;
     private final ScheduledExecutorService scheduler;
@@ -50,6 +52,7 @@ public enum UniChatWebSocket {
         this.generation = 0;
         this.url = "ws://localhost:9527/ws";
         this.keepAlive = true;
+        this.attempts = 0;
 
         ExecutorService wsExecutor = Executors.newCachedThreadPool(Thread.ofPlatform().daemon().name("unichat-ws-", 0).factory());
         this.client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).executor(wsExecutor).build();
@@ -73,6 +76,11 @@ public enum UniChatWebSocket {
     /* ====================================================================== */
 
     public synchronized void connect(String url) {
+        this.attempts = 0;
+        open(url);
+    }
+
+    private synchronized void open(String url) {
         if (isConnected(socket)) {
             if (this.url.equals(url)) {
                 return;
@@ -139,6 +147,8 @@ public enum UniChatWebSocket {
         if (!isCurrent(gen)) {
             return;
         }
+
+        this.attempts = 0;
 
         try {
             ServerEventHandler.INSTANCE.handleConnectionStatus(ConnectionStatus.CONNECTED);
@@ -207,8 +217,16 @@ public enum UniChatWebSocket {
             return;
         }
 
-        LOGGER.info("[UniChat Adapter] Attempting to reconnect in {} seconds...", RECONNECT_DELAY_SECONDS);
-        this.pendingReconnect = scheduler.schedule(() -> connect(currentUrl), RECONNECT_DELAY_SECONDS, TimeUnit.SECONDS);
+        if (attempts >= MAX_RECONNECT_ATTEMPTS) {
+            this.keepAlive = false;
+            LOGGER.warn("[UniChat Adapter] Giving up after {} reconnect attempts", MAX_RECONNECT_ATTEMPTS);
+            return;
+        }
+
+        this.attempts++;
+
+        LOGGER.info("[UniChat Adapter] Attempting to reconnect in {} seconds ({}/{})", RECONNECT_DELAY_SECONDS, attempts, MAX_RECONNECT_ATTEMPTS);
+        this.pendingReconnect = scheduler.schedule(() -> open(currentUrl), RECONNECT_DELAY_SECONDS, TimeUnit.SECONDS);
     }
 
 }
