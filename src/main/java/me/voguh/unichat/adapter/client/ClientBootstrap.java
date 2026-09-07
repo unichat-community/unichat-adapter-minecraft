@@ -13,9 +13,11 @@ package me.voguh.unichat.adapter.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.UniChatSettingsMenuScreen;
+import me.voguh.unichat.adapter.gui.chat.ChatMessages;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
@@ -28,6 +30,7 @@ public final class ClientBootstrap {
     public static void register() {
         RegisterKeyMappingsEvent.BUS.addListener(ClientBootstrap::onRegisterKeyMappings);
         TickEvent.ClientTickEvent.Post.BUS.addListener(ClientBootstrap::onClientTick);
+        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(ClientBootstrap::onLoggingOut);
     }
 
     /* ====================================================================== */
@@ -43,6 +46,10 @@ public final class ClientBootstrap {
 
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.setScreen(new UniChatSettingsMenuScreen());
+    }
+
+    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ChatMessages.INSTANCE.clear();
     }
 
     /* ====================================================================== */

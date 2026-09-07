@@ -27,6 +27,8 @@ minecraft {
 
             systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
             systemProperty 'forge.enabledGameTestNamespaces', mod_id
+
+            args '--mixin.config=unichat_adapter.mixins.json'
         }
 
         register('client') {
@@ -59,6 +61,7 @@ dependencies {
 
     implementation minecraft.dependency('net.minecraftforge:forge:1.21.11-61.2.0')
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -73,5 +76,11 @@ tasks.named('processResources', ProcessResources) {
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes['MixinConfigs'] = 'unichat_adapter.mixins.json'
     }
 }

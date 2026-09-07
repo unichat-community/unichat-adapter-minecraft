@@ -1,0 +1,11 @@
+{
+    "package": "me.voguh.unichat.adapter.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "minVersion": "0.8.7",
+    "client": [
+        "ChatGraphicsAccessMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

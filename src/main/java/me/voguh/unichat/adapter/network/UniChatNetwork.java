@@ -11,7 +11,7 @@
 package me.voguh.unichat.adapter.network;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
-import me.voguh.unichat.adapter.client.ChatMessages;
+import me.voguh.unichat.adapter.gui.chat.ChatMessages;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.UniChatToast;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
@@ -134,28 +134,24 @@ public enum UniChatNetwork {
     }
 
     private void onChatMessage(SendChatMessagePayload payload, CustomPayloadEvent.Context context) {
-        ChatMessages.accept(payload);
+        ChatMessages.INSTANCE.accept(payload);
     }
 
     private void onConnectionStatus(SendConnectionStatusPayload payload, CustomPayloadEvent.Context context) {
         ServerStateHolder.INSTANCE.setConnectionStatus(payload.status());
 
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.execute(() -> {
-            Component msg = null;
-            if (payload.status() == ConnectionStatus.CONNECTED) {
-                msg = Component.translatable(STATUS_PREFIX + "connected");
-            } else if (payload.status() == ConnectionStatus.DISCONNECTED) {
-                msg = Component.translatable(STATUS_PREFIX + "disconnected");
-            }
+        Component msg = null;
+        if (payload.status() == ConnectionStatus.CONNECTED) {
+            msg = Component.translatable(STATUS_PREFIX + "connected");
+        } else if (payload.status() == ConnectionStatus.DISCONNECTED) {
+            msg = Component.translatable(STATUS_PREFIX + "disconnected");
+        }
 
-            if (msg != null) {
-                ToastManager toastManager = minecraft.getToastManager();
-                UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
-                toastManager.addToast(toast);
-            }
-
-        });
+        if (msg != null) {
+            ToastManager toastManager = Minecraft.getInstance().getToastManager();
+            UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
+            toastManager.addToast(toast);
+        }
     }
 
     private void onServerSettings(SendServerSettingsPayload payload, CustomPayloadEvent.Context context) {
