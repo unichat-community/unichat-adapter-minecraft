@@ -21,7 +21,7 @@ public final class ServerConfig {
     private static final ForgeConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
         .define("websocketUrl", "ws://localhost:9527/ws", ServerConfig::isWebSocketUrl);
 
-    private static final ForgeConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", true);
+    private static final ForgeConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", false);
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
