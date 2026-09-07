@@ -11,6 +11,7 @@
 package me.voguh.unichat.adapter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.UniChatSettingsMenuScreen;
 import me.voguh.unichat.adapter.gui.chat.ChatMessages;
@@ -22,12 +23,15 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 
+import javax.imageio.spi.IIORegistry;
+
 public final class ClientBootstrap {
 
     private static final KeyMapping.Category UNICHAT_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "unichat_adapter"));
     private static final KeyMapping OPEN_SCREEN = new KeyMapping("key." + UniChatAdapter.MODID + ".open_screen", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, UNICHAT_CATEGORY);
 
     public static void register() {
+        IIORegistry.getDefaultInstance().registerServiceProvider(new WebPImageReaderSpi());
         RegisterKeyMappingsEvent.BUS.addListener(ClientBootstrap::onRegisterKeyMappings);
         TickEvent.ClientTickEvent.Post.BUS.addListener(ClientBootstrap::onClientTick);
         ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(ClientBootstrap::onLoggingOut);

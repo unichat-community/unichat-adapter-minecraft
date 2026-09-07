@@ -11,16 +11,19 @@
 package me.voguh.unichat.adapter.network;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
-import me.voguh.unichat.adapter.gui.chat.ChatMessages;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.UniChatToast;
+import me.voguh.unichat.adapter.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.network.packet.client.RequestImagePayload;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
+import me.voguh.unichat.adapter.network.packet.server.SendImageBytesPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.server.ServerConfig;
+import me.voguh.unichat.adapter.store.ImageRequests;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.client.Minecraft;
@@ -38,7 +41,9 @@ import net.minecraftforge.network.NetworkProtocol;
 import net.minecraftforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public enum UniChatNetwork {
     INSTANCE;
@@ -51,12 +56,14 @@ public enum UniChatNetwork {
         Identifier identifier = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "main");
         channel = ChannelBuilder.named(identifier).optional().payloadChannel().protocol(NetworkProtocol.PLAY)
             .clientbound()
-            .addMain(SendChatMessagePayload.TYPE, SendChatMessagePayload.CODEC, this::onChatMessage)
             .addMain(SendConnectionStatusPayload.TYPE, SendConnectionStatusPayload.CODEC, this::onConnectionStatus)
             .addMain(SendServerSettingsPayload.TYPE, SendServerSettingsPayload.CODEC, this::onServerSettings)
+            .add(SendChatMessagePayload.TYPE, SendChatMessagePayload.CODEC, this::onChatMessage)
+            .add(SendImageBytesPayload.TYPE, SendImageBytesPayload.CODEC, this::onImageReceive)
             .serverbound()
             .addMain(UpdateServerSettingsPayload.TYPE, UpdateServerSettingsPayload.CODEC, this::updateServerSettings)
             .addMain(ToggleWebSocketConnectionPayload.TYPE, ToggleWebSocketConnectionPayload.CODEC, this::toggleWebSocketConnection)
+            .add(RequestImagePayload.TYPE, RequestImagePayload.CODEC, this::onImageRequest)
             .build();
     }
 
@@ -122,6 +129,23 @@ public enum UniChatNetwork {
             UniChatWebSocket.INSTANCE.disconnect();
         }
     }
+
+    private void onImageRequest(RequestImagePayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
+        ServerPlayer player = context.getSender();
+        if (player == null) {
+            throw new IllegalStateException("Method must be called from the server");
+        }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                byte[] fetch = ImageRequests.INSTANCE.serverFetch(payload.path());
+                sendToPlayer(player, new SendImageBytesPayload(payload.path(), fetch));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     /* <=====================================[ END SERVER ]=====================================> */
 
     /* <=======================================[ CLIENT ]=======================================> */
@@ -134,6 +158,7 @@ public enum UniChatNetwork {
     }
 
     private void onChatMessage(SendChatMessagePayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
         ChatMessages.INSTANCE.accept(payload);
     }
 
@@ -156,6 +181,11 @@ public enum UniChatNetwork {
 
     private void onServerSettings(SendServerSettingsPayload payload, CustomPayloadEvent.Context context) {
         ServerStateHolder.INSTANCE.setSettings(payload.websocketUrl(), payload.autoConnect());
+    }
+
+    private void onImageReceive(SendImageBytesPayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
+        ImageRequests.INSTANCE.onServerImageResponse(payload.path(), payload.data());
     }
     /* <=====================================[ END CLIENT ]=====================================> */
 

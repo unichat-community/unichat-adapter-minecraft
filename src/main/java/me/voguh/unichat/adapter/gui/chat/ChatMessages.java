@@ -12,11 +12,11 @@ package me.voguh.unichat.adapter.gui.chat;
 
 import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.gui.chat.image.DecodedImage;
-import me.voguh.unichat.adapter.gui.chat.image.ImageDecoder;
-import me.voguh.unichat.adapter.gui.chat.image.ImageStore;
+import me.voguh.unichat.adapter.gui.chat.image.decoder.ImageDecoder;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTextures;
 import me.voguh.unichat.adapter.network.ChatImage;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
+import me.voguh.unichat.adapter.store.ImageStore;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -131,13 +131,10 @@ public enum ChatMessages {
         }
 
         try {
-            Path file = ImageStore.INSTANCE.fetch(url);
-
+            Path file = ImageStore.INSTANCE.retrieve(url);
             return new Loaded(url, file, ImageDecoder.decode(file));
         } catch (IOException e) {
-            ImageStore.INSTANCE.reject(url);
             LOGGER.warn("[UniChat Adapter] Failed to load image '{}'", url, e);
-
             return null;
         }
     }

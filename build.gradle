@@ -7,6 +7,7 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+    id 'net.minecraftforge.jarjar' version '0.2.3'
 }
 
 version = mod_version
@@ -49,6 +50,8 @@ minecraft {
     }
 }
 
+jarJar.register()
+
 repositories {
     minecraft.mavenizer(it) // In Kotlin, it = this
     maven fg.forgeMaven
@@ -58,6 +61,16 @@ repositories {
 
 dependencies {
     compileOnly 'org.jspecify:jspecify:1.0.0'
+
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.9.4'
+
+    // The jarJar configuration is not resolved transitively, so every nested jar is listed here.
+    jarJar('com.twelvemonkeys.imageio:imageio-webp:3.9.4') { transitive = false }
+    jarJar('com.twelvemonkeys.imageio:imageio-core:3.9.4') { transitive = false }
+    jarJar('com.twelvemonkeys.imageio:imageio-metadata:3.9.4') { transitive = false }
+    jarJar('com.twelvemonkeys.common:common-image:3.9.4') { transitive = false }
+    jarJar('com.twelvemonkeys.common:common-io:3.9.4') { transitive = false }
+    jarJar('com.twelvemonkeys.common:common-lang:3.9.4') { transitive = false }
 
     implementation minecraft.dependency('net.minecraftforge:forge:1.21.11-61.2.0')
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
@@ -80,7 +93,13 @@ tasks.named('processResources', ProcessResources) {
 }
 
 tasks.named('jar', Jar) {
+    archiveClassifier = 'slim'
+
     manifest {
         attributes['MixinConfigs'] = 'unichat_adapter.mixins.json'
     }
+}
+
+tasks.named('jarJar') {
+    archiveClassifier = null
 }
