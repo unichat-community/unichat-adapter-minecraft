@@ -12,8 +12,8 @@ package me.voguh.unichat.adapter.gui.chat;
 
 import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.gui.chat.image.DecodedImage;
-import me.voguh.unichat.adapter.gui.chat.image.decoder.ImageDecoder;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTextures;
+import me.voguh.unichat.adapter.gui.chat.image.decoder.ImageDecoder;
 import me.voguh.unichat.adapter.network.ChatImage;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import me.voguh.unichat.adapter.store.ImageStore;
