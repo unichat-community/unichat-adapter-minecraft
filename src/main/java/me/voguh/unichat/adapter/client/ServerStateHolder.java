@@ -1,7 +1,7 @@
 package me.voguh.unichat.adapter.client;
 
 import me.voguh.unichat.adapter.util.ConnectionStatus;
-import me.voguh.unichat.adapter.worker.Worker;
+import me.voguh.unichat.adapter.worker.loader.RawWorker;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ public enum ServerStateHolder {
 
     private volatile ServerSettings settings;
     private volatile ConnectionStatus connectionStatus;
-    private volatile List<Worker> workers;
+    private volatile List<RawWorker> workers;
 
     public String websocketUrl() {
         return settings.websocketUrl;
@@ -25,7 +25,7 @@ public enum ServerStateHolder {
         return connectionStatus;
     }
 
-    public List<Worker> workers() {
+    public List<RawWorker> workers() {
         return workers;
     }
 
@@ -35,6 +35,10 @@ public enum ServerStateHolder {
 
     public void setConnectionStatus(ConnectionStatus connectionStatus) {
         this.connectionStatus = connectionStatus;
+    }
+
+    public void setWorkers(List<RawWorker> workers) {
+        this.workers = workers;
     }
 
     /* ====================================================================== */

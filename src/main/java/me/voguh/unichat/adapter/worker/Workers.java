@@ -11,6 +11,9 @@
 package me.voguh.unichat.adapter.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
+import me.voguh.unichat.adapter.network.UniChatNetwork;
+import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
+import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import me.voguh.unichat.adapter.worker.loader.WorkerLoader;
 
 import java.util.Collections;
@@ -19,10 +22,26 @@ import java.util.List;
 public enum Workers {
     INSTANCE;
 
-    private volatile List<Worker> workers = Collections.emptyList();
+    private volatile List<RawWorker> rawWorkers;
+    private volatile List<Worker> workers;
+
+    public List<RawWorker> rawWorkers() {
+        return rawWorkers;
+    }
+
+    /* ====================================================================== */
+
+    private Workers() {
+        this.rawWorkers = Collections.emptyList();
+        this.workers = Collections.emptyList();
+    }
+
+    /* ====================================================================== */
 
     public int reload() {
-        workers = WorkerLoader.load();
+        rawWorkers = WorkerLoader.raw();
+        workers = WorkerLoader.load(rawWorkers);
+        UniChatNetwork.INSTANCE.sendToPlayers(new SendWorkersPayload(rawWorkers));
 
         return workers.size();
     }

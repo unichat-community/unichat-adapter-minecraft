@@ -14,13 +14,16 @@ import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
-import me.voguh.unichat.adapter.worker.Worker;
+import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
+import java.util.Optional;
 
 public final class UniChatWorkersSettingsScreen extends Screen {
 
@@ -66,15 +69,18 @@ public final class UniChatWorkersSettingsScreen extends Screen {
 
         /* ================================================================== */
 
-        for (Worker worker : ServerStateHolder.INSTANCE.workers()) {
+        List<RawWorker> workers = ServerStateHolder.INSTANCE.workers();
+        for (int i = 0; i < workers.size(); i++) {
+            RawWorker worker = workers.get(i);
             addRenderableWidget(
                 new CustomButton(font,
                     xPos, yPos,
                     INNER_WIDTH,
-                    Component.literal(worker.name()),
+                    Component.literal(Optional.ofNullable(worker.name()).orElse("Unnamed Worker")),
                     (btn) -> onWorkerClick(btn, worker)
                 )
             );
+            yPos += CustomButton.HEIGHT + SPACING;
         }
 
         /* ================================================================== */
@@ -110,7 +116,7 @@ public final class UniChatWorkersSettingsScreen extends Screen {
 
     /* ====================================================================== */
 
-    private void onWorkerClick(CustomButton button, Worker worker) {
+    private void onWorkerClick(CustomButton button, RawWorker worker) {
     }
 
 }

@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.worker.loader;
 
-import com.google.gson.JsonParseException;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.util.JSONParser;
@@ -31,6 +30,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class WorkerLoader {
 
@@ -38,11 +38,10 @@ public final class WorkerLoader {
 
     private static final String FILE_NAME = "unichat_adapter-workers.jsonc";
 
-    public static List<Worker> load() {
-        MinecraftServer server = MinecraftServerHolder.getInstance();
-        Path file = server.getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
-
+    public static List<RawWorker> raw() {
         try {
+            MinecraftServer server = MinecraftServerHolder.getInstance();
+            Path file = server.getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
             if (Files.notExists(file)) {
                 try (InputStream template = WorkerLoader.class.getResourceAsStream("/" + FILE_NAME)) {
                     Files.copy(template, file);
@@ -54,29 +53,29 @@ public final class WorkerLoader {
                 return Collections.emptyList();
             }
 
-            List<Worker> workers = new ArrayList<>();
-            for (int i = 0; i < rawEntries.size(); i++) {
-                RawWorker entry = rawEntries.get(i);
-                if (entry == null) {
-                    LOGGER.error("[UniChat Adapter] Worker #{} was skipped: entry is null", i);
-                    continue;
-                }
-
-                try {
-                    workers.add(buildWorker(entry));
-                } catch (Exception e) {
-                    LOGGER.error("[UniChat Adapter] An error occurred on load worker #{}", i, e);
-                }
-            }
-
-            LOGGER.info("[UniChat Adapter] Loaded {} workers", workers.size());
-
-            return workers;
-        } catch (IOException | JsonParseException e) {
-            LOGGER.error("[UniChat Adapter] Failed to load workers from '{}'", file, e);
+            return rawEntries.stream().filter(Objects::nonNull).toList();
+        } catch (IOException e) {
+            LOGGER.error("[UniChat Adapter] Failed to read workers from '{}'", FILE_NAME, e);
 
             return Collections.emptyList();
         }
+    }
+
+    public static List<Worker> load(List<RawWorker> rawEntries) {
+        List<Worker> workers = new ArrayList<>();
+        for (int i = 0; i < rawEntries.size(); i++) {
+            RawWorker entry = rawEntries.get(i);
+
+            try {
+                workers.add(buildWorker(entry));
+            } catch (Exception e) {
+                LOGGER.error("[UniChat Adapter] An error occurred on load worker #{}", i, e);
+            }
+        }
+
+        LOGGER.info("[UniChat Adapter] Loaded {} workers", workers.size());
+
+        return Collections.unmodifiableList(workers);
     }
 
     private static Worker buildWorker(RawWorker entry) {

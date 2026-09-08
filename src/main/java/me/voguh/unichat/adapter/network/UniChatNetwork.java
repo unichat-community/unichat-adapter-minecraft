@@ -21,13 +21,13 @@ import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendImageBytesPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
+import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.server.ServerConfig;
 import me.voguh.unichat.adapter.store.ImageRequests;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -56,8 +56,9 @@ public enum UniChatNetwork {
         Identifier identifier = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "main");
         channel = ChannelBuilder.named(identifier).optional().payloadChannel().protocol(NetworkProtocol.PLAY)
             .clientbound()
-            .addMain(SendConnectionStatusPayload.TYPE, SendConnectionStatusPayload.CODEC, this::onConnectionStatus)
-            .addMain(SendServerSettingsPayload.TYPE, SendServerSettingsPayload.CODEC, this::onServerSettings)
+            .add(SendConnectionStatusPayload.TYPE, SendConnectionStatusPayload.CODEC, this::onConnectionStatus)
+            .add(SendServerSettingsPayload.TYPE, SendServerSettingsPayload.CODEC, this::onServerSettings)
+            .add(SendWorkersPayload.TYPE, SendWorkersPayload.CODEC, this::onWorkers)
             .add(SendChatMessagePayload.TYPE, SendChatMessagePayload.CODEC, this::onChatMessage)
             .add(SendImageBytesPayload.TYPE, SendImageBytesPayload.CODEC, this::onImageReceive)
             .serverbound()
@@ -74,11 +75,32 @@ public enum UniChatNetwork {
         }
 
         MinecraftServerHolder.execute((server) -> {
-            List<Connection> targets = server.getPlayerList().getPlayers().stream().filter(this::hasChannel)
-                .map(p -> p.connection.getConnection()).toList();
+            List<Connection> targets = server.getPlayerList().getPlayers().stream()
+                .filter(this::hasChannel)
+                .filter(p -> !isOperatorsOnly(payload) || p.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
+                .map(p -> p.connection.getConnection())
+                .toList();
 
             channel.send(payload, PacketDistributor.NMLIST.with(targets));
         });
+    }
+
+    public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        if (channel == null) {
+            throw new IllegalStateException("Channel is not registered");
+        }
+
+        if (!hasChannel(player)) {
+            return;
+        } else if (isOperatorsOnly(payload) && !player.permissions().hasPermission(Permissions.COMMANDS_ADMIN)) {
+            return;
+        }
+
+        channel.send(payload, PacketDistributor.PLAYER.with(player));
+    }
+
+    private boolean isOperatorsOnly(CustomPacketPayload payload) {
+        return payload instanceof SendServerSettingsPayload || payload instanceof SendWorkersPayload;
     }
 
     private boolean hasChannel(ServerPlayer player) {
@@ -87,16 +109,6 @@ public enum UniChatNetwork {
         }
 
         return channel.isRemotePresent(player.connection.getConnection());
-    }
-
-    public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
-        if (channel == null) {
-            throw new IllegalStateException("Channel is not registered");
-        } else if (!hasChannel(player)) {
-            return;
-        }
-
-        channel.send(payload, PacketDistributor.PLAYER.with(player));
     }
 
     private void updateServerSettings(UpdateServerSettingsPayload payload, CustomPayloadEvent.Context context) {
@@ -157,12 +169,8 @@ public enum UniChatNetwork {
         channel.send(payload, PacketDistributor.SERVER.noArg());
     }
 
-    private void onChatMessage(SendChatMessagePayload payload, CustomPayloadEvent.Context context) {
-        context.setPacketHandled(true);
-        ChatMessages.INSTANCE.accept(payload);
-    }
-
     private void onConnectionStatus(SendConnectionStatusPayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
         ServerStateHolder.INSTANCE.setConnectionStatus(payload.status());
 
         Component msg = null;
@@ -172,15 +180,27 @@ public enum UniChatNetwork {
             msg = Component.translatable(STATUS_PREFIX + "disconnected");
         }
 
-        if (msg != null) {
-            ToastManager toastManager = Minecraft.getInstance().getToastManager();
-            UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
-            toastManager.addToast(toast);
+        if (msg == null) {
+            return;
         }
+
+        UniChatToast toast = new UniChatToast(Component.literal("UniChat"), msg);
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().getToastManager().addToast(toast));
     }
 
     private void onServerSettings(SendServerSettingsPayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
         ServerStateHolder.INSTANCE.setSettings(payload.websocketUrl(), payload.autoConnect());
+    }
+
+    private void onWorkers(SendWorkersPayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
+        ServerStateHolder.INSTANCE.setWorkers(payload.workers());
+    }
+
+    private void onChatMessage(SendChatMessagePayload payload, CustomPayloadEvent.Context context) {
+        context.setPacketHandled(true);
+        ChatMessages.INSTANCE.accept(payload);
     }
 
     private void onImageReceive(SendImageBytesPayload payload, CustomPayloadEvent.Context context) {

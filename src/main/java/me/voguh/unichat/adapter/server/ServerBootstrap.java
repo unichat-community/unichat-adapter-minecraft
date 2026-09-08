@@ -13,6 +13,7 @@ package me.voguh.unichat.adapter.server;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
+import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.worker.Workers;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
@@ -46,6 +47,7 @@ public final class ServerBootstrap {
             ConnectionStatus status = UniChatWebSocket.INSTANCE.isConnected() ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED;
             UniChatNetwork.INSTANCE.sendToPlayer(player, new SendConnectionStatusPayload(status));
             UniChatNetwork.INSTANCE.sendToPlayer(player, new SendServerSettingsPayload(ServerConfig.websocketUrl(), ServerConfig.autoConnect()));
+            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendWorkersPayload(Workers.INSTANCE.rawWorkers()));
         }
     }
 
