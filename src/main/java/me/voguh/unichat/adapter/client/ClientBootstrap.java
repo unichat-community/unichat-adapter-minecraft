@@ -59,7 +59,7 @@ public final class ClientBootstrap {
     /* ====================================================================== */
 
     private ClientBootstrap() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

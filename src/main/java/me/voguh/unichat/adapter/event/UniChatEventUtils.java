@@ -165,7 +165,7 @@ public final class UniChatEventUtils {
     /* ====================================================================== */
 
     private UniChatEventUtils() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

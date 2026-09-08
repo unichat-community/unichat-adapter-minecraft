@@ -37,7 +37,7 @@ public final class CommandsBootstrap {
     /* ====================================================================== */
 
     private CommandsBootstrap() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

@@ -30,7 +30,7 @@ public final class MinecraftServerHolder {
     /* ====================================================================== */
 
     private MinecraftServerHolder() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

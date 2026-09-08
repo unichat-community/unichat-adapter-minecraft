@@ -45,7 +45,7 @@ public final class JSONParser {
     /* ====================================================================== */
 
     private JSONParser() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

@@ -23,7 +23,7 @@ public final class ConnectionStatusDispatch {
     /* ====================================================================== */
 
     private ConnectionStatusDispatch() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

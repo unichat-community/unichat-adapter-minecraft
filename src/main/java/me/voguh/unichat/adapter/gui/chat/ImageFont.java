@@ -71,7 +71,7 @@ public final class ImageFont {
     /* ====================================================================== */
 
     private ImageFont() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

@@ -18,7 +18,7 @@ public final class Base64Utils {
     /* ====================================================================== */
 
     private Base64Utils() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

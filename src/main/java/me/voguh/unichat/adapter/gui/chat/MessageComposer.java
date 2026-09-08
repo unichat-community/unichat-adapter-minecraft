@@ -71,7 +71,7 @@ public final class MessageComposer {
     /* ====================================================================== */
 
     private MessageComposer() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

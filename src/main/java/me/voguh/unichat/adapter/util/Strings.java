@@ -108,7 +108,7 @@ public final class Strings {
     /* ====================================================================== */
 
     private Strings() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

@@ -58,7 +58,7 @@ public final class ImageDecoder {
     /* ====================================================================== */
 
     private ImageDecoder() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

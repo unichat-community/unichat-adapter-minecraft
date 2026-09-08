@@ -31,7 +31,7 @@ public final class ServerCommandDispatch {
     /* ====================================================================== */
 
     private ServerCommandDispatch() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

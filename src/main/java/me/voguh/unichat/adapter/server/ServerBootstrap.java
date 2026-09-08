@@ -52,7 +52,7 @@ public final class ServerBootstrap {
     /* ====================================================================== */
 
     private ServerBootstrap() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

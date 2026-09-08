@@ -120,7 +120,7 @@ public final class InlineImageRenderer {
     /* ====================================================================== */
 
     private InlineImageRenderer() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

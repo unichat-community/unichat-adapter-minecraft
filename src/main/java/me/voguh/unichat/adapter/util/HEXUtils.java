@@ -17,7 +17,7 @@ public final class HEXUtils {
     /* ====================================================================== */
 
     private HEXUtils() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

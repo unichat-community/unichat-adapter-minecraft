@@ -82,8 +82,8 @@ public final class WorkerLoader {
     private static Worker buildWorker(RawWorker entry) {
         String name = Strings.requiresNonNullOrEmpty(entry.name(), "Property 'name' is missing or blank");
         String eventType = parseEventType(entry.onEvent());
-        List<WorkerCondition> conditions = RawCondition.parse(eventType, entry.conditions());
-        List<WorkerCommand> execCommands = RawAction.parse(eventType, entry.actions());
+        List<WorkerCondition> conditions = RawConditionParser.parse(eventType, entry.conditions());
+        List<WorkerCommand> execCommands = RawActionParser.parse(eventType, entry.actions());
 
         return new Worker(name, eventType, conditions, execCommands);
     }
@@ -101,7 +101,7 @@ public final class WorkerLoader {
     /* ====================================================================== */
 
     private WorkerLoader() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }

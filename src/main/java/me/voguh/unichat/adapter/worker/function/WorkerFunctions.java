@@ -39,7 +39,7 @@ public final class WorkerFunctions {
     /* ====================================================================== */
 
     private WorkerFunctions() {
-        throw new IllegalStateException("Utility class");
+        throw new UnsupportedOperationException("Utility class");
     }
 
 }
