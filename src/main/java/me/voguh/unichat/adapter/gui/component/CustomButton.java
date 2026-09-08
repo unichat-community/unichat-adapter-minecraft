@@ -8,7 +8,9 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
@@ -21,6 +23,7 @@ public final class CustomButton extends AbstractButton {
     private static final Identifier NORMAL_PRESSED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/normal_pressed");
     private static final Identifier DANGER = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/danger");
     private static final Identifier DANGER_PRESSED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/danger_pressed");
+    private static final int PADDING = 8;
     public static final int HEIGHT = 20;
 
     private final Font font;
@@ -69,10 +72,15 @@ public final class CustomButton extends AbstractButton {
         Identifier texture = getTextureForVariant();
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, x, y, width, height);
 
+        int innerWidth = width - PADDING * 2;
+
+        boolean hovered = isHoveredOrFocused();
         int color = getFontColor();
-        int xText = x + (width - font.width(getMessage())) / 2;
-        int yText = y + (height - glyph) / 2;
-        graphics.drawString(font, getMessage(), xText, isHoveredOrFocused() ? yText + 2 : yText, color, false);
+        FormattedText formattedText = font.ellipsize(getMessage(), innerWidth);
+        int xText = x + (width - font.width(formattedText)) / 2;
+        int yText = y + (height - glyph) / 2 + (hovered ? 2 : 0);
+
+        graphics.drawString(font, Language.getInstance().getVisualOrder(formattedText), xText, yText, color, false);
     }
 
     private Identifier getTextureForVariant() {
