@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
@@ -19,7 +18,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 
@@ -43,7 +41,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
     /* ====================================================================== */
 
     public UniChatSettingsMenuScreen() {
-        super(Component.translatable("gui." + UniChatAdapter.MODID + ".menu_title"));
+        super(IdentifierUtils.translatable("menu_title"));
     }
 
     private boolean isOperator() {
@@ -71,7 +69,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
             new CustomButton(font,
                 xPos, yPos,
                 INNER_WIDTH,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".btn_client"),
+                IdentifierUtils.translatable("btn_client"),
                 this::onClientTabClick
             )
         );
@@ -85,7 +83,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
                 new CustomButton(font,
                     xPos, yPos,
                     INNER_WIDTH,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".btn_server"),
+                    IdentifierUtils.translatable("btn_server"),
                     this::onServerTabClick
                 )
             );
@@ -96,7 +94,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
                 new CustomButton(font,
                     xPos, yPos,
                     INNER_WIDTH,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".btn_workers"),
+                    IdentifierUtils.translatable("btn_workers"),
                     this::onWorkersTabClick
                 )
             );

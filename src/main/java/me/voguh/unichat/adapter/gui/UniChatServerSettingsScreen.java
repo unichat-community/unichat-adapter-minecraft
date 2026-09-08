@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomEditBox;
@@ -25,7 +24,6 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public final class UniChatServerSettingsScreen extends Screen {
@@ -54,7 +52,7 @@ public final class UniChatServerSettingsScreen extends Screen {
     /* ====================================================================== */
 
     public UniChatServerSettingsScreen(Screen parent) {
-        super(Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings"));
+        super(IdentifierUtils.translatable("screen_server_settings"));
         this.websocketUrl = ServerStateHolder.INSTANCE.websocketUrl();
         this.autoConnect = ServerStateHolder.INSTANCE.autoConnect();
 
@@ -79,7 +77,7 @@ public final class UniChatServerSettingsScreen extends Screen {
         addRenderableOnly(new StringWidget(
             xPos, yPos,
             INNER_WIDTH, font.lineHeight,
-            Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings.websocket_url"),
+            IdentifierUtils.translatable("screen_server_settings.websocket_url"),
             font
         ));
 
@@ -90,7 +88,7 @@ public final class UniChatServerSettingsScreen extends Screen {
             new CustomEditBox(font,
                 xPos, yPos,
                 INNER_WIDTH,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings.websocket_url"),
+                IdentifierUtils.translatable("screen_server_settings.websocket_url"),
                 this::onWebsocketUrlChange,
                 websocketUrl
             )
@@ -103,7 +101,7 @@ public final class UniChatServerSettingsScreen extends Screen {
             new CustomSwitch(font,
                 xPos, yPos,
                 INNER_WIDTH,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings.auto_connect"),
+                IdentifierUtils.translatable("screen_server_settings.auto_connect"),
                 this::onAutoConnectChange,
                 autoConnect
             )
@@ -120,7 +118,7 @@ public final class UniChatServerSettingsScreen extends Screen {
                     xPos, yPos,
                     INNER_WIDTH,
                     CustomButton.Variant.DANGER,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings.disconnect"),
+                    IdentifierUtils.translatable("screen_server_settings.disconnect"),
                     (btn) -> toggleConnection(btn, status)
                 )
             );
@@ -130,7 +128,7 @@ public final class UniChatServerSettingsScreen extends Screen {
                     xPos, yPos,
                     INNER_WIDTH,
                     CustomButton.Variant.SUCCESS,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".screen_server_settings.connect"),
+                    IdentifierUtils.translatable("screen_server_settings.connect"),
                     (btn) -> toggleConnection(btn, status)
                 )
             );

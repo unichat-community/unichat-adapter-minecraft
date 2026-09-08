@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
@@ -50,7 +49,7 @@ public final class UniChatWorkersSettingsScreen extends Screen {
     /* ====================================================================== */
 
     public UniChatWorkersSettingsScreen(Screen parent) {
-        super(Component.translatable("gui." + UniChatAdapter.MODID + ".screen_workers_settings"));
+        super(IdentifierUtils.translatable("screen_workers_settings"));
 
         this.parent = parent;
     }

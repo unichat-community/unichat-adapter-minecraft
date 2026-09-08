@@ -10,7 +10,6 @@
 
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import me.voguh.unichat.adapter.store.ImageStore;
@@ -20,7 +19,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 
 public final class UniChatDeleteCacheScreen extends Screen {
@@ -48,7 +46,7 @@ public final class UniChatDeleteCacheScreen extends Screen {
     /* ====================================================================== */
 
     public UniChatDeleteCacheScreen(Screen parent) {
-        super(Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache"));
+        super(IdentifierUtils.translatable("screen_client_settings.clear_cache"));
         this.parent = parent;
     }
 
@@ -69,7 +67,7 @@ public final class UniChatDeleteCacheScreen extends Screen {
                 xPos, yPos,
                 btnWidth,
                 CustomButton.Variant.DANGER,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".clear"),
+                IdentifierUtils.translatable("clear"),
                 this::apply
             )
         );
@@ -110,8 +108,8 @@ public final class UniChatDeleteCacheScreen extends Screen {
         int warningBoxWidth = INNER_WIDTH;
         int warningBoxInnerWidth = warningBoxWidth - (2 + SPACING * 2 + 2); // 2px border + SPACING left and right + 2px border
 
-        MutableComponent warningTitle = Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_title");
-        MutableComponent warningMessage = Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_message");
+        Component warningTitle = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_title");
+        Component warningMessage = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_message");
         int height = 2 + SPACING + glyph + SPACING + font.wordWrapHeight(warningMessage, warningBoxInnerWidth) + SPACING + 2;
 
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, WARNING, xPos, yPos, warningBoxWidth, height);
