@@ -10,6 +10,7 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
@@ -36,7 +37,7 @@ public final class CustomSwitch extends AbstractButton {
     /* ====================================================================== */
 
     @Override
-    public void onPress(InputWithModifiers inputWithModifiers) {
+    public void onPress(@NotNull InputWithModifiers mod) {
         selected = !selected;
         onPress.accept(this, selected);
     }
