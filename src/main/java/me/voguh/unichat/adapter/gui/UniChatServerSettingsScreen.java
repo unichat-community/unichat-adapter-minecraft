@@ -19,6 +19,7 @@ import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -29,7 +30,7 @@ import net.minecraft.resources.Identifier;
 
 public final class UniChatServerSettingsScreen extends Screen {
 
-    private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
+    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;

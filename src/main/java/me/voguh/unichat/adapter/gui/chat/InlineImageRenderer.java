@@ -11,9 +11,9 @@
 package me.voguh.unichat.adapter.gui.chat;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTexture;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTextures;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,7 +26,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 public final class InlineImageRenderer {
 
-    private static final Identifier MISSING = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "textures/gui/placeholder.png");
+    private static final Identifier MISSING = IdentifierUtils.getIdentifier("textures/gui/placeholder.png");
     private static final RenderPipeline PIPELINE = RenderPipelines.GUI_TEXTURED;
     private static final int MISSING_SIZE = 16;
 

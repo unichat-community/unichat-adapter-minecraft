@@ -14,6 +14,7 @@ import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import me.voguh.unichat.adapter.store.ImageStore;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -24,8 +25,8 @@ import net.minecraft.resources.Identifier;
 
 public final class UniChatDeleteCacheScreen extends Screen {
 
-    private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
-    private static final Identifier WARNING = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/warning");
+    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
+    private static final Identifier WARNING = IdentifierUtils.getIdentifier("panel/warning");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;

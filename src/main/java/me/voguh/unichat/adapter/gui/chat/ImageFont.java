@@ -10,7 +10,7 @@
 
 package me.voguh.unichat.adapter.gui.chat;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
@@ -19,7 +19,7 @@ import net.minecraft.util.Mth;
 
 public final class ImageFont {
 
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "image");
+    public static final Identifier ID = IdentifierUtils.getIdentifier("image");
 
     public enum Kind {
         EMOTE(0xE000, 12),

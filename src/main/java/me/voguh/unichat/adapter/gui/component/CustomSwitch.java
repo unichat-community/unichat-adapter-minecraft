@@ -1,6 +1,6 @@
 package me.voguh.unichat.adapter.gui.component;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -15,8 +15,8 @@ import java.util.function.BiConsumer;
 
 public final class CustomSwitch extends AbstractButton {
 
-    private static final Identifier UNCKECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/off");
-    private static final Identifier CHECKED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "switch/on");
+    private static final Identifier UNCKECKED = IdentifierUtils.getIdentifier("switch/off");
+    private static final Identifier CHECKED = IdentifierUtils.getIdentifier("switch/on");
     public static final int HEIGHT = 20;
 
     private boolean selected;

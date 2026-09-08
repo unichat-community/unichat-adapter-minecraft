@@ -11,7 +11,7 @@
 package me.voguh.unichat.adapter.gui.chat.image;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
@@ -63,7 +63,7 @@ public enum ImageTextures {
     }
 
     public void upload(String url, Path file, DecodedImage decoded) {
-        Identifier id = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "image/" + file.getFileName());
+        Identifier id = IdentifierUtils.getIdentifier("image/" + file.getFileName());
         NativeImage atlas = decoded.atlas();
         DynamicTexture texture = new DynamicTexture(id::toString, atlas);
 

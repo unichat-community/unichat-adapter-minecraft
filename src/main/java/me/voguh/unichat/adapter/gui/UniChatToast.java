@@ -1,6 +1,6 @@
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class UniChatToast implements Toast {
 
-    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "toast/unichat_toast");
+    private static final Identifier BACKGROUND = IdentifierUtils.getIdentifier("toast/unichat_toast");
 
     private long lastTime;
 

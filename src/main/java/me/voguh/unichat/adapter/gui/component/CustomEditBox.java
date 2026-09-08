@@ -1,6 +1,6 @@
 package me.voguh.unichat.adapter.gui.component;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 
 public class CustomEditBox extends EditBox {
 
-    private static final Identifier BOX = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "editbox/background");
+    private static final Identifier BOX = IdentifierUtils.getIdentifier("editbox/background");
     public static final int HEIGHT = 20;
     private static final int PADDING_X = 6;
     private static final int PADDING_Y = 6;

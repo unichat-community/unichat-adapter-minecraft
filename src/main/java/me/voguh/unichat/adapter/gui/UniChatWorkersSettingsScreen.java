@@ -14,6 +14,7 @@ import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
 import me.voguh.unichat.adapter.gui.component.CustomSwitch;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -27,7 +28,7 @@ import java.util.Optional;
 
 public final class UniChatWorkersSettingsScreen extends Screen {
 
-    private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
+    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;
@@ -117,6 +118,7 @@ public final class UniChatWorkersSettingsScreen extends Screen {
     /* ====================================================================== */
 
     private void onWorkerClick(CustomButton button, RawWorker worker) {
+        minecraft.setScreen(new UniChatWorkerSettingsScreen(this, worker));
     }
 
 }
