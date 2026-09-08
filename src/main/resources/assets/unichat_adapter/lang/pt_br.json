@@ -9,15 +9,17 @@
     "gui.unichat_adapter.menu_title": "Configurações do UniChat",
     "gui.unichat_adapter.btn_client": "Cliente",
     "gui.unichat_adapter.btn_server": "Servidor",
-    "gui.unichat_adapter.screen_client_settings": "Configurações do Cliente",
+    "gui.unichat_adapter.btn_workers": "Workers",
     "gui.unichat_adapter.screen_server_settings": "Configurações do Servidor",
     "gui.unichat_adapter.screen_server_settings.websocket_url": "WebSocket URL",
     "gui.unichat_adapter.screen_server_settings.auto_connect": "Conectar automaticamente",
     "gui.unichat_adapter.screen_server_settings.disconnect": "Desconectar",
     "gui.unichat_adapter.screen_server_settings.connect": "Conectar",
+    "gui.unichat_adapter.screen_client_settings": "Configurações do Cliente",
     "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Imprimir mensagens no chat",
     "gui.unichat_adapter.screen_client_settings.supersample": "Resolução da imagens",
     "gui.unichat_adapter.screen_client_settings.clear_cache": "Limpar cache",
     "gui.unichat_adapter.screen_client_settings.clear_cache_warning_title": "Cuidado!",
-    "gui.unichat_adapter.screen_client_settings.clear_cache_warning_message": "Isso irá apagar todo o cache de imagens (badges e emotes), ele será reconstruído automaticamente conforme necessário."
+    "gui.unichat_adapter.screen_client_settings.clear_cache_warning_message": "Isso irá apagar todo o cache de imagens (badges e emotes), ele será reconstruído automaticamente conforme necessário.",
+    "gui.unichat_adapter.screen_workers_settings": "Workers"
 }

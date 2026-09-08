@@ -88,51 +88,47 @@ public final class UniChatDeleteCacheScreen extends Screen {
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
 
+        /* ================================================================== */
+
         int glyph = font.lineHeight - 1;
         int xPos = left;
         int yPos = top;
+
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
 
         /* ================================================================== */
 
-        xPos += MARGIN;
-        yPos += MARGIN;
+        int titleX = left + MARGIN + (INNER_WIDTH / 2);
+        int titleY = top + MARGIN;
+        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
 
-        graphics.drawCenteredString(font, getTitle(), left + (PANEL_WIDTH / 2), yPos, TITLE_COLOR);
+        /* ====================================================================================== */
+
+        yPos += glyph + SPACING;
+
+        int warningBoxWidth = INNER_WIDTH;
+        int warningBoxInnerWidth = warningBoxWidth - (2 + SPACING * 2 + 2); // 2px border + SPACING left and right + 2px border
+
+        MutableComponent warningTitle = Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_title");
+        MutableComponent warningMessage = Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_message");
+        int height = 2 + SPACING + glyph + SPACING + font.wordWrapHeight(warningMessage, warningBoxInnerWidth) + SPACING + 2;
+
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, WARNING, xPos, yPos, warningBoxWidth, height);
+
+        /* ================================================================== */
+
+        xPos += 2 + SPACING;
+        yPos += 2 + SPACING;
+
+        int warningBoxTitleX = xPos + (warningBoxInnerWidth / 2);
+        int warningBoxTitleY = yPos;
+        graphics.drawCenteredString(font, warningTitle, warningBoxTitleX, warningBoxTitleY, TITLE_COLOR);
 
         /* ================================================================== */
 
         yPos += glyph + SPACING;
 
-        int innererWidth = INNER_WIDTH - (2 + SPACING * 2 + 2);
-        int width = INNER_WIDTH;
-        MutableComponent warningMessage = Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_message");
-        int height = 2 + SPACING + glyph + SPACING + font.wordWrapHeight(warningMessage, innererWidth) + SPACING + 2;
-
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, WARNING, xPos, yPos, width, height);
-
-        xPos += 2 + SPACING;
-        yPos += 2 + SPACING;
-
-        graphics.drawCenteredString(font,
-            Component.translatable("gui." + UniChatAdapter.MODID + ".screen_client_settings.clear_cache_warning_title"),
-            xPos + (innererWidth / 2), yPos,
-            0xFFFFFFFF
-        );
-
-        yPos += glyph + SPACING;
-
-        graphics.drawWordWrap(font,
-            warningMessage,
-            xPos, yPos,
-            innererWidth,
-            0xFFFFFFFF
-        );
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+        graphics.drawWordWrap(font, warningMessage, xPos, yPos, warningBoxInnerWidth, TITLE_COLOR);
     }
 
     @Override

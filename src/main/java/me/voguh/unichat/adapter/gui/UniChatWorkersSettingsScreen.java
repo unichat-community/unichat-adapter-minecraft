@@ -11,18 +11,18 @@
 package me.voguh.unichat.adapter.gui;
 
 import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.gui.component.CustomButton;
-import net.minecraft.client.Minecraft;
+import me.voguh.unichat.adapter.gui.component.CustomSwitch;
+import me.voguh.unichat.adapter.worker.Worker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.permissions.Permissions;
 
-public final class UniChatSettingsMenuScreen extends Screen {
+public final class UniChatWorkersSettingsScreen extends Screen {
 
     private static final Identifier PANEL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "panel/background");
 
@@ -36,26 +36,26 @@ public final class UniChatSettingsMenuScreen extends Screen {
 
     private static final int TITLE_COLOR = 0xFFFFFFFF;
 
+    /* ====================================================================== */
+
     private int left;
     private int top;
 
+    private final Screen parent;
+
     /* ====================================================================== */
 
-    public UniChatSettingsMenuScreen() {
-        super(Component.translatable("gui." + UniChatAdapter.MODID + ".menu_title"));
-    }
+    public UniChatWorkersSettingsScreen(Screen parent) {
+        super(Component.translatable("gui." + UniChatAdapter.MODID + ".screen_workers_settings"));
 
-    private boolean isOperator() {
-        LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+        this.parent = parent;
     }
 
     /* ====================================================================== */
 
     @Override
     protected void init() {
-        boolean isOperator = isOperator();
-
+        super.init();
         left = (width - PANEL_WIDTH) / 2;
         top = (height - PANEL_HEIGHT) / 2;
 
@@ -66,44 +66,20 @@ public final class UniChatSettingsMenuScreen extends Screen {
 
         /* ================================================================== */
 
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                Component.translatable("gui." + UniChatAdapter.MODID + ".btn_client"),
-                this::onClientTabClick
-            )
-        );
-
-        /* ================================================================== */
-
-        if (isOperator) {
-            yPos += CustomButton.HEIGHT + SPACING;
-
+        for (Worker worker : ServerStateHolder.INSTANCE.workers()) {
             addRenderableWidget(
                 new CustomButton(font,
                     xPos, yPos,
                     INNER_WIDTH,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".btn_server"),
-                    this::onServerTabClick
-                )
-            );
-
-            yPos += CustomButton.HEIGHT + SPACING;
-
-            addRenderableWidget(
-                new CustomButton(font,
-                    xPos, yPos,
-                    INNER_WIDTH,
-                    Component.translatable("gui." + UniChatAdapter.MODID + ".btn_workers"),
-                    this::onWorkersTabClick
+                    Component.literal(worker.name()),
+                    (btn) -> onWorkerClick(btn, worker)
                 )
             );
         }
 
         /* ================================================================== */
 
-        yPos = top + PANEL_HEIGHT - (CustomButton.HEIGHT + MARGIN);
+        yPos = top + PANEL_HEIGHT - (CustomSwitch.HEIGHT + MARGIN);
 
         addRenderableWidget(
             new CustomButton(font,
@@ -118,19 +94,8 @@ public final class UniChatSettingsMenuScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
-
-        /* ================================================================== */
-
-        int xPos = left;
-        int yPos = top;
-
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-
-        /* ================================================================== */
-
-        int titleX = left + MARGIN + (INNER_WIDTH / 2);
-        int titleY = top + MARGIN;
-        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, left, top, PANEL_WIDTH, PANEL_HEIGHT);
+        graphics.drawCenteredString(font, getTitle(), width / 2, top + MARGIN, TITLE_COLOR);
     }
 
     @Override
@@ -138,17 +103,14 @@ public final class UniChatSettingsMenuScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
-    private void onClientTabClick(CustomButton button) {
-        minecraft.setScreen(new UniChatClientSettingsScreen(this));
-
+    @Override
+    public void onClose() {
+        minecraft.setScreen(parent);
     }
 
-    private void onServerTabClick(CustomButton button) {
-        minecraft.setScreen(new UniChatServerSettingsScreen(this));
-    }
+    /* ====================================================================== */
 
-    private void onWorkersTabClick(CustomButton button) {
-        minecraft.setScreen(new UniChatWorkersSettingsScreen(this));
+    private void onWorkerClick(CustomButton button, Worker worker) {
     }
 
 }

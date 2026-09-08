@@ -162,8 +162,19 @@ public final class UniChatClientSettingsScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, left, top, PANEL_WIDTH, PANEL_HEIGHT);
-        graphics.drawCenteredString(font, getTitle(), width / 2, top + MARGIN, TITLE_COLOR);
+
+        /* ================================================================== */
+
+        int xPos = left;
+        int yPos = top;
+
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
+
+        /* ================================================================== */
+
+        int titleX = left + MARGIN + (INNER_WIDTH / 2);
+        int titleY = top + MARGIN;
+        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
     }
 
     @Override

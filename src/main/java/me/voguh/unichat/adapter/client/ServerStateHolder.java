@@ -1,12 +1,17 @@
 package me.voguh.unichat.adapter.client;
 
 import me.voguh.unichat.adapter.util.ConnectionStatus;
+import me.voguh.unichat.adapter.worker.Worker;
+
+import java.util.Collections;
+import java.util.List;
 
 public enum ServerStateHolder {
     INSTANCE;
 
     private volatile ServerSettings settings;
     private volatile ConnectionStatus connectionStatus;
+    private volatile List<Worker> workers;
 
     public String websocketUrl() {
         return settings.websocketUrl;
@@ -18,6 +23,10 @@ public enum ServerStateHolder {
 
     public ConnectionStatus connectionStatus() {
         return connectionStatus;
+    }
+
+    public List<Worker> workers() {
+        return workers;
     }
 
     public void setSettings(String websocketUrl, boolean autoConnect) {
@@ -41,6 +50,7 @@ public enum ServerStateHolder {
     private ServerStateHolder() {
         this.settings = ServerSettings.DEFAULT;
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
+        this.workers = Collections.emptyList();
     }
 
 }
