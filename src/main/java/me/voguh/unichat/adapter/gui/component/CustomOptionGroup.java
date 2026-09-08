@@ -1,50 +1,38 @@
 package me.voguh.unichat.adapter.gui.component;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import com.mojang.math.Divisor;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractContainerWidget;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.layouts.EqualSpacingLayout;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public final class CustomOptionGroup<T> extends AbstractButton {
+public final class CustomOptionGroup<T> extends AbstractContainerWidget {
 
-    private static final Identifier SELECTED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/success_pressed");
-    private static final Identifier REGULAR = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/normal");
+    private static final int PADDING = 8;
     public static final int HEIGHT = 20;
 
-    private State<T> selectedState;
+    private State<T> currentState;
 
     private final Font font;
-    private final List<State<T>> states;
+    private final List<Option> options;
     private final BiConsumer<CustomOptionGroup<T>, T> onPress;
-
-    /* ====================================================================== */
-
-    public record State<T>(Component msg, T value) {
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            State<?> state = (State<?>) o;
-            return Objects.equals(value, state.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(value);
-        }
-
-    }
 
     /* ====================================================================== */
 
@@ -60,82 +48,108 @@ public final class CustomOptionGroup<T> extends AbstractButton {
         super(x, y, width, HEIGHT, msg);
         this.font = font;
         this.onPress = onPress;
-        this.selectedState = initialState;
-        this.states = states;
+        this.currentState = initialState;
+        this.options = buildOptions(states);
+
+        EqualSpacingLayout layout = new EqualSpacingLayout(x, y, width, HEIGHT, EqualSpacingLayout.Orientation.HORIZONTAL);
+        options.forEach(layout::addChild);
+        layout.arrangeElements();
+    }
+
+    private List<Option> buildOptions(List<State<T>> states) {
+        Divisor widths = new Divisor(getWidth(), states.size());
+
+        List<Option> options = new ArrayList<>();
+        for (State<T> state : states) {
+            options.add(new Option(state, widths.nextInt()));
+        }
+
+        return List.copyOf(options);
     }
 
     /* ====================================================================== */
 
     @Override
-    public void onPress(InputWithModifiers mod) {
-        if (mod instanceof MouseButtonEvent event) {
-            double mouseX = event.x();
-            double mouseY = event.y();
+    public @NotNull List<? extends GuiEventListener> children() {
+        return options;
+    }
 
-            int x = getX();
-            int y = getY();
-            int width = getWidth();
-            int height = getHeight();
-
-            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
-                int n = states.size();
-                int span = width - 1;
-                for (int i = 0; i < n; i++) {
-                    int x0 = i * span / n;
-                    int x1 = (i + 1) * span / n;
-
-                    if (mouseX >= x + x0 && mouseX <= x + x1) {
-                        State<T> state = states.get(i);
-                        selectedState = state;
-                        onPress.accept(this, state.value());
-                        break;
-                    }
-                }
-            }
+    @Override
+    protected void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        for (Option option : options) {
+            option.render(graphics, mouseX, mouseY, partialTick);
         }
     }
 
     @Override
-    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        int x = getX();
-        int y = getY();
-        int width = getWidth();
-        int height = getHeight();
-        int glyph = font.lineHeight - 1;
+    protected int contentHeight() {
+        return getHeight();
+    }
 
-        int n = states.size();
-        int span = width - 1;
-        for (int i = 0; i < n; i++) {
-            int x0 = i * span / n;
-            int x1 = (i + 1) * span / n;
-            int w = x1 - x0 + 1;
-
-            /* ============================================================== */
-
-            State<T> state = states.get(i);
-            boolean isSelected = state.equals(selectedState);
-
-            /* ============================================================== */
-
-            int stateX = x + x0;
-            Identifier texture = isSelected ? SELECTED : REGULAR;
-
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, stateX, y, w, height);
-
-            /* ============================================================== */
-
-            int textColor = isSelected ? 0xFFFFFFFF : 0xFF1C1C1D;
-            int xText = stateX + (w - font.width(state.msg())) / 2;
-            int yText = y + (height - glyph) / 2;
-
-            graphics.drawString(font, state.msg(), xText, isSelected ? yText + 2 : yText, textColor, false);
-        }
+    @Override
+    protected double scrollRate() {
+        return 0.0;
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput out) {
         out.add(NarratedElementType.TITLE, createNarrationMessage());
-        out.add(NarratedElementType.USAGE, selectedState.msg);
+        out.add(NarratedElementType.USAGE, currentState.message());
+    }
+
+    private void select(State<T> state) {
+        currentState = state;
+        onPress.accept(this, state.value());
+    }
+
+    /* ====================================================================== */
+
+    private final class Option extends AbstractButton {
+
+        private static final WidgetSprites SPRITES = new WidgetSprites(IdentifierUtils.getIdentifier("button/normal"), IdentifierUtils.getIdentifier("button/disabled"), IdentifierUtils.getIdentifier("button/success_pressed"));
+
+        private final State<T> state;
+
+        private Option(State<T> state, int width) {
+            super(0, 0, width, HEIGHT, state.message());
+            this.state = state;
+        }
+
+        @Override
+        public void onPress(@NotNull InputWithModifiers mod) {
+            select(state);
+        }
+
+        @Override
+        protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            int x = getX();
+            int y = getY();
+            int width = getWidth();
+            int height = getHeight();
+            int innerWidth = width - PADDING * 2;
+            int glyph = font.lineHeight - 1;
+
+            /* ============================================================== */
+
+            boolean selected = state.equals(currentState);
+            Identifier texture = SPRITES.get(isActive(), selected);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, x, y, width, height);
+
+            /* ============================================================== */
+
+            FormattedText formattedText = font.ellipsize(state.message(), innerWidth);
+            int color = selected ? 0xFFFFFFFF : 0xFF1C1C1D;
+            int xText = x + (width - font.width(formattedText)) / 2;
+            int yText = y + (height - glyph) / 2 + (selected ? 2 : 0);
+
+            graphics.drawString(font, Language.getInstance().getVisualOrder(formattedText), xText, yText, color, false);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            out.add(NarratedElementType.TITLE, createNarrationMessage());
+        }
+
     }
 
 }
