@@ -1,9 +1,10 @@
 package me.voguh.unichat.adapter.gui.component;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
@@ -12,17 +13,15 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 public final class CustomButton extends AbstractButton {
 
-    private static final Identifier SUCCESS = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/success");
-    private static final Identifier SUCCESS_PRESSED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/success_pressed");
-    private static final Identifier NORMAL = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/normal");
-    private static final Identifier NORMAL_PRESSED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/normal_pressed");
-    private static final Identifier DANGER = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/danger");
-    private static final Identifier DANGER_PRESSED = Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "button/danger_pressed");
+    private static final WidgetSprites NORMAL = new WidgetSprites(IdentifierUtils.getIdentifier("button/normal"), IdentifierUtils.getIdentifier("button/disabled"), IdentifierUtils.getIdentifier("button/normal_pressed"));
+    private static final WidgetSprites SUCCESS = new WidgetSprites(IdentifierUtils.getIdentifier("button/success"), IdentifierUtils.getIdentifier("button/disabled"), IdentifierUtils.getIdentifier("button/success_pressed"));
+    private static final WidgetSprites DANGER = new WidgetSprites(IdentifierUtils.getIdentifier("button/danger"), IdentifierUtils.getIdentifier("button/disabled"), IdentifierUtils.getIdentifier("button/danger_pressed"));
     private static final int PADDING = 8;
     public static final int HEIGHT = 20;
 
@@ -57,7 +56,7 @@ public final class CustomButton extends AbstractButton {
     /* ====================================================================== */
 
     @Override
-    public void onPress(InputWithModifiers inputWithModifiers) {
+    public void onPress(@NotNull InputWithModifiers mod) {
         onPress.accept(this);
     }
 
@@ -84,12 +83,13 @@ public final class CustomButton extends AbstractButton {
     }
 
     private Identifier getTextureForVariant() {
+        boolean active = isActive();
         boolean pressed = isHoveredOrFocused();
 
         return switch (variant) {
-            case NORMAL -> pressed ? NORMAL_PRESSED : NORMAL;
-            case SUCCESS -> pressed ? SUCCESS_PRESSED : SUCCESS;
-            case DANGER -> pressed ? DANGER_PRESSED : DANGER;
+            case NORMAL -> NORMAL.get(active, pressed);
+            case SUCCESS -> SUCCESS.get(active, pressed);
+            case DANGER -> DANGER.get(active, pressed);
         };
     }
 
