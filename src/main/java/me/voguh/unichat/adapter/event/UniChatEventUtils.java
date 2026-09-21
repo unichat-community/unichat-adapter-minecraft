@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public final class UniChatEventUtils {
 
@@ -97,6 +98,10 @@ public final class UniChatEventUtils {
     }
 
     /* ====================================================================== */
+
+    public static Set<String> getEventTypeMap() {
+        return BY_EVENT_TYPE.keySet();
+    }
 
     /**
      * Returns the event kind for the given event class.

@@ -16,17 +16,22 @@ import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ScrollableLayout;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 
 public final class UniChatWorkersSettingsScreen extends Screen {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UniChatWorkersSettingsScreen.class);
     private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final int SPACING = 8;
@@ -69,19 +74,29 @@ public final class UniChatWorkersSettingsScreen extends Screen {
 
         /* ================================================================== */
 
+        int viewportWidth = PANEL_WIDTH - (MARGIN * 2 + 20); // 20 is the scrollbar reserve
+        LinearLayout content = LinearLayout.vertical().spacing(SPACING / 2);
+
         List<RawWorker> workers = ServerStateHolder.INSTANCE.workers();
         for (int i = 0; i < workers.size(); i++) {
             RawWorker worker = workers.get(i);
-            addRenderableWidget(
+            content.addChild(
                 new CustomButton(font,
-                    xPos, yPos,
-                    INNER_WIDTH,
+                    0, 0,
+                    viewportWidth,
                     Component.literal(Optional.ofNullable(worker.name()).orElse("Unnamed Worker")),
                     (btn) -> onWorkerClick(btn, worker)
                 )
             );
-            yPos += CustomButton.HEIGHT + SPACING;
         }
+
+        ScrollableLayout scroll = new ScrollableLayout(minecraft, content, viewportWidth);
+        scroll.setMinWidth(INNER_WIDTH);
+        scroll.setMaxHeight(PANEL_HEIGHT - (MARGIN * 2 + titleSpacingY + CustomButton.HEIGHT + SPACING));
+        scroll.setX(xPos);
+        scroll.setY(yPos);
+        scroll.arrangeElements();
+        scroll.visitWidgets(this::addRenderableWidget);
 
         /* ================================================================== */
 
@@ -117,7 +132,7 @@ public final class UniChatWorkersSettingsScreen extends Screen {
     /* ====================================================================== */
 
     private void onWorkerClick(CustomButton button, RawWorker worker) {
-        minecraft.setScreen(new UniChatWorkerSettingsScreen(this, worker));
+//        minecraft.setScreen(new UniChatWorkerSettingsScreen(this, worker));
     }
 
 }
