@@ -140,9 +140,17 @@ dependencies {
 
     compileOnly 'org.jspecify:jspecify:1.0.0'
 
-    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.9.4'
     additionalRuntimeClasspath 'com.twelvemonkeys.imageio:imageio-webp:3.9.4'
-    jarJar('com.twelvemonkeys.imageio:imageio-webp:3.9.4')
+    ['com.twelvemonkeys.imageio:imageio-webp', 'com.twelvemonkeys.imageio:imageio-core',
+     'com.twelvemonkeys.imageio:imageio-metadata', 'com.twelvemonkeys.common:common-lang',
+     'com.twelvemonkeys.common:common-io', 'com.twelvemonkeys.common:common-image'].each { coord ->
+        jarJar(implementation(coord)) {
+            version {
+                strictly '[3.9.0,4.0.0)'
+                prefer '3.9.4'
+            }
+        }
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
