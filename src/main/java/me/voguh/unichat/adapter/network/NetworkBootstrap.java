@@ -22,11 +22,11 @@ import me.voguh.unichat.adapter.network.packet.server.SendImageBytesPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.server.ServerConfig;
+import me.voguh.unichat.adapter.server.ServerPermissions;
 import me.voguh.unichat.adapter.store.ImageRequests;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -56,7 +56,7 @@ public final class NetworkBootstrap {
     /* <=======================================[ SERVER ]=======================================> */
     private static void updateServerSettings(UpdateServerSettingsPayload payload, IPayloadContext context) {
         ServerPlayer player = (ServerPlayer) context.player();
-        if (!player.hasPermissions(Commands.LEVEL_ADMINS)) {
+        if (!ServerPermissions.canManage(player)) {
             return;
         }
 
@@ -71,7 +71,7 @@ public final class NetworkBootstrap {
 
     private static void toggleWebSocketConnection(ToggleWebSocketConnectionPayload payload, IPayloadContext context) {
         ServerPlayer player = (ServerPlayer) context.player();
-        if (!player.hasPermissions(Commands.LEVEL_ADMINS)) {
+        if (!ServerPermissions.canManage(player)) {
             return;
         }
 

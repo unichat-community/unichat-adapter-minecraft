@@ -21,8 +21,7 @@ public final class UniChatAdapterClient {
 
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
-        modEventBus.addListener(ClientBootstrap::onRegisterKeyMappings);
-        NeoForge.EVENT_BUS.addListener(ClientBootstrap::onClientTick);
+        NeoForge.EVENT_BUS.addListener(ClientBootstrap::onScreenInit);
         NeoForge.EVENT_BUS.addListener(ClientBootstrap::onLoggingOut);
     }
 

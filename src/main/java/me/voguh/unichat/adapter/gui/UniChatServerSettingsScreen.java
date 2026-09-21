@@ -11,191 +11,105 @@
 package me.voguh.unichat.adapter.gui;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
-import me.voguh.unichat.adapter.gui.component.CustomButton;
-import me.voguh.unichat.adapter.gui.component.CustomEditBox;
-import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
-public final class UniChatServerSettingsScreen extends Screen {
+public final class UniChatServerSettingsScreen extends UniChatPanelScreen {
 
-    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
-
-    private static final int SPACING = 8;
-    private static final int MARGIN = 16;
-
-    private static final int PANEL_WIDTH = 225;
-    private static final int PANEL_HEIGHT = 200;
-
-    private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
-
-    private static final int TITLE_COLOR = 0xFFFFFFFF;
-
-    /* ====================================================================== */
+    private static final int URL_MAX_LENGTH = 256;
 
     private String websocketUrl;
-    private Boolean autoConnect;
-    private int left;
-    private int top;
-
-    private final Screen parent;
+    private boolean autoConnect;
+    private Button connectionButton;
 
     /* ====================================================================== */
 
     public UniChatServerSettingsScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_server_settings"));
+        super(IdentifierUtils.translatable("screen_server_settings"), parent);
         this.websocketUrl = ServerStateHolder.INSTANCE.websocketUrl();
         this.autoConnect = ServerStateHolder.INSTANCE.autoConnect();
-
-        this.parent = parent;
     }
 
     /* ====================================================================== */
 
     @Override
-    protected void init() {
-        super.init();
-        left = (width - PANEL_WIDTH) / 2;
-        top = (height - PANEL_HEIGHT) / 2;
-
-        int glyph = font.lineHeight - 1;
-        int titleSpacingY = glyph + SPACING;
-        int xPos = left + MARGIN;
-        int yPos = top + MARGIN + titleSpacingY;
+    protected void addContents(LinearLayout layout) {
+        Component websocketUrlLabel = IdentifierUtils.translatable("screen_server_settings.websocket_url");
+        layout.addChild(new StringWidget(CONTENT_WIDTH, font.lineHeight, websocketUrlLabel, font).alignLeft());
 
         /* ================================================================== */
 
-        addRenderableOnly(
-            new StringWidget(
-                xPos, yPos,
-                INNER_WIDTH, font.lineHeight,
-                IdentifierUtils.translatable("screen_server_settings.websocket_url"),
-                font
-            )
-        );
+        EditBox websocketUrlBox = new EditBox(font, 0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, websocketUrlLabel);
+        // setValue truncates to maxLength, which defaults to 32.
+        websocketUrlBox.setMaxLength(URL_MAX_LENGTH);
+        websocketUrlBox.setValue(websocketUrl);
+        websocketUrlBox.setResponder(value -> websocketUrl = value);
+        layout.addChild(websocketUrlBox);
 
         /* ================================================================== */
 
-        yPos += font.lineHeight;
-        addRenderableWidget(
-            new CustomEditBox(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                IdentifierUtils.translatable("screen_server_settings.websocket_url"),
-                this::onWebsocketUrlChange,
-                websocketUrl
-            )
-        );
+        Component autoConnectLabel = IdentifierUtils.translatable("screen_server_settings.auto_connect");
+        Checkbox autoConnectBox = Checkbox.builder(autoConnectLabel, font)
+            .selected(autoConnect)
+            .maxWidth(CONTENT_WIDTH)
+            .onValueChange(this::onAutoConnectChange)
+            .build();
+        layout.addChild(autoConnectBox);
 
         /* ================================================================== */
 
-        yPos += CustomEditBox.HEIGHT + SPACING;
-        addRenderableWidget(
-            new CustomSwitch(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                IdentifierUtils.translatable("screen_server_settings.auto_connect"),
-                this::onAutoConnectChange,
-                autoConnect
-            )
-        );
+        connectionButton = Button.builder(CommonComponents.EMPTY, this::toggleConnection).width(CONTENT_WIDTH).build();
+        refreshConnectionButton();
+        layout.addChild(connectionButton);
 
         /* ================================================================== */
 
+        LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
+        actions.addChild(Button.builder(CommonComponents.GUI_DONE, this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
+
+        layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
+    }
+
+    @Override
+    public void tick() {
+        refreshConnectionButton();
+    }
+
+    /* ====================================================================== */
+
+    private void refreshConnectionButton() {
         ConnectionStatus status = ServerStateHolder.INSTANCE.connectionStatus();
-        yPos = top + PANEL_HEIGHT - (CustomButton.HEIGHT + SPACING) - (CustomSwitch.HEIGHT + MARGIN);
-
-        if (status == ConnectionStatus.CONNECTED) {
-            addRenderableWidget(
-                new CustomButton(font,
-                    xPos, yPos,
-                    INNER_WIDTH,
-                    CustomButton.Variant.DANGER,
-                    IdentifierUtils.translatable("screen_server_settings.disconnect"),
-                    (btn) -> toggleConnection(btn, status)
-                )
-            );
-        } else if (status == ConnectionStatus.DISCONNECTED) {
-            addRenderableWidget(
-                new CustomButton(font,
-                    xPos, yPos,
-                    INNER_WIDTH,
-                    CustomButton.Variant.SUCCESS,
-                    IdentifierUtils.translatable("screen_server_settings.connect"),
-                    (btn) -> toggleConnection(btn, status)
-                )
-            );
-        }
-
-        /* ================================================================== */
-
-        int btnWidth = (INNER_WIDTH / 2) - (SPACING / 2);
-
-        yPos = top + PANEL_HEIGHT - (CustomSwitch.HEIGHT + MARGIN);
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CustomButton.Variant.SUCCESS,
-                CommonComponents.GUI_DONE,
-                this::apply
-            )
-        );
-
-        xPos += btnWidth + SPACING;
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CommonComponents.GUI_BACK,
-                this::cancel
-            )
-        );
+        connectionButton.setMessage(connectionLabel(status));
+        connectionButton.active = status != ConnectionStatus.CONNECTING;
     }
 
-    @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick);
-
-        /* ================================================================== */
-
-        int xPos = left;
-        int yPos = top;
-
-        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-
-        /* ================================================================== */
-
-        int titleX = left + MARGIN + (INNER_WIDTH / 2);
-        int titleY = top + MARGIN;
-        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-    }
-
-    @Override
-    public void onClose() {
-        minecraft.setScreen(parent);
+    private Component connectionLabel(ConnectionStatus status) {
+        return switch (status) {
+            case CONNECTED -> IdentifierUtils.translatable("screen_server_settings.disconnect");
+            case CONNECTING -> IdentifierUtils.translatable("status_connecting");
+            case DISCONNECTED -> IdentifierUtils.translatable("screen_server_settings.connect");
+        };
     }
 
     /* ====================================================================== */
 
-    private void cancel(CustomButton button) {
+    private void cancel(Button button) {
         onClose();
     }
 
-    private void apply(CustomButton button) {
+    private void apply(Button button) {
         UniChatNetwork.sendToServer(new UpdateServerSettingsPayload(websocketUrl, autoConnect));
         ServerStateHolder.INSTANCE.setSettings(websocketUrl, autoConnect);
         onClose();
@@ -203,24 +117,19 @@ public final class UniChatServerSettingsScreen extends Screen {
 
     /* ====================================================================== */
 
-    private void onWebsocketUrlChange(CustomEditBox editBox, String newValue) {
-        websocketUrl = newValue;
-    }
-
-    private void onAutoConnectChange(CustomSwitch checkbox, boolean newValue) {
+    private void onAutoConnectChange(Checkbox checkbox, boolean newValue) {
         autoConnect = newValue;
     }
 
-    private void toggleConnection(CustomButton button, ConnectionStatus currentStatus) {
-        if (currentStatus == ConnectionStatus.CONNECTED) {
+    private void toggleConnection(Button button) {
+        ConnectionStatus status = ServerStateHolder.INSTANCE.connectionStatus();
+        if (status == ConnectionStatus.CONNECTED) {
             UniChatNetwork.sendToServer(new ToggleWebSocketConnectionPayload(false));
             ServerStateHolder.INSTANCE.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-        } else if (currentStatus == ConnectionStatus.DISCONNECTED) {
+        } else if (status == ConnectionStatus.DISCONNECTED) {
             UniChatNetwork.sendToServer(new ToggleWebSocketConnectionPayload(true));
             ServerStateHolder.INSTANCE.setConnectionStatus(ConnectionStatus.CONNECTING);
         }
-
-        onClose();
     }
 
 }

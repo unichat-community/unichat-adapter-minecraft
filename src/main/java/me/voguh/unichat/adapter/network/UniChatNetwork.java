@@ -3,7 +3,7 @@ package me.voguh.unichat.adapter.network;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
-import net.minecraft.commands.Commands;
+import me.voguh.unichat.adapter.server.ServerPermissions;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -22,7 +22,7 @@ public final class UniChatNetwork {
     public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         if (!player.connection.hasChannel(payload)) {
             return;
-        } else if (isOperatorsOnly(payload) && !player.hasPermissions(Commands.LEVEL_ADMINS)) {
+        } else if (isOperatorsOnly(payload) && !ServerPermissions.canManage(player)) {
             return;
         }
 

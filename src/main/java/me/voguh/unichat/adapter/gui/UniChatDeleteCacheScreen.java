@@ -10,137 +10,79 @@
 
 package me.voguh.unichat.adapter.gui;
 
-import me.voguh.unichat.adapter.gui.component.CustomButton;
-import me.voguh.unichat.adapter.gui.component.CustomSwitch;
 import me.voguh.unichat.adapter.store.ImageStore;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.MultiLineTextWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public final class UniChatDeleteCacheScreen extends Screen {
+public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
 
-    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
     private static final ResourceLocation WARNING = IdentifierUtils.getIdentifier("panel/warning");
 
-    private static final int SPACING = 8;
-    private static final int MARGIN = 16;
+    private static final Component WARNING_TITLE = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_title");
+    private static final Component WARNING_MESSAGE = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_message");
 
-    private static final int PANEL_WIDTH = 225;
-    private static final int PANEL_HEIGHT = 200;
+    private static final int WARNING_PADDING = 10;
+    private static final int WARNING_WIDTH = CONTENT_WIDTH - WARNING_PADDING * 2;
 
-    private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
-
-    private static final int TITLE_COLOR = 0xFFFFFFFF;
-
-    /* ====================================================================== */
-
-    private int left;
-    private int top;
-
-    private final Screen parent;
+    private LinearLayout warning;
 
     /* ====================================================================== */
 
     public UniChatDeleteCacheScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_client_settings.clear_cache"));
-        this.parent = parent;
+        super(IdentifierUtils.translatable("screen_client_settings.clear_cache"), parent);
     }
 
     /* ====================================================================== */
 
     @Override
-    protected void init() {
-        super.init();
-        left = (width - PANEL_WIDTH) / 2;
-        top = (height - PANEL_HEIGHT) / 2;
+    protected void addContents(LinearLayout layout) {
+        warning = LinearLayout.vertical().spacing(SPACING);
+        warning.addChild(new StringWidget(WARNING_WIDTH, font.lineHeight, WARNING_TITLE, font));
+        warning.addChild(new MultiLineTextWidget(WARNING_MESSAGE, font).setMaxWidth(WARNING_WIDTH));
 
-        int xPos = left + MARGIN;
-        int yPos = top + PANEL_HEIGHT - CustomSwitch.HEIGHT - MARGIN;
-        int btnWidth = (INNER_WIDTH / 2) - (SPACING / 2);
+        layout.addChild(warning, (settings) -> settings.padding(WARNING_PADDING));
 
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CustomButton.Variant.DANGER,
-                IdentifierUtils.translatable("clear"),
-                this::apply
-            )
-        );
+        /* ================================================================== */
 
-        xPos += btnWidth + SPACING;
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CommonComponents.GUI_BACK,
-                this::cancel
-            )
-        );
+        LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
+        actions.addChild(Button.builder(IdentifierUtils.translatable("clear"), this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
+
+        layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
 
-        /* ================================================================== */
+        int xPos = warning.getX() - WARNING_PADDING;
+        int yPos = warning.getY() - WARNING_PADDING;
+        int warningWidth = warning.getWidth() + WARNING_PADDING * 2;
+        int warningHeight = warning.getHeight() + WARNING_PADDING * 2;
 
-        int glyph = font.lineHeight - 1;
-        int xPos = left;
-        int yPos = top;
-
-        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-
-        /* ================================================================== */
-
-        int titleX = left + MARGIN + (INNER_WIDTH / 2);
-        int titleY = top + MARGIN;
-        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
-
-        /* ====================================================================================== */
-
-        yPos += glyph + SPACING;
-
-        int warningBoxWidth = INNER_WIDTH;
-        int warningBoxInnerWidth = warningBoxWidth - (2 + SPACING * 2 + 2); // 2px border + SPACING left and right + 2px border
-
-        Component warningTitle = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_title");
-        Component warningMessage = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_message");
-        int height = 2 + SPACING + glyph + SPACING + font.wordWrapHeight(warningMessage, warningBoxInnerWidth) + SPACING + 2;
-
-        graphics.blitSprite(WARNING, xPos, yPos, warningBoxWidth, height);
-
-        /* ================================================================== */
-
-        xPos += 2 + SPACING;
-        yPos += 2 + SPACING;
-
-        int warningBoxTitleX = xPos + (warningBoxInnerWidth / 2);
-        int warningBoxTitleY = yPos;
-        graphics.drawCenteredString(font, warningTitle, warningBoxTitleX, warningBoxTitleY, TITLE_COLOR);
-
-        /* ================================================================== */
-
-        yPos += glyph + SPACING;
-
-        graphics.drawWordWrap(font, warningMessage, xPos, yPos, warningBoxInnerWidth, TITLE_COLOR);
+        graphics.blitSprite(WARNING, xPos, yPos, warningWidth, warningHeight);
     }
 
     @Override
-    public void onClose() {
-        minecraft.setScreen(parent);
+    public Component getNarrationMessage() {
+        return CommonComponents.joinForNarration(super.getNarrationMessage(), WARNING_MESSAGE);
     }
 
     /* ====================================================================== */
 
-    private void cancel(CustomButton button) {
+    private void cancel(Button button) {
         onClose();
     }
 
-    private void apply(CustomButton button) {
+    private void apply(Button button) {
         ImageStore.INSTANCE.clear();
         onClose();
     }

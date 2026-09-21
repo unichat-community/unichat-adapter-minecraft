@@ -1,7 +1,5 @@
 {
     "commands.unichat_adapter.reload": "%s workers carregados",
-    "key.category.unichat_adapter.unichat_adapter": "UniChat Adapter",
-    "key.unichat_adapter.open_screen": "Abrir tela do UniChat",
     "_comment_": "<=======================[ GUI KEYS ]=======================>",
     "gui.unichat_adapter.clear": "Limpar",
     "gui.unichat_adapter.open_editor": "Abrir editor",

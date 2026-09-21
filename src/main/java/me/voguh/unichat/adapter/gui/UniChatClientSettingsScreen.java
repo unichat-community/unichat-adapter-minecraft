@@ -12,191 +12,75 @@ package me.voguh.unichat.adapter.gui;
 
 import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.gui.chat.ChatMessages;
-import me.voguh.unichat.adapter.gui.component.CustomButton;
-import me.voguh.unichat.adapter.gui.component.CustomOptionGroup;
-import me.voguh.unichat.adapter.gui.component.CustomSwitch;
-import me.voguh.unichat.adapter.gui.component.State;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.chat.Component;
 
-import java.util.List;
+public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
-public final class UniChatClientSettingsScreen extends Screen {
-
-    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
-
-    private static final State<Integer> SUPERSAMPLE_1 = State.literal("1x", 1);
-    private static final State<Integer> SUPERSAMPLE_2 = State.literal("2x", 2);
-    private static final State<Integer> SUPERSAMPLE_3 = State.literal("3x", 3);
-    private static final State<Integer> SUPERSAMPLE_4 = State.literal("4x", 4);
-    private static final List<State<Integer>> SUPERSAMPLE_OPTIONS = List.of(SUPERSAMPLE_1, SUPERSAMPLE_2, SUPERSAMPLE_3, SUPERSAMPLE_4);
-
-    private static final int SPACING = 8;
-    private static final int MARGIN = 16;
-
-    private static final int PANEL_WIDTH = 225;
-    private static final int PANEL_HEIGHT = 200;
-
-    private static final int INNER_WIDTH = PANEL_WIDTH - MARGIN * 2;
-
-    private static final int TITLE_COLOR = 0xFFFFFFFF;
-
-    /* ====================================================================== */
-
-    private Boolean displayChatMessages;
-    private Integer supersample;
-    private int left;
-    private int top;
-
-    private final Screen parent;
+    private boolean displayChatMessages;
+    private int supersample;
 
     /* ====================================================================== */
 
     public UniChatClientSettingsScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_client_settings"));
+        super(IdentifierUtils.translatable("screen_client_settings"), parent);
         this.displayChatMessages = ClientConfig.renderMessages();
         this.supersample = ClientConfig.supersample();
-
-        this.parent = parent;
     }
 
     /* ====================================================================== */
 
     @Override
-    protected void init() {
-        super.init();
-        left = (width - PANEL_WIDTH) / 2;
-        top = (height - PANEL_HEIGHT) / 2;
-
-        int glyph = font.lineHeight - 1;
-        int titleSpacingY = glyph + SPACING;
-        int xPos = left + MARGIN;
-        int yPos = top + MARGIN + titleSpacingY;
-
-        /* ================================================================== */
-
-        addRenderableWidget(
-            new CustomSwitch(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                IdentifierUtils.translatable("screen_client_settings.display_chat_messages"),
-                this::onDisplayChatMessages,
-                displayChatMessages
-            )
-        );
+    protected void addContents(LinearLayout layout) {
+        Component renderMessagesLabel = IdentifierUtils.translatable("screen_client_settings.display_chat_messages");
+        Checkbox renderMessages = Checkbox.builder(renderMessagesLabel, font)
+            .selected(displayChatMessages)
+            .maxWidth(CONTENT_WIDTH)
+            .onValueChange(this::onDisplayChatMessages)
+            .build();
+        layout.addChild(renderMessages);
 
         /* ================================================================== */
 
-        yPos += CustomSwitch.HEIGHT + SPACING;
-
-        addRenderableOnly(
-            new StringWidget(
-                xPos, yPos,
-                INNER_WIDTH, font.lineHeight,
-                IdentifierUtils.translatable("screen_client_settings.supersample"),
-                font
-            )
-        );
+        Component supersampleLabel = IdentifierUtils.translatable("screen_client_settings.supersample");
+        CycleButton<Integer> supersampleButton = CycleButton.<Integer>builder(value -> Component.literal(value + "x"))
+            .withValues(1, 2, 3, 4)
+            .withInitialValue(supersample)
+            .create(0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, supersampleLabel, this::onSupersampleChange);
+        layout.addChild(supersampleButton);
 
         /* ================================================================== */
 
-        yPos += font.lineHeight;
-
-        addRenderableWidget(
-            new CustomOptionGroup<>(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                IdentifierUtils.translatable("screen_client_settings.supersample"),
-                this::onSupersampleChange,
-                SUPERSAMPLE_OPTIONS.stream().filter(state -> state.value().equals(supersample)).findFirst().orElse(SUPERSAMPLE_1),
-                SUPERSAMPLE_OPTIONS
-            )
-        );
+        Component clearCacheLabel = IdentifierUtils.translatable("screen_client_settings.clear_cache");
+        Button clearCache = Button.builder(clearCacheLabel, this::onClearCacheClick).width(CONTENT_WIDTH).build();
+        layout.addChild(clearCache);
 
         /* ================================================================== */
 
-        yPos += CustomOptionGroup.HEIGHT + SPACING;
+        LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
+        actions.addChild(Button.builder(CommonComponents.GUI_DONE, this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                INNER_WIDTH,
-                CustomButton.Variant.DANGER,
-                IdentifierUtils.translatable("screen_client_settings.clear_cache"),
-                this::onClearCacheClick
-            )
-        );
-
-        /* ================================================================== */
-
-        yPos = top + PANEL_HEIGHT - CustomSwitch.HEIGHT - MARGIN;
-        int btnWidth = (INNER_WIDTH / 2) - (SPACING / 2);
-
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CustomButton.Variant.SUCCESS,
-                CommonComponents.GUI_DONE,
-                this::apply
-            )
-        );
-
-        xPos += btnWidth + SPACING;
-        addRenderableWidget(
-            new CustomButton(font,
-                xPos, yPos,
-                btnWidth,
-                CommonComponents.GUI_BACK,
-                this::cancel
-            )
-        );
-    }
-
-    @Override
-    public void renderBackground(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick);
-
-        /* ================================================================== */
-
-        int xPos = left;
-        int yPos = top;
-
-        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
-
-        /* ================================================================== */
-
-        int titleX = left + MARGIN + (INNER_WIDTH / 2);
-        int titleY = top + MARGIN;
-        graphics.drawCenteredString(font, getTitle(), titleX, titleY, TITLE_COLOR);
-    }
-
-    @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-    }
-
-    @Override
-    public void onClose() {
-        minecraft.setScreen(parent);
+        layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 
     /* ====================================================================== */
 
-    private void onClearCacheClick(CustomButton button) {
+    private void onClearCacheClick(Button button) {
         minecraft.setScreen(new UniChatDeleteCacheScreen(this));
     }
 
-    private void cancel(CustomButton button) {
+    private void cancel(Button button) {
         onClose();
     }
 
-    private void apply(CustomButton button) {
+    private void apply(Button button) {
         boolean rescaled = ClientConfig.supersample() != supersample;
 
         ClientConfig.updateSettings(displayChatMessages, supersample);
@@ -209,11 +93,11 @@ public final class UniChatClientSettingsScreen extends Screen {
 
     /* ====================================================================== */
 
-    private void onDisplayChatMessages(CustomSwitch checkbox, boolean newValue) {
+    private void onDisplayChatMessages(Checkbox checkbox, boolean newValue) {
         displayChatMessages = newValue;
     }
 
-    private void onSupersampleChange(CustomOptionGroup<Integer> group, Integer newValue) {
+    private void onSupersampleChange(CycleButton<Integer> button, Integer newValue) {
         supersample = newValue;
     }
 

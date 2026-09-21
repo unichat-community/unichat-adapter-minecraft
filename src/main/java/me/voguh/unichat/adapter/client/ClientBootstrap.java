@@ -10,35 +10,45 @@
 
 package me.voguh.unichat.adapter.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.UniChatSettingsMenuScreen;
 import me.voguh.unichat.adapter.gui.chat.ChatMessages;
-import net.minecraft.client.KeyMapping;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
 public final class ClientBootstrap {
 
-    private static final KeyMapping OPEN_SCREEN = new KeyMapping("key." + UniChatAdapter.MODID + ".open_screen", InputConstants.Type.KEYSYM, InputConstants.KEY_U, KeyMapping.CATEGORY_MISC);
+    private static final int MARGIN = 8;
 
-    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(OPEN_SCREEN);
-    }
-
-    public static void onClientTick(ClientTickEvent.Post event) {
-        if (!OPEN_SCREEN.consumeClick()) {
+    public static void onScreenInit(ScreenEvent.Init.Post event) {
+        Screen screen = event.getScreen();
+        if (!(screen instanceof PauseScreen pauseScreen) || !pauseScreen.showsPauseMenu()) {
             return;
         }
 
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.setScreen(new UniChatSettingsMenuScreen());
+        Component label = IdentifierUtils.translatable("menu_title");
+        int yPos = screen.height - Button.DEFAULT_HEIGHT - MARGIN;
+
+        Button openScreen = Button.builder(label, (btn) -> openSettings(screen))
+            .bounds(MARGIN, yPos, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT)
+            .build();
+
+        event.addListener(openScreen);
     }
 
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ChatMessages.INSTANCE.clear();
+    }
+
+    /* ====================================================================== */
+
+    private static void openSettings(Screen parent) {
+        Minecraft.getInstance().setScreen(new UniChatSettingsMenuScreen(parent));
     }
 
     /* ====================================================================== */
