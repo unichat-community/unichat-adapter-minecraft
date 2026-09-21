@@ -11,39 +11,24 @@
 package me.voguh.unichat.adapter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import me.voguh.unichat.adapter.UniChatAdapter;
 import me.voguh.unichat.adapter.gui.UniChatSettingsMenuScreen;
 import me.voguh.unichat.adapter.gui.chat.ChatMessages;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.event.TickEvent;
-import org.lwjgl.glfw.GLFW;
-
-import javax.imageio.spi.IIORegistry;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 public final class ClientBootstrap {
 
-    private static final KeyMapping.Category UNICHAT_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "unichat_adapter"));
-    private static final KeyMapping OPEN_SCREEN = new KeyMapping("key." + UniChatAdapter.MODID + ".open_screen", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, UNICHAT_CATEGORY);
+    private static final KeyMapping OPEN_SCREEN = new KeyMapping("key." + UniChatAdapter.MODID + ".open_screen", InputConstants.Type.KEYSYM, InputConstants.KEY_U, KeyMapping.CATEGORY_MISC);
 
-    public static void register() {
-        IIORegistry.getDefaultInstance().registerServiceProvider(new WebPImageReaderSpi());
-        RegisterKeyMappingsEvent.BUS.addListener(ClientBootstrap::onRegisterKeyMappings);
-        TickEvent.ClientTickEvent.Post.BUS.addListener(ClientBootstrap::onClientTick);
-        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(ClientBootstrap::onLoggingOut);
-    }
-
-    /* ====================================================================== */
-
-    private static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
+    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(OPEN_SCREEN);
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         if (!OPEN_SCREEN.consumeClick()) {
             return;
         }
@@ -52,7 +37,7 @@ public final class ClientBootstrap {
         minecraft.setScreen(new UniChatSettingsMenuScreen());
     }
 
-    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ChatMessages.INSTANCE.clear();
     }
 
