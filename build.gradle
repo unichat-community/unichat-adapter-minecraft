@@ -54,6 +54,7 @@ neoForge {
     runs {
         client {
             client()
+            programArguments.addAll '--width', '1280', '--height', '720', '--quickPlaySingleplayer', 'DevWorld'
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
