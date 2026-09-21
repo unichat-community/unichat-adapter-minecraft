@@ -10,20 +10,20 @@
 
 package me.voguh.unichat.adapter.server;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.net.URI;
 
 public final class ServerConfig {
 
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
+    private static final ModConfigSpec.ConfigValue<String> WEBSOCKET_URL_SPEC = BUILDER
         .define("websocketUrl", "ws://localhost:9527/ws", ServerConfig::isWebSocketUrl);
 
-    private static final ForgeConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", false);
+    private static final ModConfigSpec.BooleanValue AUTO_CONNECT_SPEC = BUILDER.define("autoConnect", false);
 
-    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     /* ====================================================================== */
 

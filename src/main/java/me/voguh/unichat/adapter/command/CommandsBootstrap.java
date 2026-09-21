@@ -16,13 +16,13 @@ import me.voguh.unichat.adapter.worker.Workers;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 public final class CommandsBootstrap {
 
     public static void register(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> prefix = Commands.literal("unichat")
-            .requires(Commands.hasPermission(Commands.LEVEL_ADMINS));
+            .requires((css) -> css.hasPermission(Commands.LEVEL_ADMINS));
 
         event.getDispatcher().register(prefix.then(Commands.literal("reload").executes(CommandsBootstrap::reload)));
     }

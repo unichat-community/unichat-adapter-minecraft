@@ -12,7 +12,7 @@ package me.voguh.unichat.adapter.store;
 
 import me.voguh.unichat.adapter.util.HEXUtils;
 import me.voguh.unichat.adapter.util.Strings;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

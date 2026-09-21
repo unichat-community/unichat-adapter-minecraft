@@ -10,16 +10,16 @@
 
 package me.voguh.unichat.adapter.client;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class ClientConfig {
 
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.BooleanValue RENDER_MESSAGES = BUILDER.define("renderMessages", true);
-    private static final ForgeConfigSpec.IntValue SUPERSAMPLE = BUILDER.defineInRange("supersample", 4, 1, 4);
+    private static final ModConfigSpec.BooleanValue RENDER_MESSAGES = BUILDER.define("renderMessages", true);
+    private static final ModConfigSpec.IntValue SUPERSAMPLE = BUILDER.defineInRange("supersample", 4, 1, 4);
 
-    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     /* ====================================================================== */
 
