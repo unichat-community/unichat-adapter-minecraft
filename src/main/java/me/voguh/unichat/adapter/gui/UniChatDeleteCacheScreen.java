@@ -16,15 +16,14 @@ import me.voguh.unichat.adapter.store.ImageStore;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public final class UniChatDeleteCacheScreen extends Screen {
 
-    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
-    private static final Identifier WARNING = IdentifierUtils.getIdentifier("panel/warning");
+    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
+    private static final ResourceLocation WARNING = IdentifierUtils.getIdentifier("panel/warning");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;
@@ -93,7 +92,7 @@ public final class UniChatDeleteCacheScreen extends Screen {
         int xPos = left;
         int yPos = top;
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
+        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
 
         /* ================================================================== */
 
@@ -112,7 +111,7 @@ public final class UniChatDeleteCacheScreen extends Screen {
         Component warningMessage = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_message");
         int height = 2 + SPACING + glyph + SPACING + font.wordWrapHeight(warningMessage, warningBoxInnerWidth) + SPACING + 2;
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, WARNING, xPos, yPos, warningBoxWidth, height);
+        graphics.blitSprite(WARNING, xPos, yPos, warningBoxWidth, height);
 
         /* ================================================================== */
 

@@ -20,15 +20,15 @@ import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public final class UniChatClientSettingsScreen extends Screen {
 
-    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
+    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final State<Integer> SUPERSAMPLE_1 = State.literal("1x", 1);
     private static final State<Integer> SUPERSAMPLE_2 = State.literal("2x", 2);
@@ -159,7 +159,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
 
         /* ================================================================== */
@@ -167,7 +167,7 @@ public final class UniChatClientSettingsScreen extends Screen {
         int xPos = left;
         int yPos = top;
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
+        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
 
         /* ================================================================== */
 
@@ -177,7 +177,7 @@ public final class UniChatClientSettingsScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 

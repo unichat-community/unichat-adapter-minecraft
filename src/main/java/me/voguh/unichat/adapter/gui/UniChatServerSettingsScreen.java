@@ -22,13 +22,12 @@ import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public final class UniChatServerSettingsScreen extends Screen {
 
-    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
+    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;
@@ -74,12 +73,14 @@ public final class UniChatServerSettingsScreen extends Screen {
 
         /* ================================================================== */
 
-        addRenderableOnly(new StringWidget(
-            xPos, yPos,
-            INNER_WIDTH, font.lineHeight,
-            IdentifierUtils.translatable("screen_server_settings.websocket_url"),
-            font
-        ));
+        addRenderableOnly(
+            new StringWidget(
+                xPos, yPos,
+                INNER_WIDTH, font.lineHeight,
+                IdentifierUtils.translatable("screen_server_settings.websocket_url"),
+                font
+            )
+        );
 
         /* ================================================================== */
 
@@ -169,7 +170,7 @@ public final class UniChatServerSettingsScreen extends Screen {
         int xPos = left;
         int yPos = top;
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
+        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
 
         /* ================================================================== */
 
@@ -195,7 +196,7 @@ public final class UniChatServerSettingsScreen extends Screen {
     }
 
     private void apply(CustomButton button) {
-        UniChatNetwork.INSTANCE.sendToServer(new UpdateServerSettingsPayload(websocketUrl, autoConnect));
+        UniChatNetwork.sendToServer(new UpdateServerSettingsPayload(websocketUrl, autoConnect));
         ServerStateHolder.INSTANCE.setSettings(websocketUrl, autoConnect);
         onClose();
     }
@@ -212,10 +213,10 @@ public final class UniChatServerSettingsScreen extends Screen {
 
     private void toggleConnection(CustomButton button, ConnectionStatus currentStatus) {
         if (currentStatus == ConnectionStatus.CONNECTED) {
-            UniChatNetwork.INSTANCE.sendToServer(new ToggleWebSocketConnectionPayload(false));
+            UniChatNetwork.sendToServer(new ToggleWebSocketConnectionPayload(false));
             ServerStateHolder.INSTANCE.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         } else if (currentStatus == ConnectionStatus.DISCONNECTED) {
-            UniChatNetwork.INSTANCE.sendToServer(new ToggleWebSocketConnectionPayload(true));
+            UniChatNetwork.sendToServer(new ToggleWebSocketConnectionPayload(true));
             ServerStateHolder.INSTANCE.setConnectionStatus(ConnectionStatus.CONNECTING);
         }
 

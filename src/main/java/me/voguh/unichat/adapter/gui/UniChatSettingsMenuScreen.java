@@ -16,14 +16,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.permissions.Permissions;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public final class UniChatSettingsMenuScreen extends Screen {
 
-    private static final Identifier PANEL = IdentifierUtils.getIdentifier("panel/background");
+    private static final ResourceLocation PANEL = IdentifierUtils.getIdentifier("panel/background");
 
     private static final int SPACING = 8;
     private static final int MARGIN = 16;
@@ -46,7 +46,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
 
     private boolean isOperator() {
         LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+        return player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
     }
 
     /* ====================================================================== */
@@ -87,17 +87,6 @@ public final class UniChatSettingsMenuScreen extends Screen {
                     this::onServerTabClick
                 )
             );
-
-            yPos += CustomButton.HEIGHT + SPACING;
-
-            addRenderableWidget(
-                new CustomButton(font,
-                    xPos, yPos,
-                    INNER_WIDTH,
-                    IdentifierUtils.translatable("btn_workers"),
-                    this::onWorkersTabClick
-                )
-            );
         }
 
         /* ================================================================== */
@@ -115,7 +104,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
 
         /* ================================================================== */
@@ -123,7 +112,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
         int xPos = left;
         int yPos = top;
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
+        graphics.blitSprite(PANEL, xPos, yPos, PANEL_WIDTH, PANEL_HEIGHT);
 
         /* ================================================================== */
 
@@ -133,7 +122,7 @@ public final class UniChatSettingsMenuScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
@@ -144,10 +133,6 @@ public final class UniChatSettingsMenuScreen extends Screen {
 
     private void onServerTabClick(CustomButton button) {
         minecraft.setScreen(new UniChatServerSettingsScreen(this));
-    }
-
-    private void onWorkersTabClick(CustomButton button) {
-        minecraft.setScreen(new UniChatWorkersSettingsScreen(this));
     }
 
 }
