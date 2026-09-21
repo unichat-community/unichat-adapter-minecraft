@@ -6,18 +6,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.BiConsumer;
 
 public final class CustomSwitch extends AbstractButton {
 
-    private static final Identifier UNCKECKED = IdentifierUtils.getIdentifier("switch/off");
-    private static final Identifier CHECKED = IdentifierUtils.getIdentifier("switch/on");
+    private static final ResourceLocation UNCKECKED = IdentifierUtils.getIdentifier("switch/off");
+    private static final ResourceLocation CHECKED = IdentifierUtils.getIdentifier("switch/on");
     public static final int HEIGHT = 20;
 
     private boolean selected;
@@ -37,13 +34,13 @@ public final class CustomSwitch extends AbstractButton {
     /* ====================================================================== */
 
     @Override
-    public void onPress(@NotNull InputWithModifiers mod) {
+    public void onPress() {
         selected = !selected;
         onPress.accept(this, selected);
     }
 
     @Override
-    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int x = getX();
         int y = getY();
         int width = getWidth();
@@ -57,8 +54,8 @@ public final class CustomSwitch extends AbstractButton {
         int xSwitch = x;
         int ySwitch = y + (height - hSwitch) / 2;
 
-        Identifier texture = selected ? CHECKED : UNCKECKED;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, xSwitch, ySwitch, wSwitch, hSwitch);
+        ResourceLocation texture = selected ? CHECKED : UNCKECKED;
+        graphics.blitSprite(texture, xSwitch, ySwitch, wSwitch, hSwitch);
 
         /* ================================================================== */
 

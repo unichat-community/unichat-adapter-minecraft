@@ -4,17 +4,15 @@ import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
 public class CustomEditBox extends EditBox {
 
-    private static final Identifier BOX = IdentifierUtils.getIdentifier("editbox/background");
+    private static final ResourceLocation BOX = IdentifierUtils.getIdentifier("editbox/background");
     public static final int HEIGHT = 20;
     private static final int PADDING_X = 6;
     private static final int PADDING_Y = 6;
@@ -39,18 +37,18 @@ public class CustomEditBox extends EditBox {
         int y = getY() - PADDING_Y;
         int width = getWidth() + PADDING_X * 2;
         int height = getHeight() + PADDING_Y * 2;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX, x, y, width, height);
+        graphics.blitSprite(BOX, x, y, width, height);
 
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (!isMouseOver(event.x(), event.y())) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isMouseOver(mouseX, mouseY)) {
             return false;
         }
 
-        return super.mouseClicked(event, doubleClick);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override

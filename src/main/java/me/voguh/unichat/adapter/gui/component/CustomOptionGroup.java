@@ -11,12 +11,10 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.EqualSpacingLayout;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -82,16 +80,6 @@ public final class CustomOptionGroup<T> extends AbstractContainerWidget {
     }
 
     @Override
-    protected int contentHeight() {
-        return getHeight();
-    }
-
-    @Override
-    protected double scrollRate() {
-        return 0.0;
-    }
-
-    @Override
     protected void updateWidgetNarration(NarrationElementOutput out) {
         out.add(NarratedElementType.TITLE, createNarrationMessage());
         out.add(NarratedElementType.USAGE, currentState.message());
@@ -116,12 +104,12 @@ public final class CustomOptionGroup<T> extends AbstractContainerWidget {
         }
 
         @Override
-        public void onPress(@NotNull InputWithModifiers mod) {
+        public void onPress() {
             select(state);
         }
 
         @Override
-        protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             int x = getX();
             int y = getY();
             int width = getWidth();
@@ -132,8 +120,8 @@ public final class CustomOptionGroup<T> extends AbstractContainerWidget {
             /* ============================================================== */
 
             boolean selected = state.equals(currentState);
-            Identifier texture = SPRITES.get(isActive(), selected);
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, x, y, width, height);
+            ResourceLocation texture = SPRITES.get(isActive(), selected);
+            graphics.blitSprite(texture, x, y, width, height);
 
             /* ============================================================== */
 

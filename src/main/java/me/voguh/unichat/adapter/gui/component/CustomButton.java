@@ -7,13 +7,10 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
@@ -56,20 +53,20 @@ public final class CustomButton extends AbstractButton {
     /* ====================================================================== */
 
     @Override
-    public void onPress(@NotNull InputWithModifiers mod) {
+    public void onPress() {
         onPress.accept(this);
     }
 
     @Override
-    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int x = getX();
         int y = getY();
         int width = getWidth();
         int height = getHeight();
         int glyph = font.lineHeight - 1;
 
-        Identifier texture = getTextureForVariant();
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, x, y, width, height);
+        ResourceLocation texture = getTextureForVariant();
+        graphics.blitSprite(texture, x, y, width, height);
 
         int innerWidth = width - PADDING * 2;
 
@@ -82,7 +79,7 @@ public final class CustomButton extends AbstractButton {
         graphics.drawString(font, Language.getInstance().getVisualOrder(formattedText), xText, yText, color, false);
     }
 
-    private Identifier getTextureForVariant() {
+    private ResourceLocation getTextureForVariant() {
         boolean active = isActive();
         boolean pressed = isHoveredOrFocused();
 
