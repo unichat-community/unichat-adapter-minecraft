@@ -41,7 +41,7 @@ public enum Workers {
     public int reload() {
         rawWorkers = WorkerLoader.raw();
         workers = WorkerLoader.load(rawWorkers);
-        UniChatNetwork.INSTANCE.sendToPlayers(new SendWorkersPayload(rawWorkers));
+        UniChatNetwork.sendToPlayers(new SendWorkersPayload(rawWorkers));
 
         return workers.size();
     }

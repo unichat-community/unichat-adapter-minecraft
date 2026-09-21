@@ -12,8 +12,8 @@ package me.voguh.unichat.adapter.server.dispatch;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.event.UniChatEventMessage;
-import me.voguh.unichat.adapter.network.ChatImage;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
+import me.voguh.unichat.adapter.network.packet.ChatImage;
 import me.voguh.unichat.adapter.network.packet.server.SendChatMessagePayload;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public final class ChatMessageEventDispatch {
             emotes
         );
 
-        UniChatNetwork.INSTANCE.sendToPlayers(payload);
+        UniChatNetwork.sendToPlayers(payload);
     }
 
     /* ====================================================================== */

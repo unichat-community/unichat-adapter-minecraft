@@ -17,7 +17,7 @@ import me.voguh.unichat.adapter.util.ConnectionStatus;
 public final class ConnectionStatusDispatch {
 
     public static void dispatch(ConnectionStatus status) {
-        UniChatNetwork.INSTANCE.sendToPlayers(new SendConnectionStatusPayload(status));
+        UniChatNetwork.sendToPlayers(new SendConnectionStatusPayload(status));
     }
 
     /* ====================================================================== */

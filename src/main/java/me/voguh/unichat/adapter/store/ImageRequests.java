@@ -115,7 +115,7 @@ public enum ImageRequests {
             resultRef.set(bytes);
             latch.countDown();
         });
-        UniChatNetwork.INSTANCE.sendToServer(new RequestImagePayload(path));
+        UniChatNetwork.sendToServer(new RequestImagePayload(path));
 
         try {
             if (!latch.await(REQUEST_TIMEOUT, TimeUnit.SECONDS)) {
