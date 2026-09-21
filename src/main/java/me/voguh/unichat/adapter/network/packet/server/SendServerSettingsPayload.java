@@ -10,16 +10,15 @@
 
 package me.voguh.unichat.adapter.network.packet.server;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 
 public record SendServerSettingsPayload(String websocketUrl, Boolean autoConnect) implements CustomPacketPayload {
 
-    public static final Type<SendServerSettingsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "send_server_settings"));
+    public static final Type<SendServerSettingsPayload> TYPE = new Type<>(IdentifierUtils.getIdentifier("send_server_settings"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SendServerSettingsPayload> CODEC = StreamCodec.composite(
         ByteBufCodecs.STRING_UTF8,
         SendServerSettingsPayload::websocketUrl,

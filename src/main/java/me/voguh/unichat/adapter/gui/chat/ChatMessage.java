@@ -10,7 +10,7 @@
 
 package me.voguh.unichat.adapter.gui.chat;
 
-import me.voguh.unichat.adapter.network.ChatImage;
+import me.voguh.unichat.adapter.network.packet.ChatImage;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;

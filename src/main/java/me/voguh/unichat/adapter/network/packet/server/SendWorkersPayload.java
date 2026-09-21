@@ -10,20 +10,19 @@
 
 package me.voguh.unichat.adapter.network.packet.server;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
 public record SendWorkersPayload(List<RawWorker> workers) implements CustomPacketPayload {
 
-    public static final Type<SendWorkersPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "send_workers"));
+    public static final Type<SendWorkersPayload> TYPE = new Type<>(IdentifierUtils.getIdentifier("send_workers"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SendWorkersPayload> CODEC = ByteBufCodecs.STRING_UTF8
         .map(SendWorkersPayload::fromJson, SendWorkersPayload::toJson)
         .cast();

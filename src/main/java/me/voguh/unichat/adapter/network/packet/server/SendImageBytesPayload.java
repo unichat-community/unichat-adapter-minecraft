@@ -10,19 +10,18 @@
 
 package me.voguh.unichat.adapter.network.packet.server;
 
-import me.voguh.unichat.adapter.UniChatAdapter;
+import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 
 public record SendImageBytesPayload(String path, byte[] data) implements CustomPacketPayload {
 
     // ClientboundCustomPayloadPacket caps the whole packet at 1 MiB.
     public static final int MAX_BYTES = 768 * 1024;
 
-    public static final Type<SendImageBytesPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(UniChatAdapter.MODID, "send_image_bytes"));
+    public static final Type<SendImageBytesPayload> TYPE = new Type<>(IdentifierUtils.getIdentifier("send_image_bytes"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SendImageBytesPayload> CODEC = StreamCodec.composite(
         ByteBufCodecs.STRING_UTF8,
         SendImageBytesPayload::path,
