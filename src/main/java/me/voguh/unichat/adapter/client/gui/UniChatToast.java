@@ -7,7 +7,6 @@ import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public final class UniChatToast implements Toast {
 
@@ -39,12 +38,12 @@ public final class UniChatToast implements Toast {
     /* ====================================================================== */
 
     @Override
-    public @NotNull Object getToken() {
+    public Object getToken() {
         return "unichat_toast";
     }
 
     @Override
-    public @NotNull Visibility render(GuiGraphics graphics, @NotNull ToastComponent toastComponent, long timeSinceLastVisible) {
+    public Visibility render(GuiGraphics graphics, ToastComponent toastComponent, long timeSinceLastVisible) {
         Font font = toastComponent.getMinecraft().font;
 
         int xPos = 0;
