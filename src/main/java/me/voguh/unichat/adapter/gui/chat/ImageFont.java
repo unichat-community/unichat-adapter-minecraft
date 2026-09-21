@@ -11,19 +11,18 @@
 package me.voguh.unichat.adapter.gui.chat;
 
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public final class ImageFont {
 
-    public static final Identifier ID = IdentifierUtils.getIdentifier("image");
+    public static final ResourceLocation ID = IdentifierUtils.getIdentifier("image");
+    public static final int TEXT_LINE_HEIGHT = 9;
 
     public enum Kind {
         EMOTE(0xE000, 12),
-        BADGE(0xE100, ChatComponent.MESSAGE_BOTTOM_TO_MESSAGE_TOP);
+        BADGE(0xE100, TEXT_LINE_HEIGHT);
 
         private final int base;
         private final int height;
@@ -41,11 +40,10 @@ public final class ImageFont {
 
     public static final int MAX_HEIGHT = Math.max(Kind.EMOTE.height, Kind.BADGE.height);
 
-    private static final FontDescription DESCRIPTION = new FontDescription.Resource(ID);
     private static final int MAX_WIDTH = 256;
 
     public static Style style(String insertion) {
-        return Style.EMPTY.withFont(DESCRIPTION).withInsertion(insertion);
+        return Style.EMPTY.withFont(ID).withInsertion(insertion);
     }
 
     public static String placeholder(Kind kind, int width) {
@@ -57,7 +55,7 @@ public final class ImageFont {
             return false;
         }
 
-        return style.getFont() instanceof FontDescription.Resource resource && ID.equals(resource.id());
+        return ID.equals(style.getFont());
     }
 
     public static Kind kind(int codepoint) {

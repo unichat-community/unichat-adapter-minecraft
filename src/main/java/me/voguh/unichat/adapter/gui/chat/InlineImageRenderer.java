@@ -10,33 +10,27 @@
 
 package me.voguh.unichat.adapter.gui.chat;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTexture;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTextures;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 public final class InlineImageRenderer {
 
-    private static final Identifier MISSING = IdentifierUtils.getIdentifier("textures/gui/placeholder.png");
-    private static final RenderPipeline PIPELINE = RenderPipelines.GUI_TEXTURED;
+    private static final ResourceLocation MISSING = IdentifierUtils.getIdentifier("textures/gui/placeholder.png");
     private static final int MISSING_SIZE = 16;
 
-    public static void render(GuiGraphics graphics, int y, float alpha, FormattedCharSequence content) {
+    public static void render(GuiGraphics graphics, int x, int y, float alpha, FormattedCharSequence content) {
         if (hasNoPlaceholder(content)) {
             return;
         }
 
-        Cursor cursor = new Cursor(Minecraft.getInstance().font.getSplitter());
-        int color = ARGB.white(alpha);
+        Cursor cursor = new Cursor(Minecraft.getInstance().font.getSplitter(), x);
 
         content.accept((index, style, codepoint) -> {
             if (!ImageFont.isPlaceholder(style, codepoint)) {
@@ -46,7 +40,7 @@ public final class InlineImageRenderer {
             }
 
             int width = ImageFont.width(codepoint);
-            draw(graphics, cursor.mark(), y, width, ImageFont.kind(codepoint).height(), color, style);
+            draw(graphics, cursor.mark(), y, width, ImageFont.kind(codepoint).height(), alpha, style);
             cursor.skip(width);
 
             return true;
@@ -57,22 +51,25 @@ public final class InlineImageRenderer {
         return content.accept((index, style, codepoint) -> !ImageFont.isPlaceholder(style, codepoint));
     }
 
-    private static void draw(GuiGraphics graphics, int x, int y, int width, int height, int color, Style style) {
-        int top = y - (height - ChatComponent.MESSAGE_BOTTOM_TO_MESSAGE_TOP) / 2;
+    private static void draw(GuiGraphics graphics, int x, int y, int width, int height, float alpha, Style style) {
+        int top = y - (height - ImageFont.TEXT_LINE_HEIGHT) / 2;
+
+        graphics.setColor(1.0F, 1.0F, 1.0F, alpha);
 
         ImageTexture texture = ImageTextures.INSTANCE.get(style.getInsertion());
         if (texture == null) {
             int size = MISSING_SIZE;
 
-            graphics.blit(PIPELINE, MISSING, x, top, 0.0F, 0.0F, width, height, size, size, size, size, color);
-            return;
+            graphics.blit(MISSING, x, top, width, height, 0.0F, 0.0F, size, size, size, size);
+        } else {
+            int srcW = texture.width();
+            int srcH = texture.height();
+            float v = texture.frameOffset();
+
+            graphics.blit(texture.id(), x, top, width, height, 0.0F, v, srcW, srcH, srcW, texture.atlasHeight());
         }
 
-        int srcW = texture.width();
-        int srcH = texture.height();
-        float v = texture.frameOffset();
-
-        graphics.blit(PIPELINE, texture.id(), x, top, 0.0F, v, width, height, srcW, srcH, srcW, texture.atlasHeight(), color);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     private static final class Cursor {
@@ -82,9 +79,10 @@ public final class InlineImageRenderer {
         private Style style = Style.EMPTY;
         private float x;
 
-        Cursor(StringSplitter splitter) {
+        Cursor(StringSplitter splitter, float x) {
             this.splitter = splitter;
             this.pending = new StringBuilder();
+            this.x = x;
         }
 
         void append(Style style, int codepoint) {

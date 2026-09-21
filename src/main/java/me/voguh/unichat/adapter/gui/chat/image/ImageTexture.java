@@ -11,13 +11,13 @@
 package me.voguh.unichat.adapter.gui.chat.image;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 
 public final class ImageTexture {
 
-    private final Identifier id;
+    private final ResourceLocation id;
     private final int[] delays;
     private final int frameWidth;
     private final int frameHeight;
@@ -27,7 +27,7 @@ public final class ImageTexture {
 
     /* ====================================================================== */
 
-    public Identifier id() {
+    public ResourceLocation id() {
         return id;
     }
 
@@ -45,7 +45,7 @@ public final class ImageTexture {
 
     /* ====================================================================== */
 
-    public ImageTexture(Identifier id, int[] delays, int frameWidth, int atlasHeight) {
+    public ImageTexture(ResourceLocation id, int[] delays, int frameWidth, int atlasHeight) {
         this.id = id;
         this.delays = delays;
         this.frameWidth = frameWidth;

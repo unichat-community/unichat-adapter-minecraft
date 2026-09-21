@@ -80,7 +80,7 @@ public abstract class AbstractDecoder {
             for (int x = 0; x < source.getWidth(); x++) {
                 int argb = source.getRGB(x, y);
                 int abgr = (argb & 0xFF00FF00) | ((argb & 0x00FF0000) >> 16) | ((argb & 0x000000FF) << 16);
-                image.setPixelABGR(x, y, abgr);
+                image.setPixelRGBA(x, y, abgr);
             }
         }
 

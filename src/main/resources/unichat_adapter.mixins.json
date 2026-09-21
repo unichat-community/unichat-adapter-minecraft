@@ -3,7 +3,7 @@
     "compatibilityLevel": "JAVA_21",
     "minVersion": "0.8.7",
     "client": [
-        "ChatGraphicsAccessMixin"
+        "ChatComponentMixin"
     ],
     "injectors": {
         "defaultRequire": 1

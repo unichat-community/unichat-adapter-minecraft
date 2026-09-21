@@ -14,7 +14,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -63,12 +63,11 @@ public enum ImageTextures {
     }
 
     public void upload(String url, Path file, DecodedImage decoded) {
-        Identifier id = IdentifierUtils.getIdentifier("image/" + file.getFileName());
+        ResourceLocation id = IdentifierUtils.getIdentifier("image/" + file.getFileName());
         NativeImage atlas = decoded.atlas();
-        DynamicTexture texture = new DynamicTexture(id::toString, atlas);
+        DynamicTexture texture = new DynamicTexture(atlas);
 
         Minecraft.getInstance().getTextureManager().register(id, texture);
-
         uploaded.put(url, new ImageTexture(id, decoded.delays(), atlas.getWidth(), atlas.getHeight()));
     }
 
