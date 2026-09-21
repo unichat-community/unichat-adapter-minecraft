@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.dto;
 
 import org.jspecify.annotations.Nullable;
 

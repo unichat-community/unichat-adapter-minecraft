@@ -10,10 +10,10 @@
 
 package me.voguh.unichat.adapter.worker;
 
+import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
-import me.voguh.unichat.adapter.worker.loader.RawWorker;
 import me.voguh.unichat.adapter.worker.loader.WorkerLoader;
 
 import java.util.Collections;

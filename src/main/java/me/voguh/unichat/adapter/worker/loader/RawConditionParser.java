@@ -1,5 +1,6 @@
 package me.voguh.unichat.adapter.worker.loader;
 
+import me.voguh.unichat.adapter.dto.RawCondition;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.util.Kind;
 import me.voguh.unichat.adapter.util.Property;

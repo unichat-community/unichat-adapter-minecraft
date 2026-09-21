@@ -8,21 +8,10 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.dto;
 
-import com.google.gson.reflect.TypeToken;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-public record RawWorker(
-    @Nullable String name,
-    @Nullable String onEvent,
-    @Nullable List<@Nullable RawCondition> conditions,
-    @Nullable RawAction actions
-) {
-
-    public static Type TYPE = TypeToken.getParameterized(List.class, RawWorker.class).getType();
+public record RawCondition(@Nullable String property, @Nullable String operator, @Nullable Object value) {
 
 }

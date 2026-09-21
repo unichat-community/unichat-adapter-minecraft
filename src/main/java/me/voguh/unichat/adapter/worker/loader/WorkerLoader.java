@@ -10,6 +10,7 @@
 
 package me.voguh.unichat.adapter.worker.loader;
 
+import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.util.JSONParser;

@@ -1,5 +1,6 @@
 package me.voguh.unichat.adapter.worker.loader;
 
+import me.voguh.unichat.adapter.dto.RawAction;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
