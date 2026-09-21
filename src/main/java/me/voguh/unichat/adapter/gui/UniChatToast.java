@@ -4,17 +4,15 @@ import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
-import net.minecraft.client.gui.components.toasts.ToastManager;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public final class UniChatToast implements Toast {
 
-    private static final Identifier BACKGROUND = IdentifierUtils.getIdentifier("toast/unichat_toast");
-
-    private long lastTime;
+    private static final ResourceLocation BACKGROUND = IdentifierUtils.getIdentifier("toast/unichat_toast");
+    private static final long DISPLAY_TIME = 5000L;
 
     private final Component title;
     private final Component message;
@@ -46,23 +44,15 @@ public final class UniChatToast implements Toast {
     }
 
     @Override
-    public void update(@NotNull ToastManager toastManager, long time) {
-        this.lastTime = time;
-    }
+    public @NotNull Visibility render(GuiGraphics graphics, @NotNull ToastComponent toastComponent, long timeSinceLastVisible) {
+        Font font = toastComponent.getMinecraft().font;
 
-    @Override
-    public @NotNull Visibility getWantedVisibility() {
-        return lastTime < 5000L ? Visibility.SHOW : Visibility.HIDE;
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, @NotNull Font font, long time) {
         int xPos = 0;
         int yPos = 0;
         int width = width();
         int height = height();
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, xPos, yPos, width, height);
+        graphics.blitSprite(BACKGROUND, xPos, yPos, width, height);
 
         xPos = 36;
         int margin = 2;
@@ -76,6 +66,8 @@ public final class UniChatToast implements Toast {
 
         yPos += 8 + gap;
         graphics.drawString(font, message, xPos, yPos, 0xFFFFFFFF, false);
+
+        return timeSinceLastVisible < DISPLAY_TIME ? Visibility.SHOW : Visibility.HIDE;
     }
 
 }
