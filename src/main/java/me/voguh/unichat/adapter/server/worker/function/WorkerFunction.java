@@ -8,7 +8,21 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-@NullMarked
-package me.voguh.unichat.adapter.worker.function;
+package me.voguh.unichat.adapter.server.worker.function;
 
-import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public interface WorkerFunction {
+
+    String id();
+
+    @Nullable
+    Object apply(List<@Nullable Object> args);
+
+    default boolean acceptsNull() {
+        return false;
+    }
+
+}

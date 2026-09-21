@@ -8,29 +8,23 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.function;
+package me.voguh.unichat.adapter.server.worker.function;
 
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
-public final class Default implements WorkerFunction {
+public final class Upper implements WorkerFunction {
 
     @Override
     public String id() {
-        return "default";
+        return "upper";
     }
 
     @Override
-    public @Nullable Object apply(List<@Nullable Object> args) {
-        Object value = args.getFirst();
-
-        return value == null ? args.get(1) : value;
-    }
-
-    @Override
-    public boolean acceptsNull() {
-        return true;
+    public Object apply(List<@Nullable Object> args) {
+        return ((String) args.getFirst()).toUpperCase(Locale.ROOT);
     }
 
 }

@@ -8,16 +8,16 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.server.worker.loader;
 
 import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
+import me.voguh.unichat.adapter.server.worker.Worker;
+import me.voguh.unichat.adapter.server.worker.WorkerCommand;
+import me.voguh.unichat.adapter.server.worker.WorkerCondition;
 import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.util.Strings;
-import me.voguh.unichat.adapter.worker.Worker;
-import me.voguh.unichat.adapter.worker.WorkerCommand;
-import me.voguh.unichat.adapter.worker.WorkerCondition;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jspecify.annotations.Nullable;

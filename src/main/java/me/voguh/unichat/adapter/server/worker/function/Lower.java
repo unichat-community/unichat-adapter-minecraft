@@ -8,25 +8,23 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.function;
+package me.voguh.unichat.adapter.server.worker.function;
 
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
-public final class StripSuffix implements WorkerFunction {
+public final class Lower implements WorkerFunction {
 
     @Override
     public String id() {
-        return "stripSuffix";
+        return "lower";
     }
 
     @Override
     public Object apply(List<@Nullable Object> args) {
-        String value = (String) args.getFirst();
-        String suffix = (String) args.get(1);
-
-        return value.endsWith(suffix) ? value.substring(0, value.length() - suffix.length()) : value;
+        return ((String) args.getFirst()).toLowerCase(Locale.ROOT);
     }
 
 }

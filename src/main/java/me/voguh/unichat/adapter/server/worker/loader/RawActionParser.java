@@ -1,10 +1,10 @@
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.server.worker.loader;
 
 import me.voguh.unichat.adapter.dto.RawAction;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
+import me.voguh.unichat.adapter.server.worker.WorkerCommand;
 import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
-import me.voguh.unichat.adapter.worker.WorkerCommand;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

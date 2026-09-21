@@ -8,23 +8,22 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.function;
+package me.voguh.unichat.adapter.server.worker.function;
 
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.Locale;
 
-public final class Upper implements WorkerFunction {
+public final class Replace implements WorkerFunction {
 
     @Override
     public String id() {
-        return "upper";
+        return "replace";
     }
 
     @Override
     public Object apply(List<@Nullable Object> args) {
-        return ((String) args.getFirst()).toUpperCase(Locale.ROOT);
+        return ((String) args.getFirst()).replace((String) args.get(1), (String) args.get(2));
     }
 
 }

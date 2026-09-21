@@ -8,7 +8,22 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-@NullMarked
-package me.voguh.unichat.adapter.worker;
+package me.voguh.unichat.adapter.server.worker.function;
 
-import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public final class Round implements WorkerFunction {
+
+    @Override
+    public String id() {
+        return "round";
+    }
+
+    @Override
+    public Object apply(List<@Nullable Object> args) {
+        return Math.round(((Number) args.getFirst()).doubleValue());
+    }
+
+}

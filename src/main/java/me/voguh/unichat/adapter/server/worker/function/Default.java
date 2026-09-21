@@ -8,22 +8,29 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker.function;
+package me.voguh.unichat.adapter.server.worker.function;
 
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public final class Trim implements WorkerFunction {
+public final class Default implements WorkerFunction {
 
     @Override
     public String id() {
-        return "trim";
+        return "default";
     }
 
     @Override
-    public Object apply(List<@Nullable Object> args) {
-        return ((String) args.getFirst()).trim();
+    public @Nullable Object apply(List<@Nullable Object> args) {
+        Object value = args.getFirst();
+
+        return value == null ? args.get(1) : value;
+    }
+
+    @Override
+    public boolean acceptsNull() {
+        return true;
     }
 
 }

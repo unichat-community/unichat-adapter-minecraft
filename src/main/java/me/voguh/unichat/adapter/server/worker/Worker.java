@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker;
+package me.voguh.unichat.adapter.server.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
 

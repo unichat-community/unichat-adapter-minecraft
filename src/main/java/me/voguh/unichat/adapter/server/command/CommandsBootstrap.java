@@ -12,7 +12,7 @@ package me.voguh.unichat.adapter.server.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import me.voguh.unichat.adapter.worker.Workers;
+import me.voguh.unichat.adapter.server.worker.Workers;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

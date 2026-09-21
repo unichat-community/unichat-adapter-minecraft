@@ -9,6 +9,6 @@
  ******************************************************************************/
 
 @NullMarked
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.server.worker.loader;
 
 import org.jspecify.annotations.NullMarked;

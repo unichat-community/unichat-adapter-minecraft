@@ -16,9 +16,9 @@ import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.server.dispatch.ChatMessageEventDispatch;
 import me.voguh.unichat.adapter.server.dispatch.ConnectionStatusDispatch;
 import me.voguh.unichat.adapter.server.dispatch.ServerCommandDispatch;
+import me.voguh.unichat.adapter.server.worker.Workers;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.util.JSONParser;
-import me.voguh.unichat.adapter.worker.Workers;
 import net.minecraft.server.MinecraftServer;
 
 public enum ServerEventHandler {

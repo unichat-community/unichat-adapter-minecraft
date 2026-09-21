@@ -1,4 +1,4 @@
-package me.voguh.unichat.adapter.worker;
+package me.voguh.unichat.adapter.server.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.util.Property;

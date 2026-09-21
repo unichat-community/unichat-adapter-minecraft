@@ -1,12 +1,12 @@
-package me.voguh.unichat.adapter.worker.loader;
+package me.voguh.unichat.adapter.server.worker.loader;
 
 import me.voguh.unichat.adapter.dto.RawCondition;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
+import me.voguh.unichat.adapter.server.worker.WorkerCondition;
+import me.voguh.unichat.adapter.server.worker.WorkerOperator;
 import me.voguh.unichat.adapter.util.Kind;
 import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
-import me.voguh.unichat.adapter.worker.WorkerCondition;
-import me.voguh.unichat.adapter.worker.WorkerOperator;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

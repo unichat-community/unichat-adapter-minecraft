@@ -8,13 +8,13 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker;
+package me.voguh.unichat.adapter.server.worker;
 
 import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.event.UniChatEvent;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
-import me.voguh.unichat.adapter.worker.loader.WorkerLoader;
+import me.voguh.unichat.adapter.server.worker.loader.WorkerLoader;
 
 import java.util.Collections;
 import java.util.List;

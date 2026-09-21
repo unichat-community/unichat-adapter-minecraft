@@ -8,11 +8,11 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.worker;
+package me.voguh.unichat.adapter.server.worker;
 
 import me.voguh.unichat.adapter.event.UniChatEvent;
+import me.voguh.unichat.adapter.server.worker.function.WorkerFunction;
 import me.voguh.unichat.adapter.util.Property;
-import me.voguh.unichat.adapter.worker.function.WorkerFunction;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
