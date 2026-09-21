@@ -18,10 +18,10 @@ import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.worker.Workers;
 import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 public final class ServerBootstrap {
 
@@ -45,9 +45,9 @@ public final class ServerBootstrap {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ConnectionStatus status = UniChatWebSocket.INSTANCE.isConnected() ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED;
-            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendConnectionStatusPayload(status));
-            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendServerSettingsPayload(ServerConfig.websocketUrl(), ServerConfig.autoConnect()));
-            UniChatNetwork.INSTANCE.sendToPlayer(player, new SendWorkersPayload(Workers.INSTANCE.rawWorkers()));
+            UniChatNetwork.sendToPlayer(player, new SendConnectionStatusPayload(status));
+            UniChatNetwork.sendToPlayer(player, new SendServerSettingsPayload(ServerConfig.websocketUrl(), ServerConfig.autoConnect()));
+            UniChatNetwork.sendToPlayer(player, new SendWorkersPayload(Workers.INSTANCE.rawWorkers()));
         }
     }
 

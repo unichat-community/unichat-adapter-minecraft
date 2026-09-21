@@ -10,44 +10,38 @@
 
 package me.voguh.unichat.adapter;
 
-import me.voguh.unichat.adapter.client.ClientBootstrap;
-import me.voguh.unichat.adapter.client.ClientConfig;
-import me.voguh.unichat.adapter.command.CommandsBootstrap;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
-import me.voguh.unichat.adapter.network.UniChatNetwork;
+import me.voguh.unichat.adapter.network.NetworkBootstrap;
 import me.voguh.unichat.adapter.server.ServerBootstrap;
 import me.voguh.unichat.adapter.server.ServerConfig;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(UniChatAdapter.MODID)
 public final class UniChatAdapter {
 
     public static final String MODID = "unichat_adapter";
 
-    public UniChatAdapter(FMLJavaModLoadingContext ctx) {
+    public UniChatAdapter(IEventBus modEventBus, ModContainer container) {
+        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(NetworkBootstrap::register);
+
+        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopping);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopped);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onPlayerLoggedIn);
+    }
+
+    /* ====================================================================== */
+
+    private void commonSetup(FMLCommonSetupEvent event) {
         UniChatEventUtils.initialize();
-        ctx.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
-
-        UniChatNetwork.INSTANCE.register();
-
-        if (FMLEnvironment.dist.isClient()) {
-            ctx.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
-            ClientBootstrap.register();
-        }
-
-        RegisterCommandsEvent.BUS.addListener(CommandsBootstrap::register);
-        ServerStartedEvent.BUS.addListener(ServerBootstrap::onServerStarted);
-        ServerStoppingEvent.BUS.addListener(ServerBootstrap::onServerStopping);
-        ServerStoppedEvent.BUS.addListener(ServerBootstrap::onServerStopped);
-        PlayerEvent.PlayerLoggedInEvent.BUS.addListener(ServerBootstrap::onPlayerLoggedIn);
     }
 
 }

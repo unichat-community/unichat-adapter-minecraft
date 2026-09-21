@@ -12,7 +12,7 @@ package me.voguh.unichat.adapter.gui.chat;
 
 import me.voguh.unichat.adapter.gui.chat.image.ImageTexture;
 import me.voguh.unichat.adapter.gui.chat.image.ImageTextures;
-import me.voguh.unichat.adapter.network.ChatImage;
+import me.voguh.unichat.adapter.network.packet.ChatImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -63,7 +63,7 @@ public final class MessageComposer {
         }
 
         int width = Math.round(kind.height() * texture.width() / (float) texture.height());
-        Style style = ImageFont.style(url).withHoverEvent(new HoverEvent.ShowText(Component.literal(code)));
+        Style style = ImageFont.style(url).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(code)));
 
         return Component.literal(ImageFont.placeholder(kind, width)).withStyle(style);
     }
