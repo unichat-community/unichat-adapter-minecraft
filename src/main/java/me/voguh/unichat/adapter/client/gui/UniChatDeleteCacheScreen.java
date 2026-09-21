@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
 
@@ -72,7 +73,7 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
     }
 
     @Override
-    public Component getNarrationMessage() {
+    public @NotNull Component getNarrationMessage() {
         return CommonComponents.joinForNarration(super.getNarrationMessage(), WARNING_MESSAGE);
     }
 
