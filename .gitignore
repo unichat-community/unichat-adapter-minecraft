@@ -1,7 +1,9 @@
-.gradle/
-.idea/
-__pycache__/
-bin/
-build/
-run/
+.eclipse/*
+.gradle/*
+.idea/*
+.vscode/*
+!.vscode/settings.json
+bin/*
+build/*
+run/*
 *.iml
