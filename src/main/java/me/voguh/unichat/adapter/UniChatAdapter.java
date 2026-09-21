@@ -10,16 +10,14 @@
 
 package me.voguh.unichat.adapter;
 
+import me.voguh.unichat.adapter.client.ClientBootstrap;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.network.NetworkBootstrap;
 import me.voguh.unichat.adapter.server.ServerBootstrap;
-import me.voguh.unichat.adapter.server.ServerConfig;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 @Mod(UniChatAdapter.MODID)
 public final class UniChatAdapter {
@@ -27,21 +25,14 @@ public final class UniChatAdapter {
     public static final String MODID = "unichat_adapter";
 
     public UniChatAdapter(IEventBus modEventBus, ModContainer container) {
-        modEventBus.addListener(this::commonSetup);
+        UniChatEventUtils.initialize();
+
         modEventBus.addListener(NetworkBootstrap::register);
 
-        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
-
-        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStarted);
-        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopping);
-        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopped);
-        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onPlayerLoggedIn);
-    }
-
-    /* ====================================================================== */
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        UniChatEventUtils.initialize();
+        ServerBootstrap.register(modEventBus, container);
+        if (FMLEnvironment.dist.isClient()) {
+            ClientBootstrap.register(modEventBus, container);
+        }
     }
 
 }

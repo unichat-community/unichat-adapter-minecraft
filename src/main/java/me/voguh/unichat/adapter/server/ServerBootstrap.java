@@ -14,10 +14,14 @@ import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.server.SendConnectionStatusPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
+import me.voguh.unichat.adapter.server.ws.UniChatWebSocket;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.worker.Workers;
-import me.voguh.unichat.adapter.ws.UniChatWebSocket;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -25,7 +29,18 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 public final class ServerBootstrap {
 
-    public static void onServerStarted(ServerStartedEvent event) {
+    public static void register(IEventBus modEventBus, ModContainer container) {
+        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopping);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onServerStopped);
+        NeoForge.EVENT_BUS.addListener(ServerBootstrap::onPlayerLoggedIn);
+    }
+
+    /* ====================================================================== */
+
+    private static void onServerStarted(ServerStartedEvent event) {
         MinecraftServerHolder.set(event.getServer());
         Workers.INSTANCE.reload();
 
@@ -34,15 +49,15 @@ public final class ServerBootstrap {
         }
     }
 
-    public static void onServerStopping(ServerStoppingEvent event) {
+    private static void onServerStopping(ServerStoppingEvent event) {
         UniChatWebSocket.INSTANCE.disconnect();
     }
 
-    public static void onServerStopped(ServerStoppedEvent event) {
+    private static void onServerStopped(ServerStoppedEvent event) {
         MinecraftServerHolder.set(null);
     }
 
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+    private static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ConnectionStatus status = UniChatWebSocket.INSTANCE.isConnected() ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED;
             UniChatNetwork.sendToPlayer(player, new SendConnectionStatusPayload(status));

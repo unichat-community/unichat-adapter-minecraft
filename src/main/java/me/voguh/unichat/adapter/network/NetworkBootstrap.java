@@ -11,8 +11,9 @@
 package me.voguh.unichat.adapter.network;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
-import me.voguh.unichat.adapter.gui.UniChatToast;
-import me.voguh.unichat.adapter.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.client.gui.UniChatToast;
+import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.client.store.ClientImageRequests;
 import me.voguh.unichat.adapter.network.packet.client.RequestImagePayload;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
@@ -23,9 +24,9 @@ import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.server.ServerConfig;
 import me.voguh.unichat.adapter.server.ServerPermissions;
-import me.voguh.unichat.adapter.store.ImageRequests;
+import me.voguh.unichat.adapter.server.ws.UniChatWebSocket;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
-import me.voguh.unichat.adapter.ws.UniChatWebSocket;
+import me.voguh.unichat.adapter.util.ImageRequests;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -128,7 +129,7 @@ public final class NetworkBootstrap {
     }
 
     private static void onImageReceive(SendImageBytesPayload payload, IPayloadContext context) {
-        ImageRequests.INSTANCE.onServerImageResponse(payload.path(), payload.data());
+        ClientImageRequests.INSTANCE.onServerImageResponse(payload.path(), payload.data());
     }
     /* <=====================================[ END CLIENT ]=====================================> */
 
