@@ -11,8 +11,8 @@
 package me.voguh.unichat.adapter.client;
 
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import me.voguh.unichat.adapter.client.gui.UniChatSettingsMenuScreen;
 import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.client.gui.screen.UniChatSettingsMenuScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

@@ -8,8 +8,9 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.screen.worker;
 
+import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.util.Kind;
@@ -46,6 +47,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private Property property;
     private WorkerOperator operator;
     private String value;
+    private boolean touched;
 
     private Button propertyButton;
     private Button operatorButton;
@@ -54,26 +56,29 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
 
     private final List<RawCondition> conditions;
     private final List<Property> properties;
+    private final Runnable onSave;
     private final int index;
 
     /* ====================================================================== */
 
-    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions) {
-        this(parent, eventType, conditions, NEW_CONDITION, null);
+    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onSave) {
+        this(parent, eventType, conditions, onSave, NEW_CONDITION, null);
     }
 
-    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, int index) {
-        this(parent, eventType, conditions, index, conditions.get(index));
+    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onSave, int index) {
+        this(parent, eventType, conditions, onSave, index, conditions.get(index));
     }
 
-    private UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, int index, @Nullable RawCondition condition) {
+    private UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onSave, int index, @Nullable RawCondition condition) {
         super(TITLE, parent);
         this.conditions = conditions;
         this.properties = UniChatEventUtils.getEventProperties(eventType);
+        this.onSave = onSave;
         this.index = index;
         this.property = property(condition);
         this.operator = operator(condition);
         this.value = value(condition);
+        this.touched = false;
     }
 
     /* ====================================================================== */
@@ -140,7 +145,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         propertyButton.setMessage(CommonComponents.optionNameValue(PROPERTY_LABEL, Component.literal(property.name())));
         operatorButton.setMessage(CommonComponents.optionNameValue(OPERATOR_LABEL, operatorName(operator)));
         valueBox.setFilter(filter(property.kind()));
-        saveButton.active = isValueValid();
+        saveButton.active = touched && isValueValid();
     }
 
     private boolean isValueValid() {
@@ -164,6 +169,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
             operator = firstOperator();
         }
 
+        touched = true;
         refreshWidgets();
     }
 
@@ -171,12 +177,14 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         List<WorkerOperator> operators = operators();
         int delta = Screen.hasShiftDown() ? -1 : 1;
         operator = operators.get(Mth.positiveModulo(operators.indexOf(operator) + delta, operators.size()));
+        touched = true;
         refreshWidgets();
     }
 
     private void onValueChange(String newValue) {
         value = newValue;
-        saveButton.active = isValueValid();
+        touched = true;
+        saveButton.active = touched && isValueValid();
     }
 
     /* ====================================================================== */
@@ -193,6 +201,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
             conditions.set(index, condition);
         }
 
+        onSave.run();
         onClose();
     }
 

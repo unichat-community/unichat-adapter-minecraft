@@ -13,7 +13,6 @@ package me.voguh.unichat.adapter.client.gui.component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -32,7 +31,7 @@ public final class CustomEntryList extends ObjectSelectionList<CustomEntryList.L
     private static final int ROW_TOP_INSET = 4;
     private static final int ICON_SIZE = 16;
     private static final int ICON_GAP = 4;
-    private static final int GUTTER = SCROLLBAR_WIDTH + Button.DEFAULT_SPACING;
+    private static final int GUTTER = SCROLLBAR_WIDTH + 2;
 
     private final Component emptyMessage;
     private final IntConsumer onSelect;

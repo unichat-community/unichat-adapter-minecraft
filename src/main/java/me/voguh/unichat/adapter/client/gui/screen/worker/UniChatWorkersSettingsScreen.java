@@ -8,11 +8,12 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.screen.worker;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList.RowAction;
+import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.client.ReloadWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.SaveWorkersPayload;

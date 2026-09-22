@@ -1,4 +1,4 @@
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.component;
 
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.Font;

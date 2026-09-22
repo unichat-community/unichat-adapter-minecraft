@@ -8,11 +8,12 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.screen.worker;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList.RowAction;
+import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.client.SaveWorkersPayload;
@@ -63,6 +64,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     private String name;
     private String eventType;
+    private boolean touched;
 
     private LinearLayout generalTab;
     private LinearLayout conditionsTab;
@@ -90,6 +92,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         this.index = NEW_WORKER;
         this.name = "";
         this.eventType = EVENT_TYPES.getFirst();
+        this.touched = false;
     }
 
     public UniChatWorkerSettingsScreen(Screen parent, RawWorker worker, int index) {
@@ -99,6 +102,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         this.index = index;
         this.name = name(worker);
         this.eventType = eventType(worker);
+        this.touched = false;
     }
 
     /* ====================================================================== */
@@ -205,7 +209,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         generalButton.active = currentTab != generalTab;
         conditionsButton.active = currentTab != conditionsTab;
         actionsButton.active = currentTab != actionsTab;
-        saveButton.active = !Strings.isNullOrEmpty(name);
+        saveButton.active = touched && !Strings.isNullOrEmpty(name);
         conditionsList.refresh(conditionLabels());
         actionsList.refresh(actionLabels());
     }
@@ -226,41 +230,49 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
+    private void markTouched() {
+        touched = true;
+    }
+
     private void onNameChange(String value) {
         name = value;
+        touched = true;
         refreshChrome();
     }
 
     private void onEventChange(CycleButton<String> button, String newValue) {
         eventType = newValue;
         conditions.removeIf(this::unknownProperty);
+        touched = true;
         refreshChrome();
     }
 
     private void createCondition(Button button) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions));
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched));
     }
 
     private void editCondition(int index) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, index));
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched, index));
     }
 
     private void deleteCondition(int index) {
         conditions.remove(index);
-        conditionsList.refresh(conditionLabels());
+        touched = true;
+        refreshChrome();
     }
 
     private void createCommand(Button button) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands));
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched));
     }
 
     private void editCommand(int index) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, index));
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched, index));
     }
 
     private void deleteCommand(int index) {
         commands.remove(index);
-        actionsList.refresh(actionLabels());
+        touched = true;
+        refreshChrome();
     }
 
     /* ====================================================================== */

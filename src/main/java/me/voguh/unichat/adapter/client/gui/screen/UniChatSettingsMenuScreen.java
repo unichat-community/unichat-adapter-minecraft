@@ -8,8 +8,11 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.screen;
 
+import me.voguh.unichat.adapter.client.gui.screen.client.UniChatClientSettingsScreen;
+import me.voguh.unichat.adapter.client.gui.screen.server.UniChatServerSettingsScreen;
+import me.voguh.unichat.adapter.client.gui.screen.worker.UniChatWorkersSettingsScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

@@ -8,8 +8,9 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.client.gui;
+package me.voguh.unichat.adapter.client.gui.screen.worker;
 
+import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.util.Strings;
 import net.minecraft.client.gui.components.Button;
@@ -30,26 +31,30 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
     private static final int NEW_COMMAND = -1;
 
     private String command;
+    private boolean touched;
     private Button saveButton;
 
     private final List<String> commands;
+    private final Runnable onSave;
     private final int index;
 
     /* ====================================================================== */
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands) {
-        this(parent, commands, NEW_COMMAND, "");
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave) {
+        this(parent, commands, onSave, NEW_COMMAND, "");
     }
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index) {
-        this(parent, commands, index, commands.get(index));
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave, int index) {
+        this(parent, commands, onSave, index, commands.get(index));
     }
 
-    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index, String command) {
+    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave, int index, String command) {
         super(TITLE, parent);
         this.commands = commands;
+        this.onSave = onSave;
         this.index = index;
         this.command = command;
+        this.touched = false;
     }
 
     /* ====================================================================== */
@@ -78,7 +83,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
     @Override
     protected void repositionElements() {
-        saveButton.active = !Strings.isNullOrEmpty(command);
+        saveButton.active = touched && !Strings.isNullOrEmpty(command);
         super.repositionElements();
     }
 
@@ -86,7 +91,8 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
     private void onCommandChange(String newValue) {
         command = newValue;
-        saveButton.active = !Strings.isNullOrEmpty(newValue);
+        touched = true;
+        saveButton.active = touched && !Strings.isNullOrEmpty(newValue);
     }
 
     /* ====================================================================== */
@@ -102,6 +108,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
             commands.set(index, command);
         }
 
+        onSave.run();
         onClose();
     }
 

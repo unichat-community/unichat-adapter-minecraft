@@ -11,8 +11,8 @@
 package me.voguh.unichat.adapter.network;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
-import me.voguh.unichat.adapter.client.gui.UniChatToast;
 import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.client.gui.component.UniChatToast;
 import me.voguh.unichat.adapter.client.store.ClientImageRequests;
 import me.voguh.unichat.adapter.network.packet.client.ReloadWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.RequestImagePayload;
