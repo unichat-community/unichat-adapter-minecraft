@@ -1,7 +1,7 @@
 package me.voguh.unichat.adapter.client;
 
-import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
+import me.voguh.unichat.adapter.worker.RawWorker;
 
 import java.util.Collections;
 import java.util.List;

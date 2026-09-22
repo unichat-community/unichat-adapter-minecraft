@@ -15,7 +15,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.voguh.unichat.adapter.event.UniChatEvent;
-import me.voguh.unichat.adapter.event.UniChatEventCustom;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 
 import java.lang.reflect.Type;
@@ -30,10 +29,6 @@ public final class UniChatEventDeserializer implements JsonDeserializer<UniChatE
         JsonElement data = Objects.requireNonNull(envelope.get("data"), "Missing 'data' field in JSON");
 
         String eventType = eventTypeRaw.getAsString();
-        if (eventType.equals(UniChatEventCustom.TYPE)) {
-            return new UniChatEventCustom(data);
-        }
-
         return context.deserialize(data, UniChatEventUtils.getEventClass(eventType));
     }
 

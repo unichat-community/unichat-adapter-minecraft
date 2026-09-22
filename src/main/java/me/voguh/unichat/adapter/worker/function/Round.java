@@ -8,17 +8,22 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.event;
+package me.voguh.unichat.adapter.worker.function;
 
-public sealed interface UniChatEvent permits
-    UniChatEventRemoveMessage,
-    UniChatEventRemoveAuthor,
-    UniChatEventMessage,
-    UniChatEventDonate,
-    UniChatEventSponsor,
-    UniChatEventSponsorGift,
-    UniChatEventRaid,
-    UniChatEventRedemption,
-    UniChatEventGift {
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public final class Round implements WorkerFunction {
+
+    @Override
+    public String id() {
+        return "round";
+    }
+
+    @Override
+    public Object apply(List<@Nullable Object> args) {
+        return Math.round(((Number) args.getFirst()).doubleValue());
+    }
 
 }

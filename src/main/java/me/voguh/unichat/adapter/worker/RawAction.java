@@ -8,17 +8,12 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package me.voguh.unichat.adapter.event;
+package me.voguh.unichat.adapter.worker;
 
-public sealed interface UniChatEvent permits
-    UniChatEventRemoveMessage,
-    UniChatEventRemoveAuthor,
-    UniChatEventMessage,
-    UniChatEventDonate,
-    UniChatEventSponsor,
-    UniChatEventSponsorGift,
-    UniChatEventRaid,
-    UniChatEventRedemption,
-    UniChatEventGift {
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public record RawAction(@Nullable List<@Nullable String> execCommands) {
 
 }

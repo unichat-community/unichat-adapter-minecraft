@@ -10,9 +10,9 @@
 
 package me.voguh.unichat.adapter.network.packet.server;
 
-import me.voguh.unichat.adapter.dto.RawWorker;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.util.JSONParser;
+import me.voguh.unichat.adapter.worker.RawWorker;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
