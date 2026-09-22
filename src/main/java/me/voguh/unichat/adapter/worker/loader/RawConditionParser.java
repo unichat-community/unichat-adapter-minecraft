@@ -7,6 +7,7 @@ import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawCondition;
 import me.voguh.unichat.adapter.worker.WorkerCondition;
 import me.voguh.unichat.adapter.worker.WorkerOperator;
+import me.voguh.unichat.adapter.worker.WorkerValidationException;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,61 +18,59 @@ final class RawConditionParser {
 
     public static List<WorkerCondition> parse(String eventType, @Nullable List<@Nullable RawCondition> rawConditions) {
         if (rawConditions == null) {
-            throw new IllegalArgumentException("Property 'conditions' is missing");
+            throw new WorkerValidationException("missing_conditions");
         }
 
         List<WorkerCondition> conditions = new ArrayList<>();
         for (int i = 0; i < rawConditions.size(); i++) {
+            int position = i + 1;
+
             RawCondition rawCondition = rawConditions.get(i);
             if (rawCondition == null) {
-                throw new IllegalArgumentException("Property 'conditions[" + i + "]' is null");
+                throw new WorkerValidationException("null_condition", position);
             }
 
-            Property property = parseConditionProperty(eventType, rawCondition.property(), i);
-            WorkerOperator operator = parseConditionOperator(property, rawCondition.operator(), i);
-            Object value = parseConditionValue(property, rawCondition.value(), i);
+            Property property = parseConditionProperty(eventType, rawCondition.property(), position);
+            WorkerOperator operator = parseConditionOperator(property, rawCondition.operator(), position);
+            Object value = parseConditionValue(property, rawCondition.value(), position);
             conditions.add(new WorkerCondition(property, operator, value));
         }
 
         return conditions;
     }
 
-    private static Property parseConditionProperty(String eventType, @Nullable String property, int index) {
-        String throwPrefix = "Property 'conditions[" + index + "].property'";
-
+    private static Property parseConditionProperty(String eventType, @Nullable String property, int position) {
         if (Strings.isNullOrEmpty(property)) {
-            throw new IllegalArgumentException(throwPrefix + " is missing or blank");
+            throw new WorkerValidationException("missing_condition_property", position);
         }
 
         Optional<Property> optProperty = UniChatEventUtils.getEventProperty(eventType, property);
         if (optProperty.isEmpty()) {
-            throw new IllegalArgumentException(throwPrefix + " has an invalid property '" + property + "' for event type '" + eventType + "'");
+            throw new WorkerValidationException("invalid_condition_property", position, property, eventType);
         }
 
         return optProperty.get();
     }
 
-    private static WorkerOperator parseConditionOperator(Property property, @Nullable String rawOperator, int index) {
-        String throwPrefix = "Property 'conditions[" + index + "].operator'";
-
+    private static WorkerOperator parseConditionOperator(Property property, @Nullable String rawOperator, int position) {
         if (Strings.isNullOrEmpty(rawOperator)) {
-            throw new IllegalArgumentException(throwPrefix + " is missing or blank");
+            throw new WorkerValidationException("missing_condition_operator", position);
         }
 
         Optional<WorkerOperator> optOperator = WorkerOperator.fromString(rawOperator);
         if (optOperator.isEmpty()) {
-            throw new IllegalArgumentException(throwPrefix + " has an invalid operator '" + rawOperator + "'");
+            throw new WorkerValidationException("invalid_condition_operator", position, rawOperator);
         }
 
         WorkerOperator operator = optOperator.get();
         if (!operator.isValidFor(property.kind())) {
-            throw new IllegalArgumentException(throwPrefix + " has an invalid operator '" + rawOperator + "' for property '" + property.name() + "' of kind '" + property.kind() + "'");
+            throw new WorkerValidationException("incompatible_condition_operator", position, rawOperator, property.name(), property.kind());
         }
 
         return operator;
     }
 
-    private static @Nullable Object parseConditionValue(Property property, @Nullable Object value, int index) {
+    private static @Nullable Object parseConditionValue(Property property, @Nullable Object value, int position) {
         if (value == null) {
             return null;
         }
@@ -79,7 +78,7 @@ final class RawConditionParser {
         Kind valueKind = Kind.fromClass(value.getClass());
         Kind propertyKind = property.kind();
         if (valueKind != propertyKind) {
-            throw new IllegalArgumentException("Property 'conditions[" + index + "].value' has an invalid value type '" + valueKind + "' for property '" + property.name() + "' of kind '" + propertyKind + "'");
+            throw new WorkerValidationException("invalid_condition_value", position, valueKind, property.name(), propertyKind);
         }
 
         return value;

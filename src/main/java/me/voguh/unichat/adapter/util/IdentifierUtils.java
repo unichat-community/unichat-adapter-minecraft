@@ -24,6 +24,10 @@ public final class IdentifierUtils {
         return Component.translatable("gui." + UniChatAdapter.MODID + "." + path);
     }
 
+    public static Component gui(String path, Object... args) {
+        return Component.translatable("gui." + UniChatAdapter.MODID + "." + path, args);
+    }
+
     /* ====================================================================== */
 
     private IdentifierUtils() {

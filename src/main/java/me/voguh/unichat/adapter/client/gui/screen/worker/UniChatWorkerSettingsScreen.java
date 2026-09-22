@@ -23,10 +23,11 @@ import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
 import me.voguh.unichat.adapter.network.packet.client.SaveWorkersPayload;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawAction;
 import me.voguh.unichat.adapter.worker.RawCondition;
 import me.voguh.unichat.adapter.worker.RawWorker;
+import me.voguh.unichat.adapter.worker.WorkerValidationException;
+import me.voguh.unichat.adapter.worker.loader.RawWorkerParser;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -213,7 +214,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     /* ====================================================================== */
 
     private void refreshChrome() {
-        saveButton.active = touched && !Strings.isNullOrEmpty(name);
+        saveButton.active = touched;
         conditionsList.refresh(conditionLabels());
         actionsList.refresh(actionLabels());
     }
@@ -283,6 +284,13 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     private void apply(CustomButton button) {
         RawWorker worker = new RawWorker(name, eventType, List.copyOf(conditions), new RawAction(List.copyOf(commands)));
+
+        try {
+            RawWorkerParser.parse(worker);
+        } catch (WorkerValidationException e) {
+            minecraft.setScreen(new UniChatWorkerValidationScreen(this, e.message()));
+            return;
+        }
 
         List<RawWorker> workers = new ArrayList<>(ServerStateHolder.INSTANCE.workers());
         if (index == NEW_WORKER || index >= workers.size()) {

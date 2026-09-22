@@ -5,6 +5,7 @@ import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawAction;
 import me.voguh.unichat.adapter.worker.WorkerCommand;
+import me.voguh.unichat.adapter.worker.WorkerValidationException;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ final class RawActionParser {
 
     public static List<WorkerCommand> parse(String eventType, @Nullable RawAction rawActions) {
         if (rawActions == null) {
-            throw new IllegalArgumentException("Property 'actions' is missing");
+            throw new WorkerValidationException("missing_actions");
         }
 
         return parseCommands(eventType, rawActions.execCommands());
@@ -35,7 +36,7 @@ final class RawActionParser {
                 continue;
             }
 
-            commands.add(CommandParser.parse("Property 'actions.execCommands[" + i + "]'", properties, rawCommand));
+            commands.add(CommandParser.parse(i + 1, properties, rawCommand));
         }
 
         return List.copyOf(commands);

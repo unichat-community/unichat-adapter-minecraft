@@ -12,6 +12,7 @@ package me.voguh.unichat.adapter.worker.loader;
 
 import me.voguh.unichat.adapter.util.Property;
 import me.voguh.unichat.adapter.worker.WorkerCommand;
+import me.voguh.unichat.adapter.worker.WorkerValidationException;
 import me.voguh.unichat.adapter.worker.function.WorkerFunction;
 import me.voguh.unichat.adapter.worker.function.WorkerFunctions;
 
@@ -20,20 +21,20 @@ import java.util.List;
 
 final class CommandParser {
 
-    private final String throwPrefix;
+    private final int position;
     private final List<Property> properties;
     private final String command;
 
     private int cursor;
 
-    private CommandParser(String throwPrefix, List<Property> properties, String command) {
-        this.throwPrefix = throwPrefix;
+    private CommandParser(int position, List<Property> properties, String command) {
+        this.position = position;
         this.properties = properties;
         this.command = command;
     }
 
-    public static WorkerCommand parse(String throwPrefix, List<Property> properties, String command) {
-        return new CommandParser(throwPrefix, properties, command).template();
+    public static WorkerCommand parse(int position, List<Property> properties, String command) {
+        return new CommandParser(position, properties, command).template();
     }
 
     /* ====================================================================== */
@@ -128,13 +129,13 @@ final class CommandParser {
             }
         }
 
-        throw new IllegalArgumentException(throwPrefix + " uses an unknown property '" + name + "'");
+        throw new WorkerValidationException("unknown_command_property", position, name);
     }
 
     private WorkerCommand.Node call(String name, List<WorkerCommand.Node> args) {
         WorkerFunction function = WorkerFunctions.byId(name);
         if (function == null) {
-            throw new IllegalArgumentException(throwPrefix + " uses an unknown function '" + name + "'");
+            throw new WorkerValidationException("unknown_command_function", position, name);
         }
 
         return new WorkerCommand.Node.Call(function, args);
@@ -149,7 +150,7 @@ final class CommandParser {
         }
 
         if (start == cursor) {
-            throw new IllegalArgumentException(throwPrefix + " has an unexpected character at index " + cursor);
+            throw new WorkerValidationException("unexpected_command_character", position, cursor);
         }
 
         return command.substring(start, cursor);
@@ -172,7 +173,7 @@ final class CommandParser {
             value.append(character);
         }
 
-        throw new IllegalArgumentException(throwPrefix + " has an unterminated string literal");
+        throw new WorkerValidationException("unterminated_command_string", position);
     }
 
     private boolean booleanLiteral() {
@@ -192,7 +193,7 @@ final class CommandParser {
         try {
             return Double.parseDouble(command.substring(start, cursor));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(throwPrefix + " has an invalid number at index " + start, e);
+            throw new WorkerValidationException("invalid_command_number", position, start);
         }
     }
 
@@ -214,7 +215,7 @@ final class CommandParser {
 
     private void expect(char expected) {
         if (!consume(expected)) {
-            throw new IllegalArgumentException(throwPrefix + " expected '" + expected + "' at index " + cursor);
+            throw new WorkerValidationException("missing_command_character", position, expected, cursor);
         }
     }
 

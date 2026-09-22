@@ -10,14 +10,10 @@
 
 package me.voguh.unichat.adapter.worker.loader;
 
-import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.server.MinecraftServerHolder;
 import me.voguh.unichat.adapter.util.JSONParser;
-import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawWorker;
 import me.voguh.unichat.adapter.worker.Worker;
-import me.voguh.unichat.adapter.worker.WorkerCommand;
-import me.voguh.unichat.adapter.worker.WorkerCondition;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -78,7 +74,7 @@ public final class WorkerLoader {
             RawWorker entry = rawEntries.get(i);
 
             try {
-                workers.add(buildWorker(entry));
+                workers.add(RawWorkerParser.parse(entry));
             } catch (Exception e) {
                 LOGGER.error("[UniChat Adapter] An error occurred on load worker #{}", i, e);
             }
@@ -87,25 +83,6 @@ public final class WorkerLoader {
         LOGGER.info("[UniChat Adapter] Loaded {} workers", workers.size());
 
         return Collections.unmodifiableList(workers);
-    }
-
-    private static Worker buildWorker(RawWorker entry) {
-        String name = Strings.requiresNonNullOrEmpty(entry.name(), "Property 'name' is missing or blank");
-        String eventType = parseEventType(entry.onEvent());
-        List<WorkerCondition> conditions = RawConditionParser.parse(eventType, entry.conditions());
-        List<WorkerCommand> execCommands = RawActionParser.parse(eventType, entry.actions());
-
-        return new Worker(name, eventType, conditions, execCommands);
-    }
-
-    private static String parseEventType(@Nullable String eventType) {
-        if (Strings.isNullOrEmpty(eventType)) {
-            throw new IllegalArgumentException("Property 'eventType' is missing or blank");
-        } else if (!UniChatEventUtils.isValidEventType(eventType)) {
-            throw new IllegalArgumentException("Property 'eventType' has an invalid event type '" + eventType + "'");
-        }
-
-        return eventType;
     }
 
     /* ====================================================================== */
