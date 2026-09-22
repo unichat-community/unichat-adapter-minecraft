@@ -50,7 +50,7 @@
     "_comment_": "<=================[ CLIENT SETTINGS KEYS ]=================>",
     "gui.unichat_adapter.screen_client_settings": "Configurações do Cliente",
     "gui.unichat_adapter.screen_client_settings.display_chat_messages": "Imprimir mensagens no chat",
-    "gui.unichat_adapter.screen_client_settings.supersample": "Resolução da imagens",
+    "gui.unichat_adapter.screen_client_settings.images_scale": "Resolução da imagens",
     "gui.unichat_adapter.screen_client_settings.clear_cache": "Limpar cache",
     "gui.unichat_adapter.screen_client_settings.clear_cache_warning_title": "Cuidado!",
     "gui.unichat_adapter.screen_client_settings.clear_cache_warning_message": "Isso irá apagar todo o cache de imagens (badges e emotes), ele será reconstruído automaticamente conforme necessário.",

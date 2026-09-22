@@ -30,10 +30,9 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
     private static final Component TITLE = IdentifierUtils.gui("screen_client_settings");
     private static final Component RENDER_MESSAGES_LABEL = IdentifierUtils.gui("screen_client_settings.display_chat_messages");
-    private static final Component SUPERSAMPLE_LABEL = IdentifierUtils.gui("screen_client_settings.supersample");
+    private static final Component IMAGES_SCALE_LABEL = IdentifierUtils.gui("screen_client_settings.images_scale");
     private static final Component CLEAR_CACHE_LABEL = IdentifierUtils.gui("screen_client_settings.clear_cache");
-
-    private static final List<State<Integer>> EMOTESCALES = List.of(
+    private static final List<State<Integer>> IMAGES_SCALE = List.of(
         State.literal("1x", 1),
         State.literal("2x", 2),
         State.literal("3x", 3),
@@ -41,14 +40,14 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
     );
 
     private boolean displayChatMessages;
-    private State<Integer> emoteScale;
+    private State<Integer> imagesScale;
 
     /* ====================================================================== */
 
     public UniChatClientSettingsScreen(Screen parent) {
         super(TITLE, parent);
         this.displayChatMessages = ClientConfig.renderMessages();
-        this.emoteScale = State.literal(ClientConfig.supersample() + "x", ClientConfig.supersample());
+        this.imagesScale = State.literal(ClientConfig.imagesScale() + "x", ClientConfig.imagesScale());
     }
 
     /* ====================================================================== */
@@ -59,7 +58,7 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        layout.addChild(new CustomOptionGroup<>(font, CONTENT_WIDTH, SUPERSAMPLE_LABEL, emoteScale, this::onEmoteScaleChange, EMOTESCALES));
+        layout.addChild(new CustomOptionGroup<>(font, CONTENT_WIDTH, IMAGES_SCALE_LABEL, imagesScale, this::onImagesScaleChange, IMAGES_SCALE));
 
         /* ================================================================== */
 
@@ -85,10 +84,10 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
     }
 
     private void apply(CustomButton button) {
-        int supersample = emoteScale.value();
-        boolean rescaled = ClientConfig.supersample() != supersample;
+        int newImagesScale = imagesScale.value();
+        boolean rescaled = ClientConfig.imagesScale() != newImagesScale;
 
-        ClientConfig.updateSettings(displayChatMessages, supersample);
+        ClientConfig.updateSettings(displayChatMessages, newImagesScale);
         if (rescaled) {
             ChatMessages.INSTANCE.reloadImages();
         }
@@ -102,8 +101,8 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
         displayChatMessages = newValue;
     }
 
-    private void onEmoteScaleChange(CustomOptionGroup<Integer> group, State<Integer> newValue) {
-        emoteScale = newValue;
+    private void onImagesScaleChange(CustomOptionGroup<Integer> group, State<Integer> newValue) {
+        imagesScale = newValue;
     }
 
 }

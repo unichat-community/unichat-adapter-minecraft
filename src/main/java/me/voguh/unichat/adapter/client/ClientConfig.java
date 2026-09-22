@@ -17,7 +17,7 @@ public final class ClientConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.BooleanValue RENDER_MESSAGES = BUILDER.define("renderMessages", true);
-    private static final ModConfigSpec.IntValue SUPERSAMPLE = BUILDER.defineInRange("supersample", 4, 1, 4);
+    private static final ModConfigSpec.IntValue IMAGES_SCALE = BUILDER.defineInRange("imagesScale", 4, 1, 4);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -27,13 +27,13 @@ public final class ClientConfig {
         return RENDER_MESSAGES.get();
     }
 
-    public static int supersample() {
-        return SUPERSAMPLE.get();
+    public static int imagesScale() {
+        return IMAGES_SCALE.get();
     }
 
-    public static void updateSettings(boolean renderMessages, int supersample) {
+    public static void updateSettings(boolean renderMessages, int imagesScale) {
         RENDER_MESSAGES.set(renderMessages);
-        SUPERSAMPLE.set(supersample);
+        IMAGES_SCALE.set(imagesScale);
     }
 
 }

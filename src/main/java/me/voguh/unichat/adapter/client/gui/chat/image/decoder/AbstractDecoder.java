@@ -26,13 +26,13 @@ public abstract class AbstractDecoder {
     protected static final int MAX_FRAMES = 200;
     protected static final int DEFAULT_DELAY_MILLIS = 100;
 
-    private final int supersample;
+    private final int imagesScale;
     protected final ImageReader reader;
 
     /* ====================================================================== */
 
     protected AbstractDecoder(ImageReader reader) {
-        this.supersample = ClientConfig.supersample();
+        this.imagesScale = ClientConfig.imagesScale();
         this.reader = reader;
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractDecoder {
         int[] delays = new int[count];
 
         Frame first = frame(0);
-        int height = ImageFont.MAX_HEIGHT * supersample;
+        int height = ImageFont.MAX_HEIGHT * imagesScale;
         int width = Math.max(1, Math.round(height * first.image().getWidth() / (float) first.image().getHeight()));
         BufferedImage atlas = new BufferedImage(width, height * count, BufferedImage.TYPE_INT_ARGB);
 
