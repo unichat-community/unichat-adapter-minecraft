@@ -10,12 +10,11 @@
 
 package me.voguh.unichat.adapter.client.gui.screen.worker;
 
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton.Variant;
+import me.voguh.unichat.adapter.client.gui.component.CustomEditBox;
 import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import me.voguh.unichat.adapter.util.Strings;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -25,90 +24,67 @@ import java.util.List;
 
 public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
-    private static final Component TITLE = IdentifierUtils.translatable("screen_worker_command");
+    private static final Component TITLE = IdentifierUtils.gui("screen_worker_command");
+    private static final Component COMMAND_LABEL = IdentifierUtils.gui("screen_worker_command.command");
 
     private static final int COMMAND_MAX_LENGTH = 1024;
     private static final int NEW_COMMAND = -1;
 
     private String command;
-    private boolean touched;
-    private Button okButton;
 
     private final List<String> commands;
-    private final Runnable onSave;
     private final int index;
 
     /* ====================================================================== */
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave) {
-        this(parent, commands, onSave, NEW_COMMAND, "");
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands) {
+        this(parent, commands, NEW_COMMAND, "");
     }
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave, int index) {
-        this(parent, commands, onSave, index, commands.get(index));
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index) {
+        this(parent, commands, index, commands.get(index));
     }
 
-    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onSave, int index, String command) {
+    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index, String command) {
         super(TITLE, parent);
         this.commands = commands;
-        this.onSave = onSave;
         this.index = index;
         this.command = command;
-        this.touched = false;
     }
 
     /* ====================================================================== */
 
     @Override
     protected void addContents(LinearLayout layout) {
-        Component commandLabel = IdentifierUtils.translatable("screen_worker_command.command");
-        layout.addChild(new StringWidget(CONTENT_WIDTH, font.lineHeight, commandLabel, font).alignLeft());
-
-        EditBox commandBox = new EditBox(font, 0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, commandLabel);
-        commandBox.setMaxLength(COMMAND_MAX_LENGTH);
-        commandBox.setValue(command);
-        commandBox.setResponder(this::onCommandChange);
-        layout.addChild(commandBox);
+        layout.addChild(new CustomEditBox(font, CONTENT_WIDTH, COMMAND_LABEL, command, this::onCommandChange, COMMAND_MAX_LENGTH));
 
         /* ================================================================== */
 
-        okButton = Button.builder(CommonComponents.GUI_OK, this::apply).width(HALF_WIDTH).build();
-
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(okButton);
-        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
-
+        actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_OK, Variant.SUCCESS, this::apply));
+        actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 
-    @Override
-    protected void repositionElements() {
-        okButton.active = touched && !Strings.isNullOrEmpty(command);
-        super.repositionElements();
-    }
-
     /* ====================================================================== */
 
-    private void onCommandChange(String newValue) {
+    private void onCommandChange(CustomEditBox editBox, String newValue) {
         command = newValue;
-        touched = true;
-        okButton.active = touched && !Strings.isNullOrEmpty(newValue);
     }
 
     /* ====================================================================== */
 
-    private void cancel(Button button) {
+    private void cancel(CustomButton button) {
         onClose();
     }
 
-    private void apply(Button button) {
+    private void apply(CustomButton button) {
         if (index == NEW_COMMAND) {
             commands.add(command);
         } else {
             commands.set(index, command);
         }
 
-        onSave.run();
         onClose();
     }
 

@@ -10,11 +10,12 @@
 
 package me.voguh.unichat.adapter.client.gui.screen.client;
 
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton.Variant;
 import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.client.store.ImageStore;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -55,8 +56,8 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.GUI_CLEAR, this::apply).width(HALF_WIDTH).build());
-        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
+        actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_CLEAR, Variant.DANGER, this::apply));
+        actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
@@ -80,11 +81,11 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
-    private void cancel(Button button) {
+    private void cancel(CustomButton button) {
         onClose();
     }
 
-    private void apply(Button button) {
+    private void apply(CustomButton button) {
         ImageStore.INSTANCE.clear();
         onClose();
     }

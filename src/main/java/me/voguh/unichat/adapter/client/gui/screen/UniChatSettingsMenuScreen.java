@@ -10,12 +10,12 @@
 
 package me.voguh.unichat.adapter.client.gui.screen;
 
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
 import me.voguh.unichat.adapter.client.gui.screen.client.UniChatClientSettingsScreen;
 import me.voguh.unichat.adapter.client.gui.screen.server.UniChatServerSettingsScreen;
 import me.voguh.unichat.adapter.client.gui.screen.worker.UniChatWorkersSettingsScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -48,37 +48,37 @@ public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        Button client = Button.builder(CLIENT_LABEL, this::onClientTabClick).width(CONTENT_WIDTH).build();
-        layout.addChild(client);
-
-        /* ================================================================== */
+        layout.addChild(new CustomButton(font, CONTENT_WIDTH, CLIENT_LABEL, this::onClientTabClick));
 
         if (canManageServer()) {
-            Button server = Button.builder(SERVER_LABEL, this::onServerTabClick).width(CONTENT_WIDTH).build();
-            layout.addChild(server);
-
-            Button workers = Button.builder(WORKERS_LABEL, this::onWorkersTabClick).width(CONTENT_WIDTH).build();
-            layout.addChild(workers);
+            layout.addChild(new CustomButton(font, CONTENT_WIDTH, SERVER_LABEL, this::onServerTabClick));
+            layout.addChild(new CustomButton(font, CONTENT_WIDTH, WORKERS_LABEL, this::onWorkersTabClick));
         }
 
         /* ================================================================== */
 
-        Button back = Button.builder(CommonComponents.GUI_BACK, (btn) -> onClose()).width(CONTENT_WIDTH).build();
+        CustomButton back = new CustomButton(font, CONTENT_WIDTH, CommonComponents.GUI_BACK, this::handleBack);
         layout.addChild(back, (settings) -> settings.paddingTop(SPACING));
     }
 
     /* ====================================================================== */
 
-    private void onClientTabClick(Button button) {
+    private void onClientTabClick(CustomButton button) {
         minecraft.setScreen(new UniChatClientSettingsScreen(this));
     }
 
-    private void onServerTabClick(Button button) {
+    private void onServerTabClick(CustomButton button) {
         minecraft.setScreen(new UniChatServerSettingsScreen(this));
     }
 
-    private void onWorkersTabClick(Button button) {
+    private void onWorkersTabClick(CustomButton button) {
         minecraft.setScreen(new UniChatWorkersSettingsScreen(this));
+    }
+
+    /* ====================================================================== */
+
+    private void handleBack(CustomButton button) {
+        onClose();
     }
 
 }

@@ -11,8 +11,13 @@
 package me.voguh.unichat.adapter.client.gui.screen.worker;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton.Variant;
+import me.voguh.unichat.adapter.client.gui.component.CustomEditBox;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList.RowAction;
+import me.voguh.unichat.adapter.client.gui.component.CustomLabeledCycleButton;
+import me.voguh.unichat.adapter.client.gui.component.State;
 import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.event.UniChatEventUtils;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
@@ -22,12 +27,9 @@ import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawAction;
 import me.voguh.unichat.adapter.worker.RawCondition;
 import me.voguh.unichat.adapter.worker.RawWorker;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
-import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -39,42 +41,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
-    private static final Component TITLE = IdentifierUtils.translatable("screen_worker_settings");
-    private static final Component GENERAL_LABEL = IdentifierUtils.translatable("screen_worker_settings.general");
-    private static final Component CONDITIONS_LABEL = IdentifierUtils.translatable("screen_worker_settings.conditions");
-    private static final Component ACTIONS_LABEL = IdentifierUtils.translatable("screen_worker_settings.actions");
-    private static final Component CONDITIONS_EMPTY = IdentifierUtils.translatable("screen_worker_settings.conditions_empty");
-    private static final Component ACTIONS_EMPTY = IdentifierUtils.translatable("screen_worker_settings.actions_empty");
+    private static final Component TITLE = IdentifierUtils.gui("screen_worker_settings");
+    private static final Component NAME_LABEL = IdentifierUtils.gui("screen_worker_settings.name");
+    private static final Component EVENT_LABEL = IdentifierUtils.gui("screen_worker_settings.on_event");
+    private static final Component CONDITIONS_LABEL = IdentifierUtils.gui("screen_worker_settings.conditions");
+    private static final Component CONDITIONS_EMPTY = IdentifierUtils.gui("screen_worker_settings.conditions_empty");
+    private static final Component ADD_CONDITION_LABEL = IdentifierUtils.gui("screen_worker_settings.add_condition");
+    private static final Component ACTIONS_LABEL = IdentifierUtils.gui("screen_worker_settings.actions");
+    private static final Component ACTIONS_EMPTY = IdentifierUtils.gui("screen_worker_settings.actions_empty");
+    private static final Component ADD_ACTION_LABEL = IdentifierUtils.gui("screen_worker_settings.add_action");
 
-    private static final Component DELETE_LABEL = IdentifierUtils.translatable("delete");
     private static final ResourceLocation DELETE_ICON = IdentifierUtils.getIdentifier("icon/delete");
 
     private static final List<String> EVENT_TYPES = List.copyOf(UniChatEventUtils.getEventTypeMap());
+    private static final List<State<String>> EVENT_STATES = EVENT_TYPES.stream().map(type -> State.literal(type, type)).toList();
 
-    private static final int NAME_MAX_LENGTH = 128;
-    private static final int TAB_WIDTH = (CONTENT_WIDTH - SPACING * 2) / 3;
+    private static final int COLUMN_WIDTH = 180;
+    private static final int ACTIONS_WIDTH = 200;
     private static final int VISIBLE_ROWS = 6;
     private static final int LIST_HEIGHT = CustomEntryList.heightFor(VISIBLE_ROWS);
+    private static final int NAME_MAX_LENGTH = 128;
     private static final int NEW_WORKER = -1;
 
     private String name;
     private String eventType;
     private boolean touched;
 
-    private LinearLayout generalTab;
-    private LinearLayout conditionsTab;
-    private LinearLayout actionsTab;
-    private LinearLayout currentTab;
-
-    private Button generalButton;
-    private Button conditionsButton;
-    private Button actionsButton;
-    private Button saveButton;
+    private CustomButton saveButton;
 
     private CustomEntryList conditionsList;
     private CustomEntryList actionsList;
@@ -109,106 +106,71 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        generalTab = buildGeneralTab();
-        conditionsTab = buildConditionsTab();
-        actionsTab = buildActionsTab();
-        currentTab = generalTab;
+        LinearLayout generalConditionsColumn = buildGeneralConditionsColumn();
+        generalConditionsColumn.arrangeElements();
 
-        generalButton = Button.builder(GENERAL_LABEL, button -> selectTab(generalTab)).width(TAB_WIDTH).build();
-        conditionsButton = Button.builder(CONDITIONS_LABEL, button -> selectTab(conditionsTab)).width(TAB_WIDTH).build();
-        actionsButton = Button.builder(ACTIONS_LABEL, button -> selectTab(actionsTab)).width(TAB_WIDTH).build();
+        int actionsChrome = font.lineHeight + SPACING * 2 + Button.DEFAULT_HEIGHT;
+        int actionsListHeight = Math.max(LIST_HEIGHT, generalConditionsColumn.getHeight() - actionsChrome);
 
-        LinearLayout tabs = LinearLayout.horizontal().spacing(SPACING);
-        tabs.addChild(generalButton);
-        tabs.addChild(conditionsButton);
-        tabs.addChild(actionsButton);
-        layout.addChild(tabs);
-
-        layout.addChild(new TabSlot());
+        LinearLayout columns = LinearLayout.horizontal().spacing(SPACING);
+        columns.addChild(generalConditionsColumn, LayoutSettings::alignVerticallyTop);
+        columns.addChild(buildActionsColumn(actionsListHeight), LayoutSettings::alignVerticallyTop);
+        layout.addChild(columns);
 
         /* ================================================================== */
 
-        saveButton = Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build();
-
         LinearLayout footer = LinearLayout.horizontal().spacing(SPACING);
-        footer.addChild(saveButton);
-        footer.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
+        saveButton = footer.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_SAVE, Variant.SUCCESS, this::apply));
+        footer.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
 
-        layout.addChild(footer, (settings) -> settings.paddingTop(SPACING));
+        layout.addChild(footer, (settings) -> settings.paddingTop(SPACING).alignHorizontallyCenter());
     }
 
     @Override
     protected void repositionElements() {
-        currentTab.arrangeElements();
         refreshChrome();
         super.repositionElements();
     }
 
     /* ====================================================================== */
 
-    private LinearLayout buildGeneralTab() {
-        LinearLayout tab = LinearLayout.vertical().spacing(SPACING);
+    private LinearLayout buildGeneralConditionsColumn() {
+        LinearLayout column = LinearLayout.vertical().spacing(SPACING);
 
-        Component nameLabel = IdentifierUtils.translatable("screen_worker_settings.name");
-        tab.addChild(new StringWidget(CONTENT_WIDTH, font.lineHeight, nameLabel, font).alignLeft());
+        column.addChild(new CustomEditBox(font, COLUMN_WIDTH, NAME_LABEL, name, this::onNameChange, NAME_MAX_LENGTH));
 
-        EditBox nameBox = new EditBox(font, 0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, nameLabel);
-        nameBox.setMaxLength(NAME_MAX_LENGTH);
-        nameBox.setValue(name);
-        nameBox.setResponder(this::onNameChange);
-        tab.addChild(nameBox);
+        State<String> eventTypeState = State.literal(eventType, eventType);
+        column.addChild(new CustomLabeledCycleButton<>(font, COLUMN_WIDTH, EVENT_LABEL, eventTypeState, this::onEventChange, EVENT_STATES));
 
         /* ================================================================== */
 
-        Component eventLabel = IdentifierUtils.translatable("screen_worker_settings.on_event");
-        CycleButton<String> eventButton = CycleButton.<String>builder(UniChatWorkerSettingsScreen::eventName)
-            .withValues(EVENT_TYPES)
-            .withInitialValue(eventType)
-            .create(0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, eventLabel, this::onEventChange);
-        tab.addChild(eventButton);
+        column.addChild(new StringWidget(COLUMN_WIDTH, font.lineHeight, CONDITIONS_LABEL, font).alignLeft());
 
-        return tab;
+        RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCondition);
+        conditionsList = new CustomEntryList(minecraft, COLUMN_WIDTH, LIST_HEIGHT, CONDITIONS_EMPTY, this::editCondition, List.of(delete));
+        column.addChild(conditionsList);
+
+        column.addChild(new CustomButton(font, COLUMN_WIDTH, ADD_CONDITION_LABEL, this::createCondition));
+
+        return column;
     }
 
-    private LinearLayout buildConditionsTab() {
-        LinearLayout tab = LinearLayout.vertical().spacing(SPACING);
+    private LinearLayout buildActionsColumn(int listHeight) {
+        LinearLayout column = LinearLayout.vertical().spacing(SPACING);
+        column.addChild(new StringWidget(ACTIONS_WIDTH, font.lineHeight, ACTIONS_LABEL, font).alignLeft());
 
-        RowAction delete = new RowAction(DELETE_LABEL, DELETE_ICON, this::deleteCondition);
-        conditionsList = new CustomEntryList(minecraft, CONTENT_WIDTH, LIST_HEIGHT, CONDITIONS_EMPTY, this::editCondition, List.of(delete));
-        tab.addChild(conditionsList);
-        tab.addChild(Button.builder(IdentifierUtils.translatable("new"), this::createCondition).width(CONTENT_WIDTH).build());
+        RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCommand);
+        actionsList = new CustomEntryList(minecraft, ACTIONS_WIDTH, listHeight, ACTIONS_EMPTY, this::editCommand, List.of(delete));
+        column.addChild(actionsList);
 
-        return tab;
-    }
+        column.addChild(new CustomButton(font, ACTIONS_WIDTH, ADD_ACTION_LABEL, this::createCommand));
 
-    private LinearLayout buildActionsTab() {
-        LinearLayout tab = LinearLayout.vertical().spacing(SPACING);
-
-        RowAction delete = new RowAction(DELETE_LABEL, DELETE_ICON, this::deleteCommand);
-        actionsList = new CustomEntryList(minecraft, CONTENT_WIDTH, LIST_HEIGHT, ACTIONS_EMPTY, this::editCommand, List.of(delete));
-        tab.addChild(actionsList);
-        tab.addChild(Button.builder(IdentifierUtils.translatable("new"), this::createCommand).width(CONTENT_WIDTH).build());
-
-        return tab;
+        return column;
     }
 
     /* ====================================================================== */
 
-    private void selectTab(LinearLayout tab) {
-        if (tab == currentTab) {
-            return;
-        }
-
-        currentTab.visitWidgets(this::removeWidget);
-        currentTab = tab;
-        currentTab.visitWidgets(this::addRenderableWidget);
-        repositionElements();
-    }
-
     private void refreshChrome() {
-        generalButton.active = currentTab != generalTab;
-        conditionsButton.active = currentTab != conditionsTab;
-        actionsButton.active = currentTab != actionsTab;
         saveButton.active = touched && !Strings.isNullOrEmpty(name);
         conditionsList.refresh(conditionLabels());
         actionsList.refresh(actionLabels());
@@ -234,25 +196,25 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         touched = true;
     }
 
-    private void onNameChange(String value) {
+    private void onNameChange(CustomEditBox editBox, String value) {
         name = value;
         touched = true;
         refreshChrome();
     }
 
-    private void onEventChange(CycleButton<String> button, String newValue) {
-        eventType = newValue;
+    private void onEventChange(CustomLabeledCycleButton<String> button, State<String> newState) {
+        eventType = newState.value();
         conditions.removeIf(this::unknownProperty);
         touched = true;
         refreshChrome();
     }
 
-    private void createCondition(Button button) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched));
+    private void createCondition(CustomButton button) {
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions));
     }
 
     private void editCondition(int index) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched, index));
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, index));
     }
 
     private void deleteCondition(int index) {
@@ -261,12 +223,12 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         refreshChrome();
     }
 
-    private void createCommand(Button button) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched));
+    private void createCommand(CustomButton button) {
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands));
     }
 
     private void editCommand(int index) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched, index));
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, index));
     }
 
     private void deleteCommand(int index) {
@@ -277,11 +239,11 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
-    private void cancel(Button button) {
+    private void cancel(CustomButton button) {
         onClose();
     }
 
-    private void apply(Button button) {
+    private void apply(CustomButton button) {
         RawWorker worker = new RawWorker(name, eventType, List.copyOf(conditions), new RawAction(List.copyOf(commands)));
 
         List<RawWorker> workers = new ArrayList<>(ServerStateHolder.INSTANCE.workers());
@@ -331,7 +293,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     }
 
     private static Component eventName(String eventType) {
-        return IdentifierUtils.translatable("event." + eventType.substring(eventType.indexOf(':') + 1));
+        return IdentifierUtils.gui("event." + eventType.substring(eventType.indexOf(':') + 1));
     }
 
     private static Component conditionLabel(RawCondition condition) {
@@ -346,48 +308,7 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
             return CommonComponents.EMPTY;
         }
 
-        return IdentifierUtils.translatable("operator." + operator.toLowerCase(Locale.ROOT));
-    }
-
-    /* ====================================================================== */
-
-    private final class TabSlot implements LayoutElement {
-
-        @Override
-        public void setX(int x) {
-            currentTab.setX(x);
-        }
-
-        @Override
-        public void setY(int y) {
-            currentTab.setY(y);
-        }
-
-        @Override
-        public int getX() {
-            return currentTab.getX();
-        }
-
-        @Override
-        public int getY() {
-            return currentTab.getY();
-        }
-
-        @Override
-        public int getWidth() {
-            return currentTab.getWidth();
-        }
-
-        @Override
-        public int getHeight() {
-            return currentTab.getHeight();
-        }
-
-        @Override
-        public void visitWidgets(Consumer<AbstractWidget> consumer) {
-            currentTab.visitWidgets(consumer);
-        }
-
+        return IdentifierUtils.gui("operator." + operator.toLowerCase(Locale.ROOT));
     }
 
 }

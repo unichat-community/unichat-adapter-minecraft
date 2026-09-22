@@ -11,18 +11,17 @@
 package me.voguh.unichat.adapter.client.gui.screen.worker;
 
 import me.voguh.unichat.adapter.client.ServerStateHolder;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList;
 import me.voguh.unichat.adapter.client.gui.component.CustomEntryList.RowAction;
 import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.network.UniChatNetwork;
-import me.voguh.unichat.adapter.network.packet.client.ReloadWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.SaveWorkersPayload;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
 import me.voguh.unichat.adapter.util.Strings;
 import me.voguh.unichat.adapter.worker.RawWorker;
 import me.voguh.unichat.adapter.worker.loader.WorkerLoader;
 import net.minecraft.Util;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -67,21 +66,18 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.GUI_NEW, this::createWorker).width(HALF_WIDTH).build());
-        actions.addChild(Button.builder(IdentifierUtils.GUI_RELOAD, this::reload).width(HALF_WIDTH).build());
-
-        layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
-
-        /* ================================================================== */
-
         if (minecraft.hasSingleplayerServer()) {
-            layout.addChild(Button.builder(IdentifierUtils.GUI_OPEN_FILE, this::openFile).width(CONTENT_WIDTH).build());
+            LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
+            actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_NEW, this::createWorker));
+            actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_OPEN_FILE, this::openFile));
+            layout.addChild(actions);
+        } else {
+            layout.addChild(new CustomButton(font, CONTENT_WIDTH, IdentifierUtils.GUI_NEW, this::createWorker));
         }
 
         /* ================================================================== */
 
-        layout.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(CONTENT_WIDTH).build());
+        layout.addChild(new CustomButton(font, CONTENT_WIDTH, CommonComponents.GUI_BACK, this::cancel));
     }
 
     @Override
@@ -95,11 +91,11 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
-    private void cancel(Button button) {
+    private void cancel(CustomButton button) {
         onClose();
     }
 
-    private void createWorker(Button button) {
+    private void createWorker(CustomButton button) {
         minecraft.setScreen(new UniChatWorkerSettingsScreen(this));
     }
 
@@ -121,11 +117,7 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
         UniChatNetwork.sendToServer(new SaveWorkersPayload(workers));
     }
 
-    private void reload(Button button) {
-        UniChatNetwork.sendToServer(new ReloadWorkersPayload());
-    }
-
-    private void openFile(Button button) {
+    private void openFile(CustomButton button) {
         Util.getPlatform().openPath(WorkerLoader.file());
     }
 

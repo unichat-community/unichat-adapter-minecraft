@@ -14,7 +14,6 @@ import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
 import me.voguh.unichat.adapter.client.gui.component.UniChatToast;
 import me.voguh.unichat.adapter.client.store.ClientImageRequests;
-import me.voguh.unichat.adapter.network.packet.client.ReloadWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.RequestImagePayload;
 import me.voguh.unichat.adapter.network.packet.client.SaveWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
@@ -55,7 +54,6 @@ public final class NetworkBootstrap {
         channel.playToServer(UpdateServerSettingsPayload.TYPE, UpdateServerSettingsPayload.CODEC, NetworkBootstrap::updateServerSettings);
         channel.playToServer(ToggleWebSocketConnectionPayload.TYPE, ToggleWebSocketConnectionPayload.CODEC, NetworkBootstrap::toggleWebSocketConnection);
         channel.playToServer(RequestImagePayload.TYPE, RequestImagePayload.CODEC, NetworkBootstrap::onImageRequest);
-        channel.playToServer(ReloadWorkersPayload.TYPE, ReloadWorkersPayload.CODEC, NetworkBootstrap::reloadWorkers);
         channel.playToServer(SaveWorkersPayload.TYPE, SaveWorkersPayload.CODEC, NetworkBootstrap::saveWorkers);
     }
 
@@ -86,15 +84,6 @@ public final class NetworkBootstrap {
         } else {
             UniChatWebSocket.INSTANCE.disconnect();
         }
-    }
-
-    private static void reloadWorkers(ReloadWorkersPayload payload, IPayloadContext context) {
-        ServerPlayer player = (ServerPlayer) context.player();
-        if (!ServerPermissions.canManage(player)) {
-            return;
-        }
-
-        Workers.INSTANCE.reload();
     }
 
     private static void saveWorkers(SaveWorkersPayload payload, IPayloadContext context) {

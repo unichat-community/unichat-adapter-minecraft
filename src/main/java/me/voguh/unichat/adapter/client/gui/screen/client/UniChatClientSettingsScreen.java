@@ -12,15 +12,19 @@ package me.voguh.unichat.adapter.client.gui.screen.client;
 
 import me.voguh.unichat.adapter.client.ClientConfig;
 import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton;
+import me.voguh.unichat.adapter.client.gui.component.CustomButton.Variant;
+import me.voguh.unichat.adapter.client.gui.component.CustomCheckbox;
+import me.voguh.unichat.adapter.client.gui.component.CustomOptionGroup;
+import me.voguh.unichat.adapter.client.gui.component.State;
 import me.voguh.unichat.adapter.client.gui.screen.UniChatPanelScreen;
 import me.voguh.unichat.adapter.util.IdentifierUtils;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
@@ -29,61 +33,59 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
     private static final Component SUPERSAMPLE_LABEL = IdentifierUtils.gui("screen_client_settings.supersample");
     private static final Component CLEAR_CACHE_LABEL = IdentifierUtils.gui("screen_client_settings.clear_cache");
 
+    private static final List<State<Integer>> EMOTESCALES = List.of(
+        State.literal("1x", 1),
+        State.literal("2x", 2),
+        State.literal("3x", 3),
+        State.literal("4x", 4)
+    );
+
     private boolean displayChatMessages;
-    private int supersample;
+    private State<Integer> emoteScale;
 
     /* ====================================================================== */
 
     public UniChatClientSettingsScreen(Screen parent) {
         super(TITLE, parent);
         this.displayChatMessages = ClientConfig.renderMessages();
-        this.supersample = ClientConfig.supersample();
+        this.emoteScale = State.literal(ClientConfig.supersample() + "x", ClientConfig.supersample());
     }
 
     /* ====================================================================== */
 
     @Override
     protected void addContents(LinearLayout layout) {
-        Checkbox renderMessages = Checkbox.builder(RENDER_MESSAGES_LABEL, font)
-            .selected(displayChatMessages)
-            .maxWidth(CONTENT_WIDTH)
-            .onValueChange(this::onDisplayChatMessages)
-            .build();
-        layout.addChild(renderMessages);
+        layout.addChild(new CustomCheckbox(font, CONTENT_WIDTH, RENDER_MESSAGES_LABEL, displayChatMessages, this::onDisplayChatMessages));
 
         /* ================================================================== */
 
-        CycleButton<Integer> supersampleButton = CycleButton.<Integer>builder(value -> Component.literal(value + "x"))
-            .withValues(1, 2, 3, 4)
-            .withInitialValue(supersample)
-            .create(0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, SUPERSAMPLE_LABEL, this::onSupersampleChange);
-        layout.addChild(supersampleButton);
+        layout.addChild(new CustomOptionGroup<>(font, CONTENT_WIDTH, SUPERSAMPLE_LABEL, emoteScale, this::onEmoteScaleChange, EMOTESCALES));
 
         /* ================================================================== */
 
-        Button clearCache = Button.builder(CLEAR_CACHE_LABEL, this::onClearCacheClick).width(CONTENT_WIDTH).build();
-        layout.addChild(clearCache);
+        layout.addChild(new CustomButton(font, CONTENT_WIDTH, CLEAR_CACHE_LABEL, Variant.DANGER, this::onClearCacheClick));
 
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.GUI_SAVE, this::apply).width(HALF_WIDTH).build());
-        actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
+        actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_SAVE, Variant.SUCCESS, this::apply));
+        actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 
     /* ====================================================================== */
 
-    private void onClearCacheClick(Button button) {
+    private void onClearCacheClick(CustomButton button) {
         minecraft.setScreen(new UniChatDeleteCacheScreen(this));
     }
 
-    private void cancel(Button button) {
+    private void cancel(CustomButton button) {
         onClose();
     }
 
-    private void apply(Button button) {
+    private void apply(CustomButton button) {
+        int supersample = emoteScale.value();
         boolean rescaled = ClientConfig.supersample() != supersample;
 
         ClientConfig.updateSettings(displayChatMessages, supersample);
@@ -96,12 +98,12 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
-    private void onDisplayChatMessages(Checkbox checkbox, boolean newValue) {
+    private void onDisplayChatMessages(CustomCheckbox checkbox, boolean newValue) {
         displayChatMessages = newValue;
     }
 
-    private void onSupersampleChange(CycleButton<Integer> button, Integer newValue) {
-        supersample = newValue;
+    private void onEmoteScaleChange(CustomOptionGroup<Integer> group, State<Integer> newValue) {
+        emoteScale = newValue;
     }
 
 }
