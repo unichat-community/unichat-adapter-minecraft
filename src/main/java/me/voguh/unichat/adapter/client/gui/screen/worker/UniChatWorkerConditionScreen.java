@@ -52,7 +52,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private Button propertyButton;
     private Button operatorButton;
     private EditBox valueBox;
-    private Button saveButton;
+    private Button okButton;
 
     private final List<RawCondition> conditions;
     private final List<Property> properties;
@@ -124,10 +124,10 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        saveButton = Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build();
+        okButton = Button.builder(CommonComponents.GUI_OK, this::apply).width(HALF_WIDTH).build();
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(saveButton);
+        actions.addChild(okButton);
         actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
@@ -145,7 +145,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         propertyButton.setMessage(CommonComponents.optionNameValue(PROPERTY_LABEL, Component.literal(property.name())));
         operatorButton.setMessage(CommonComponents.optionNameValue(OPERATOR_LABEL, operatorName(operator)));
         valueBox.setFilter(filter(property.kind()));
-        saveButton.active = touched && isValueValid();
+        okButton.active = touched && isValueValid();
     }
 
     private boolean isValueValid() {
@@ -184,7 +184,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private void onValueChange(String newValue) {
         value = newValue;
         touched = true;
-        saveButton.active = touched && isValueValid();
+        okButton.active = touched && isValueValid();
     }
 
     /* ====================================================================== */

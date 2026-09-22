@@ -32,7 +32,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
     private String command;
     private boolean touched;
-    private Button saveButton;
+    private Button okButton;
 
     private final List<String> commands;
     private final Runnable onSave;
@@ -72,10 +72,10 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        saveButton = Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build();
+        okButton = Button.builder(CommonComponents.GUI_OK, this::apply).width(HALF_WIDTH).build();
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(saveButton);
+        actions.addChild(okButton);
         actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
@@ -83,7 +83,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
     @Override
     protected void repositionElements() {
-        saveButton.active = touched && !Strings.isNullOrEmpty(command);
+        okButton.active = touched && !Strings.isNullOrEmpty(command);
         super.repositionElements();
     }
 
@@ -92,7 +92,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
     private void onCommandChange(String newValue) {
         command = newValue;
         touched = true;
-        saveButton.active = touched && !Strings.isNullOrEmpty(newValue);
+        okButton.active = touched && !Strings.isNullOrEmpty(newValue);
     }
 
     /* ====================================================================== */
