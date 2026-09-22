@@ -64,7 +64,7 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(CommonComponents.GUI_DONE, this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build());
         actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));

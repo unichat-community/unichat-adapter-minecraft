@@ -23,6 +23,7 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -118,7 +119,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        saveButton = Button.builder(CommonComponents.GUI_DONE, this::apply).width(HALF_WIDTH).build();
+        saveButton = Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build();
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
         actions.addChild(saveButton);
@@ -157,7 +158,8 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     /* ====================================================================== */
 
     private void cycleProperty(Button button) {
-        property = properties.get((properties.indexOf(property) + 1) % properties.size());
+        int delta = Screen.hasShiftDown() ? -1 : 1;
+        property = properties.get(Mth.positiveModulo(properties.indexOf(property) + delta, properties.size()));
         if (!operator.isValidFor(property.kind())) {
             operator = firstOperator();
         }
@@ -167,7 +169,8 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
 
     private void cycleOperator(Button button) {
         List<WorkerOperator> operators = operators();
-        operator = operators.get((operators.indexOf(operator) + 1) % operators.size());
+        int delta = Screen.hasShiftDown() ? -1 : 1;
+        operator = operators.get(Mth.positiveModulo(operators.indexOf(operator) + delta, operators.size()));
         refreshWidgets();
     }
 

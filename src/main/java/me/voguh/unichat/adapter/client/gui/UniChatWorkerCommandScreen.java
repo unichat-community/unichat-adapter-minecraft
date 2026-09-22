@@ -67,7 +67,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        saveButton = Button.builder(CommonComponents.GUI_DONE, this::apply).width(HALF_WIDTH).build();
+        saveButton = Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build();
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
         actions.addChild(saveButton);
