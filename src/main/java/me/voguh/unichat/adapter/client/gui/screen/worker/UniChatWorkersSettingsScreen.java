@@ -34,12 +34,11 @@ import java.util.List;
 
 public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
-    private static final Component EMPTY_MESSAGE = IdentifierUtils.translatable("screen_workers_settings.empty");
-    private static final Component UNNAMED = IdentifierUtils.translatable("screen_workers_settings.unnamed");
+    private static final Component TITLE = IdentifierUtils.gui("screen_workers_settings");
+    private static final Component EMPTY_MESSAGE = IdentifierUtils.gui("screen_workers_settings.empty");
+    private static final Component UNNAMED = IdentifierUtils.gui("screen_workers_settings.unnamed");
 
-    private static final Component DUPLICATE_LABEL = IdentifierUtils.translatable("duplicate");
     private static final ResourceLocation DUPLICATE_ICON = IdentifierUtils.getIdentifier("icon/duplicate");
-    private static final Component DELETE_LABEL = IdentifierUtils.translatable("delete");
     private static final ResourceLocation DELETE_ICON = IdentifierUtils.getIdentifier("icon/delete");
 
     private static final int VISIBLE_ROWS = 6;
@@ -51,7 +50,7 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
     /* ====================================================================== */
 
     public UniChatWorkersSettingsScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_workers_settings"), parent);
+        super(TITLE, parent);
         this.displayed = ServerStateHolder.INSTANCE.workers();
     }
 
@@ -59,8 +58,8 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        RowAction duplicate = new RowAction(DUPLICATE_LABEL, DUPLICATE_ICON, this::duplicateWorker);
-        RowAction delete = new RowAction(DELETE_LABEL, DELETE_ICON, this::deleteWorker);
+        RowAction duplicate = new RowAction(IdentifierUtils.GUI_DUPLICATE, DUPLICATE_ICON, this::duplicateWorker);
+        RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteWorker);
 
         list = new CustomEntryList(minecraft, CONTENT_WIDTH, LIST_HEIGHT, EMPTY_MESSAGE, this::editWorker, List.of(duplicate, delete));
         list.refresh(labels(displayed));
@@ -69,15 +68,15 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.translatable("new"), this::createWorker).width(HALF_WIDTH).build());
-        actions.addChild(Button.builder(IdentifierUtils.translatable("reload"), this::reload).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(IdentifierUtils.GUI_NEW, this::createWorker).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(IdentifierUtils.GUI_RELOAD, this::reload).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
 
         /* ================================================================== */
 
         if (minecraft.hasSingleplayerServer()) {
-            layout.addChild(Button.builder(IdentifierUtils.translatable("open_file"), this::openFile).width(CONTENT_WIDTH).build());
+            layout.addChild(Button.builder(IdentifierUtils.GUI_OPEN_FILE, this::openFile).width(CONTENT_WIDTH).build());
         }
 
         /* ================================================================== */

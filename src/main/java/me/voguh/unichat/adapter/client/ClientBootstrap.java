@@ -30,6 +30,8 @@ import javax.imageio.spi.IIORegistry;
 
 public final class ClientBootstrap {
 
+    private static final Component MENU_TITLE = IdentifierUtils.gui("menu_title");
+
     private static final int MARGIN = 8;
 
     /* ====================================================================== */
@@ -50,10 +52,9 @@ public final class ClientBootstrap {
             return;
         }
 
-        Component label = IdentifierUtils.translatable("menu_title");
         int yPos = screen.height - Button.DEFAULT_HEIGHT - MARGIN;
 
-        Button openScreen = Button.builder(label, (btn) -> openSettings(screen))
+        Button openScreen = Button.builder(MENU_TITLE, (btn) -> openSettings(screen))
             .bounds(MARGIN, yPos, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT)
             .build();
 

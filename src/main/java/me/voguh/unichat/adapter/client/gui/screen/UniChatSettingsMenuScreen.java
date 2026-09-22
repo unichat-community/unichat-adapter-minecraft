@@ -25,8 +25,13 @@ import net.minecraft.network.chat.Component;
 
 public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
+    private static final Component TITLE = IdentifierUtils.gui("menu_title");
+    private static final Component CLIENT_LABEL = IdentifierUtils.gui("btn_client");
+    private static final Component SERVER_LABEL = IdentifierUtils.gui("btn_server");
+    private static final Component WORKERS_LABEL = IdentifierUtils.gui("btn_workers");
+
     public UniChatSettingsMenuScreen(Screen parent) {
-        super(IdentifierUtils.translatable("menu_title"), parent);
+        super(TITLE, parent);
     }
 
     private boolean canManageServer() {
@@ -43,17 +48,16 @@ public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        Button client = Button.builder(IdentifierUtils.translatable("btn_client"), this::onClientTabClick).width(CONTENT_WIDTH).build();
+        Button client = Button.builder(CLIENT_LABEL, this::onClientTabClick).width(CONTENT_WIDTH).build();
         layout.addChild(client);
 
         /* ================================================================== */
 
         if (canManageServer()) {
-            Button server = Button.builder(IdentifierUtils.translatable("btn_server"), this::onServerTabClick).width(CONTENT_WIDTH).build();
+            Button server = Button.builder(SERVER_LABEL, this::onServerTabClick).width(CONTENT_WIDTH).build();
             layout.addChild(server);
 
-            Component workersLabel = IdentifierUtils.translatable("btn_workers");
-            Button workers = Button.builder(workersLabel, this::onWorkersTabClick).width(CONTENT_WIDTH).build();
+            Button workers = Button.builder(WORKERS_LABEL, this::onWorkersTabClick).width(CONTENT_WIDTH).build();
             layout.addChild(workers);
         }
 

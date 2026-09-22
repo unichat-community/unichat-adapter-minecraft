@@ -27,8 +27,9 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
 
     private static final ResourceLocation WARNING = IdentifierUtils.getIdentifier("panel/warning");
 
-    private static final Component WARNING_TITLE = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_title");
-    private static final Component WARNING_MESSAGE = IdentifierUtils.translatable("screen_client_settings.clear_cache_warning_message");
+    private static final Component WARNING_TITLE = IdentifierUtils.gui("screen_client_settings.clear_cache_warning_title");
+    private static final Component WARNING_MESSAGE = IdentifierUtils.gui("screen_client_settings.clear_cache_warning_message");
+    private static final Component TITLE = IdentifierUtils.gui("screen_client_settings.clear_cache");
 
     private static final int WARNING_PADDING = 10;
     private static final int WARNING_WIDTH = CONTENT_WIDTH - WARNING_PADDING * 2;
@@ -38,7 +39,7 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
     /* ====================================================================== */
 
     public UniChatDeleteCacheScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_client_settings.clear_cache"), parent);
+        super(TITLE, parent);
     }
 
     /* ====================================================================== */
@@ -54,7 +55,7 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.translatable("clear"), this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(IdentifierUtils.GUI_CLEAR, this::apply).width(HALF_WIDTH).build());
         actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));

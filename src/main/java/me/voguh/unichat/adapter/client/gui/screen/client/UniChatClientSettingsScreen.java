@@ -24,13 +24,18 @@ import net.minecraft.network.chat.Component;
 
 public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
+    private static final Component TITLE = IdentifierUtils.gui("screen_client_settings");
+    private static final Component RENDER_MESSAGES_LABEL = IdentifierUtils.gui("screen_client_settings.display_chat_messages");
+    private static final Component SUPERSAMPLE_LABEL = IdentifierUtils.gui("screen_client_settings.supersample");
+    private static final Component CLEAR_CACHE_LABEL = IdentifierUtils.gui("screen_client_settings.clear_cache");
+
     private boolean displayChatMessages;
     private int supersample;
 
     /* ====================================================================== */
 
     public UniChatClientSettingsScreen(Screen parent) {
-        super(IdentifierUtils.translatable("screen_client_settings"), parent);
+        super(TITLE, parent);
         this.displayChatMessages = ClientConfig.renderMessages();
         this.supersample = ClientConfig.supersample();
     }
@@ -39,8 +44,7 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        Component renderMessagesLabel = IdentifierUtils.translatable("screen_client_settings.display_chat_messages");
-        Checkbox renderMessages = Checkbox.builder(renderMessagesLabel, font)
+        Checkbox renderMessages = Checkbox.builder(RENDER_MESSAGES_LABEL, font)
             .selected(displayChatMessages)
             .maxWidth(CONTENT_WIDTH)
             .onValueChange(this::onDisplayChatMessages)
@@ -49,23 +53,21 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
         /* ================================================================== */
 
-        Component supersampleLabel = IdentifierUtils.translatable("screen_client_settings.supersample");
         CycleButton<Integer> supersampleButton = CycleButton.<Integer>builder(value -> Component.literal(value + "x"))
             .withValues(1, 2, 3, 4)
             .withInitialValue(supersample)
-            .create(0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, supersampleLabel, this::onSupersampleChange);
+            .create(0, 0, CONTENT_WIDTH, Button.DEFAULT_HEIGHT, SUPERSAMPLE_LABEL, this::onSupersampleChange);
         layout.addChild(supersampleButton);
 
         /* ================================================================== */
 
-        Component clearCacheLabel = IdentifierUtils.translatable("screen_client_settings.clear_cache");
-        Button clearCache = Button.builder(clearCacheLabel, this::onClearCacheClick).width(CONTENT_WIDTH).build();
+        Button clearCache = Button.builder(CLEAR_CACHE_LABEL, this::onClearCacheClick).width(CONTENT_WIDTH).build();
         layout.addChild(clearCache);
 
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
-        actions.addChild(Button.builder(IdentifierUtils.translatable("save"), this::apply).width(HALF_WIDTH).build());
+        actions.addChild(Button.builder(IdentifierUtils.GUI_SAVE, this::apply).width(HALF_WIDTH).build());
         actions.addChild(Button.builder(CommonComponents.GUI_BACK, this::cancel).width(HALF_WIDTH).build());
 
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
