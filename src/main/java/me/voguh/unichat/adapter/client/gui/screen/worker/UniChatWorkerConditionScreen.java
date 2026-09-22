@@ -51,7 +51,6 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private String value;
     private boolean touched;
 
-    private CustomLabeledCycleButton<Property> propertyButton;
     private CustomLabeledCycleButton<WorkerOperator> operatorButton;
     private CustomEditBox valueBox;
     private CustomButton okButton;
@@ -105,18 +104,35 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     @Override
     protected void addContents(LinearLayout layout) {
         List<State<Property>> propertyStates = properties.stream().map(UniChatWorkerConditionScreen::propertyState).toList();
-        propertyButton = layout.addChild(new CustomLabeledCycleButton<>(
-            font, CONTENT_WIDTH, PROPERTY_LABEL, propertyState(property), this::onPropertyChange, propertyStates
+        layout.addChild(new CustomLabeledCycleButton<>(
+            font,
+            CONTENT_WIDTH,
+            PROPERTY_LABEL,
+            propertyState(property),
+            this::onPropertyChange,
+            propertyStates
         ));
 
         List<State<WorkerOperator>> operatorStates = operatorStates();
         operatorButton = layout.addChild(new CustomLabeledCycleButton<>(
-            font, CONTENT_WIDTH, OPERATOR_LABEL, operatorState(operator), this::onOperatorChange, operatorStates
+            font,
+            CONTENT_WIDTH,
+            OPERATOR_LABEL,
+            operatorState(operator),
+            this::onOperatorChange,
+            operatorStates
         ));
 
         /* ================================================================== */
 
-        valueBox = new CustomEditBox(font, CONTENT_WIDTH, VALUE_LABEL, value, this::onValueChange, VALUE_MAX_LENGTH);
+        valueBox = new CustomEditBox(
+            font,
+            CONTENT_WIDTH,
+            VALUE_LABEL,
+            value,
+            this::onValueChange,
+            VALUE_MAX_LENGTH
+        );
         valueBox.setFilter(filter(property.kind()));
         layout.addChild(valueBox);
 

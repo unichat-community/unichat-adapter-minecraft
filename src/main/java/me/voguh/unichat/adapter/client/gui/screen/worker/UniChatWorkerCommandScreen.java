@@ -56,7 +56,14 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        layout.addChild(new CustomEditBox(font, CONTENT_WIDTH, COMMAND_LABEL, command, this::onCommandChange, COMMAND_MAX_LENGTH));
+        layout.addChild(new CustomEditBox(
+            font,
+            CONTENT_WIDTH,
+            COMMAND_LABEL,
+            command,
+            this::onCommandChange,
+            COMMAND_MAX_LENGTH
+        ));
 
         /* ================================================================== */
 

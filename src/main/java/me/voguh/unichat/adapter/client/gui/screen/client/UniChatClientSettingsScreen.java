@@ -54,22 +54,40 @@ public final class UniChatClientSettingsScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        layout.addChild(new CustomCheckbox(font, CONTENT_WIDTH, RENDER_MESSAGES_LABEL, displayChatMessages, this::onDisplayChatMessages));
+        layout.addChild(new CustomCheckbox(
+            font,
+            CONTENT_WIDTH,
+            RENDER_MESSAGES_LABEL,
+            displayChatMessages,
+            this::onDisplayChatMessages
+        ));
 
         /* ================================================================== */
 
-        layout.addChild(new CustomOptionGroup<>(font, CONTENT_WIDTH, IMAGES_SCALE_LABEL, imagesScale, this::onImagesScaleChange, IMAGES_SCALE));
+        layout.addChild(new CustomOptionGroup<>(
+            font,
+            CONTENT_WIDTH,
+            IMAGES_SCALE_LABEL,
+            imagesScale,
+            this::onImagesScaleChange,
+            IMAGES_SCALE
+        ));
 
         /* ================================================================== */
 
-        layout.addChild(new CustomButton(font, CONTENT_WIDTH, CLEAR_CACHE_LABEL, Variant.DANGER, this::onClearCacheClick));
+        layout.addChild(new CustomButton(
+            font,
+            CONTENT_WIDTH,
+            CLEAR_CACHE_LABEL,
+            Variant.DANGER,
+            this::onClearCacheClick
+        ));
 
         /* ================================================================== */
 
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
         actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_SAVE, Variant.SUCCESS, this::apply));
         actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
-
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 

@@ -60,7 +60,14 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
         RowAction duplicate = new RowAction(IdentifierUtils.GUI_DUPLICATE, DUPLICATE_ICON, this::duplicateWorker);
         RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteWorker);
 
-        list = new CustomEntryList(minecraft, CONTENT_WIDTH, LIST_HEIGHT, EMPTY_MESSAGE, this::editWorker, List.of(duplicate, delete));
+        list = new CustomEntryList(
+            minecraft,
+            CONTENT_WIDTH,
+            LIST_HEIGHT,
+            EMPTY_MESSAGE,
+            this::editWorker,
+            List.of(duplicate, delete)
+        );
         list.refresh(labels(displayed));
         layout.addChild(list);
 

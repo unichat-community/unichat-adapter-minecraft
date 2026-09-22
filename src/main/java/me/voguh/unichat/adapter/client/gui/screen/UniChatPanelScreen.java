@@ -45,7 +45,12 @@ public abstract class UniChatPanelScreen extends Screen {
 
     @Override
     protected final void init() {
-        layout.addChild(new StringWidget(CONTENT_WIDTH, font.lineHeight, getTitle(), font));
+        layout.addChild(new StringWidget(
+            CONTENT_WIDTH,
+            font.lineHeight,
+            getTitle(),
+            font
+        ));
         addContents(layout);
 
         layout.visitWidgets(this::addRenderableWidget);

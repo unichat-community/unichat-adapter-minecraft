@@ -48,8 +48,17 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
     @Override
     protected void addContents(LinearLayout layout) {
         warning = LinearLayout.vertical().spacing(SPACING);
-        warning.addChild(new StringWidget(WARNING_WIDTH, font.lineHeight, WARNING_TITLE, font));
-        warning.addChild(new MultiLineTextWidget(WARNING_MESSAGE, font).setMaxWidth(WARNING_WIDTH));
+        warning.addChild(new StringWidget(
+            WARNING_WIDTH,
+            font.lineHeight,
+            WARNING_TITLE,
+            font
+        ));
+
+        warning.addChild(new MultiLineTextWidget(
+            WARNING_MESSAGE,
+            font
+        ).setMaxWidth(WARNING_WIDTH));
 
         layout.addChild(warning, (settings) -> settings.padding(WARNING_PADDING));
 
@@ -58,7 +67,6 @@ public final class UniChatDeleteCacheScreen extends UniChatPanelScreen {
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
         actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_CLEAR, Variant.DANGER, this::apply));
         actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
-
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 

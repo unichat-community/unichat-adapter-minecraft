@@ -51,19 +51,44 @@ public final class UniChatServerSettingsScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        layout.addChild(new CustomEditBox(font, CONTENT_WIDTH, WEBSOCKET_URL_LABEL, websocketUrl, this::onWebsocketUrlChange, URL_MAX_LENGTH));
+        layout.addChild(new CustomEditBox(
+            font,
+            CONTENT_WIDTH,
+            WEBSOCKET_URL_LABEL,
+            websocketUrl,
+            this::onWebsocketUrlChange,
+            URL_MAX_LENGTH
+        ));
 
         /* ================================================================== */
 
-        layout.addChild(new CustomCheckbox(font, CONTENT_WIDTH, AUTO_CONNECT_LABEL, autoConnect, this::onAutoConnectChange));
+        layout.addChild(new CustomCheckbox(
+            font,
+            CONTENT_WIDTH,
+            AUTO_CONNECT_LABEL,
+            autoConnect,
+            this::onAutoConnectChange
+        ));
 
         /* ================================================================== */
 
         ConnectionStatus status = ServerStateHolder.INSTANCE.connectionStatus();
         if (status == ConnectionStatus.CONNECTED) {
-            layout.addChild(new CustomButton(font, CONTENT_WIDTH, DISCONNECT_LABEL, Variant.DANGER, (btn) -> toggleConnection(status)));
+            layout.addChild(new CustomButton(
+                font,
+                CONTENT_WIDTH,
+                DISCONNECT_LABEL,
+                Variant.DANGER,
+                (btn) -> toggleConnection(status)
+            ));
         } else if (status == ConnectionStatus.DISCONNECTED) {
-            layout.addChild(new CustomButton(font, CONTENT_WIDTH, CONNECT_LABEL, Variant.SUCCESS, (btn) -> toggleConnection(status)));
+            layout.addChild(new CustomButton(
+                font,
+                CONTENT_WIDTH,
+                CONNECT_LABEL,
+                Variant.SUCCESS,
+                (btn) -> toggleConnection(status)
+            ));
         }
 
         /* ================================================================== */
@@ -71,7 +96,6 @@ public final class UniChatServerSettingsScreen extends UniChatPanelScreen {
         LinearLayout actions = LinearLayout.horizontal().spacing(SPACING);
         actions.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_SAVE, Variant.SUCCESS, this::apply));
         actions.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
-
         layout.addChild(actions, (settings) -> settings.paddingTop(SPACING));
     }
 

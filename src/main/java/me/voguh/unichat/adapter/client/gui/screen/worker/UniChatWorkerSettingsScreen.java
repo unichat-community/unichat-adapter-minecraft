@@ -122,7 +122,6 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         LinearLayout footer = LinearLayout.horizontal().spacing(SPACING);
         saveButton = footer.addChild(new CustomButton(font, HALF_WIDTH, IdentifierUtils.GUI_SAVE, Variant.SUCCESS, this::apply));
         footer.addChild(new CustomButton(font, HALF_WIDTH, CommonComponents.GUI_BACK, this::cancel));
-
         layout.addChild(footer, (settings) -> settings.paddingTop(SPACING).alignHorizontallyCenter());
     }
 
@@ -137,33 +136,76 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     private LinearLayout buildGeneralConditionsColumn() {
         LinearLayout column = LinearLayout.vertical().spacing(SPACING);
 
-        column.addChild(new CustomEditBox(font, COLUMN_WIDTH, NAME_LABEL, name, this::onNameChange, NAME_MAX_LENGTH));
+        column.addChild(new CustomEditBox(
+            font,
+            COLUMN_WIDTH,
+            NAME_LABEL,
+            name,
+            this::onNameChange,
+            NAME_MAX_LENGTH
+        ));
 
-        State<String> eventTypeState = State.literal(eventType, eventType);
-        column.addChild(new CustomLabeledCycleButton<>(font, COLUMN_WIDTH, EVENT_LABEL, eventTypeState, this::onEventChange, EVENT_STATES));
+        column.addChild(new CustomLabeledCycleButton<>(
+            font,
+            COLUMN_WIDTH,
+            EVENT_LABEL,
+            State.literal(eventType, eventType),
+            this::onEventChange,
+            EVENT_STATES
+        ));
 
         /* ================================================================== */
 
-        column.addChild(new StringWidget(COLUMN_WIDTH, font.lineHeight, CONDITIONS_LABEL, font).alignLeft());
+        column.addChild(new StringWidget(
+            COLUMN_WIDTH,
+            font.lineHeight,
+            CONDITIONS_LABEL,
+            font
+        ).alignLeft());
 
-        RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCondition);
-        conditionsList = new CustomEntryList(minecraft, COLUMN_WIDTH, LIST_HEIGHT, CONDITIONS_EMPTY, this::editCondition, List.of(delete));
-        column.addChild(conditionsList);
+        conditionsList = column.addChild(new CustomEntryList(
+            minecraft,
+            COLUMN_WIDTH,
+            LIST_HEIGHT,
+            CONDITIONS_EMPTY,
+            this::editCondition,
+            List.of(new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCondition))
+        ));
 
-        column.addChild(new CustomButton(font, COLUMN_WIDTH, ADD_CONDITION_LABEL, this::createCondition));
+        column.addChild(new CustomButton(
+            font,
+            COLUMN_WIDTH,
+            ADD_CONDITION_LABEL,
+            this::createCondition
+        ));
 
         return column;
     }
 
     private LinearLayout buildActionsColumn(int listHeight) {
         LinearLayout column = LinearLayout.vertical().spacing(SPACING);
-        column.addChild(new StringWidget(ACTIONS_WIDTH, font.lineHeight, ACTIONS_LABEL, font).alignLeft());
+        column.addChild(new StringWidget(
+            ACTIONS_WIDTH,
+            font.lineHeight,
+            ACTIONS_LABEL,
+            font
+        ));
 
-        RowAction delete = new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCommand);
-        actionsList = new CustomEntryList(minecraft, ACTIONS_WIDTH, listHeight, ACTIONS_EMPTY, this::editCommand, List.of(delete));
-        column.addChild(actionsList);
+        actionsList = column.addChild(new CustomEntryList(
+            minecraft,
+            ACTIONS_WIDTH,
+            listHeight,
+            ACTIONS_EMPTY,
+            this::editCommand,
+            List.of(new RowAction(IdentifierUtils.GUI_DELETE, DELETE_ICON, this::deleteCommand))
+        ));
 
-        column.addChild(new CustomButton(font, ACTIONS_WIDTH, ADD_ACTION_LABEL, this::createCommand));
+        column.addChild(new CustomButton(
+            font,
+            ACTIONS_WIDTH,
+            ADD_ACTION_LABEL,
+            this::createCommand
+        ));
 
         return column;
     }
@@ -191,10 +233,6 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     }
 
     /* ====================================================================== */
-
-    private void markTouched() {
-        touched = true;
-    }
 
     private void onNameChange(CustomEditBox editBox, String value) {
         name = value;

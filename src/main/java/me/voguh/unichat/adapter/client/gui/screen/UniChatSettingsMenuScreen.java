@@ -48,11 +48,27 @@ public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
     @Override
     protected void addContents(LinearLayout layout) {
-        layout.addChild(new CustomButton(font, CONTENT_WIDTH, CLIENT_LABEL, this::onClientTabClick));
+        layout.addChild(new CustomButton(
+            font,
+            CONTENT_WIDTH,
+            CLIENT_LABEL,
+            this::onClientTabClick
+        ));
 
         if (canManageServer()) {
-            layout.addChild(new CustomButton(font, CONTENT_WIDTH, SERVER_LABEL, this::onServerTabClick));
-            layout.addChild(new CustomButton(font, CONTENT_WIDTH, WORKERS_LABEL, this::onWorkersTabClick));
+            layout.addChild(new CustomButton(
+                font,
+                CONTENT_WIDTH,
+                SERVER_LABEL,
+                this::onServerTabClick
+            ));
+
+            layout.addChild(new CustomButton(
+                font,
+                CONTENT_WIDTH,
+                WORKERS_LABEL,
+                this::onWorkersTabClick
+            ));
         }
 
         /* ================================================================== */
