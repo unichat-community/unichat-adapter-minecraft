@@ -44,16 +44,16 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     private static final int NAME_MAX_LENGTH = 128;
     private static final int NEW_WORKER = -1;
 
-    private final List<RawCondition> conditions;
-    private final List<String> commands;
-    private final int index;
-
     private String name;
     private String eventType;
 
     private Button conditionsButton;
     private Button commandsButton;
     private Button saveButton;
+
+    private final List<RawCondition> conditions;
+    private final List<String> commands;
+    private final int index;
 
     /* ====================================================================== */
 
@@ -73,41 +73,6 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         this.index = index;
         this.name = name(worker);
         this.eventType = eventType(worker);
-    }
-
-    /* ====================================================================== */
-
-    private static List<RawCondition> conditions(RawWorker worker) {
-        List<RawCondition> conditions = worker.conditions();
-        if (conditions == null) {
-            return new ArrayList<>();
-        }
-
-        return conditions.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private static List<String> commands(RawWorker worker) {
-        RawAction actions = worker.actions();
-        if (actions == null || actions.execCommands() == null) {
-            return new ArrayList<>();
-        }
-
-        return actions.execCommands().stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private static String name(RawWorker worker) {
-        String name = worker.name();
-
-        return name == null ? "" : name;
-    }
-
-    private static String eventType(RawWorker worker) {
-        String onEvent = worker.onEvent();
-        if (onEvent == null || !EVENT_TYPES.contains(onEvent)) {
-            return EVENT_TYPES.getFirst();
-        }
-
-        return onEvent;
     }
 
     /* ====================================================================== */
@@ -165,14 +130,6 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
         saveButton.active = !Strings.isNullOrEmpty(name);
     }
 
-    private static Component counterLabel(Component label, int count) {
-        return CommonComponents.optionNameValue(label, Component.literal(String.valueOf(count)));
-    }
-
-    private static Component eventName(String eventType) {
-        return IdentifierUtils.translatable("event." + eventType.substring(eventType.indexOf(':') + 1));
-    }
-
     private boolean unknownProperty(RawCondition condition) {
         String property = condition.property();
 
@@ -218,6 +175,49 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
         UniChatNetwork.sendToServer(new SaveWorkersPayload(workers));
         onClose();
+    }
+
+    /* ====================================================================== */
+
+    private static List<RawCondition> conditions(RawWorker worker) {
+        List<RawCondition> conditions = worker.conditions();
+        if (conditions == null) {
+            return new ArrayList<>();
+        }
+
+        return conditions.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static List<String> commands(RawWorker worker) {
+        RawAction actions = worker.actions();
+        if (actions == null || actions.execCommands() == null) {
+            return new ArrayList<>();
+        }
+
+        return actions.execCommands().stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static String name(RawWorker worker) {
+        String name = worker.name();
+
+        return name == null ? "" : name;
+    }
+
+    private static String eventType(RawWorker worker) {
+        String onEvent = worker.onEvent();
+        if (onEvent == null || !EVENT_TYPES.contains(onEvent)) {
+            return EVENT_TYPES.getFirst();
+        }
+
+        return onEvent;
+    }
+
+    private static Component counterLabel(Component label, int count) {
+        return CommonComponents.optionNameValue(label, Component.literal(String.valueOf(count)));
+    }
+
+    private static Component eventName(String eventType) {
+        return IdentifierUtils.translatable("event." + eventType.substring(eventType.indexOf(':') + 1));
     }
 
 }

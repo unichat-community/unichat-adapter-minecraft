@@ -42,10 +42,6 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private static final int VALUE_MAX_LENGTH = 256;
     private static final int NEW_CONDITION = -1;
 
-    private final List<RawCondition> conditions;
-    private final List<Property> properties;
-    private final int index;
-
     private Property property;
     private WorkerOperator operator;
     private String value;
@@ -54,6 +50,10 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
     private Button operatorButton;
     private EditBox valueBox;
     private Button saveButton;
+
+    private final List<RawCondition> conditions;
+    private final List<Property> properties;
+    private final int index;
 
     /* ====================================================================== */
 
@@ -92,12 +92,6 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         }
 
         return WorkerOperator.fromString(raw).filter(entry -> entry.isValidFor(property.kind())).orElseGet(this::firstOperator);
-    }
-
-    private static String value(@Nullable RawCondition condition) {
-        Object value = condition == null ? null : condition.value();
-
-        return value == null ? "" : String.valueOf(value);
     }
 
     /* ====================================================================== */
@@ -160,29 +154,6 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         return operators().getFirst();
     }
 
-    private static Component operatorName(WorkerOperator operator) {
-        return IdentifierUtils.translatable("operator." + operator.name().toLowerCase(Locale.ROOT));
-    }
-
-    private static Predicate<String> filter(Kind kind) {
-        return switch (kind) {
-            case NUMBER -> text -> NUMBER_DRAFT.matcher(text).matches();
-            case STRING, BOOLEAN -> text -> true;
-        };
-    }
-
-    private static @Nullable Object parseValue(Kind kind, String value) {
-        if (value.isEmpty()) {
-            return null;
-        }
-
-        return switch (kind) {
-            case NUMBER -> Double.valueOf(value);
-            case BOOLEAN -> Boolean.valueOf(value);
-            case STRING -> value;
-        };
-    }
-
     /* ====================================================================== */
 
     private void cycleProperty(Button button) {
@@ -220,6 +191,37 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
         }
 
         onClose();
+    }
+
+    /* ====================================================================== */
+
+    private static String value(@Nullable RawCondition condition) {
+        Object value = condition == null ? null : condition.value();
+
+        return value == null ? "" : String.valueOf(value);
+    }
+
+    private static Component operatorName(WorkerOperator operator) {
+        return IdentifierUtils.translatable("operator." + operator.name().toLowerCase(Locale.ROOT));
+    }
+
+    private static Predicate<String> filter(Kind kind) {
+        return switch (kind) {
+            case NUMBER -> text -> NUMBER_DRAFT.matcher(text).matches();
+            case STRING, BOOLEAN -> text -> true;
+        };
+    }
+
+    private static @Nullable Object parseValue(Kind kind, String value) {
+        if (value.isEmpty()) {
+            return null;
+        }
+
+        return switch (kind) {
+            case NUMBER -> Double.valueOf(value);
+            case BOOLEAN -> Boolean.valueOf(value);
+            case STRING -> value;
+        };
     }
 
 }

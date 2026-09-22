@@ -95,21 +95,6 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
-    private static List<Component> labels(List<RawWorker> workers) {
-        return workers.stream().map(UniChatWorkersSettingsScreen::label).toList();
-    }
-
-    private static Component label(RawWorker worker) {
-        String name = worker.name();
-        if (Strings.isNullOrEmpty(name)) {
-            return UNNAMED;
-        }
-
-        return Component.literal(name);
-    }
-
-    /* ====================================================================== */
-
     private void cancel(Button button) {
         onClose();
     }
@@ -142,6 +127,21 @@ public final class UniChatWorkersSettingsScreen extends UniChatPanelScreen {
 
     private void openFile(Button button) {
         Util.getPlatform().openPath(WorkerLoader.file());
+    }
+
+    /* ====================================================================== */
+
+    private static List<Component> labels(List<RawWorker> workers) {
+        return workers.stream().map(UniChatWorkersSettingsScreen::label).toList();
+    }
+
+    private static Component label(RawWorker worker) {
+        String name = worker.name();
+        if (Strings.isNullOrEmpty(name)) {
+            return UNNAMED;
+        }
+
+        return Component.literal(name);
     }
 
 }

@@ -40,12 +40,6 @@ public final class CustomEntryList extends ObjectSelectionList<CustomEntryList.L
 
     /* ====================================================================== */
 
-    public static int heightFor(int rows) {
-        return ROW_HEIGHT * rows + ROW_TOP_INSET;
-    }
-
-    /* ====================================================================== */
-
     public CustomEntryList(Minecraft minecraft, int width, int height, Component emptyMessage, IntConsumer onSelect, List<RowAction> actions) {
         super(minecraft, width, height, 0, ROW_HEIGHT);
         this.emptyMessage = emptyMessage;
@@ -135,6 +129,12 @@ public final class CustomEntryList extends ObjectSelectionList<CustomEntryList.L
         String truncated = font.plainSubstrByWidth(label.getString(), labelWidth - font.width(CommonComponents.ELLIPSIS));
 
         return Component.literal(truncated).append(CommonComponents.ELLIPSIS);
+    }
+
+    /* ====================================================================== */
+
+    public static int heightFor(int rows) {
+        return ROW_HEIGHT * rows + ROW_TOP_INSET;
     }
 
     /* ====================================================================== */

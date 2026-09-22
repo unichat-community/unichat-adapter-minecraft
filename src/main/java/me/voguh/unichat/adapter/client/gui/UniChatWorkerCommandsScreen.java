@@ -33,9 +33,9 @@ public final class UniChatWorkerCommandsScreen extends UniChatPanelScreen {
     private static final int VISIBLE_ROWS = 6;
     private static final int LIST_HEIGHT = CustomEntryList.heightFor(VISIBLE_ROWS);
 
-    private final List<String> commands;
-
     private CustomEntryList list;
+
+    private final List<String> commands;
 
     /* ====================================================================== */
 

@@ -36,10 +36,10 @@ public final class UniChatWorkerConditionsScreen extends UniChatPanelScreen {
     private static final int VISIBLE_ROWS = 6;
     private static final int LIST_HEIGHT = CustomEntryList.heightFor(VISIBLE_ROWS);
 
+    private CustomEntryList list;
+
     private final List<RawCondition> conditions;
     private final String eventType;
-
-    private CustomEntryList list;
 
     /* ====================================================================== */
 
@@ -79,21 +79,6 @@ public final class UniChatWorkerConditionsScreen extends UniChatPanelScreen {
         return conditions.stream().map(UniChatWorkerConditionsScreen::label).toList();
     }
 
-    private static Component label(RawCondition condition) {
-        Object value = condition.value();
-        String suffix = value == null ? "" : " " + value;
-
-        return Component.literal(condition.property() + " ").append(operatorName(condition.operator())).append(suffix);
-    }
-
-    private static Component operatorName(@Nullable String operator) {
-        if (operator == null) {
-            return CommonComponents.EMPTY;
-        }
-
-        return IdentifierUtils.translatable("operator." + operator.toLowerCase(Locale.ROOT));
-    }
-
     /* ====================================================================== */
 
     private void cancel(Button button) {
@@ -111,6 +96,23 @@ public final class UniChatWorkerConditionsScreen extends UniChatPanelScreen {
     private void deleteCondition(int index) {
         conditions.remove(index);
         list.refresh(labels());
+    }
+
+    /* ====================================================================== */
+
+    private static Component label(RawCondition condition) {
+        Object value = condition.value();
+        String suffix = value == null ? "" : " " + value;
+
+        return Component.literal(condition.property() + " ").append(operatorName(condition.operator())).append(suffix);
+    }
+
+    private static Component operatorName(@Nullable String operator) {
+        if (operator == null) {
+            return CommonComponents.EMPTY;
+        }
+
+        return IdentifierUtils.translatable("operator." + operator.toLowerCase(Locale.ROOT));
     }
 
 }

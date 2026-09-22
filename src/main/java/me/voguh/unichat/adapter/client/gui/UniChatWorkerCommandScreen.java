@@ -29,11 +29,11 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
     private static final int COMMAND_MAX_LENGTH = 1024;
     private static final int NEW_COMMAND = -1;
 
-    private final List<String> commands;
-    private final int index;
-
     private String command;
     private Button saveButton;
+
+    private final List<String> commands;
+    private final int index;
 
     /* ====================================================================== */
 

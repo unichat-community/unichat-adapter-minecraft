@@ -23,9 +23,7 @@ public final class JSONParser {
     private static final Gson GSON = new GsonBuilder()
         .registerTypeAdapter(UniChatEvent.class, new UniChatEventDeserializer())
         .create();
-    private static final Gson PRETTY_GSON = new GsonBuilder()
-        .setPrettyPrinting()
-        .create();
+    private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static <T> @Nullable T fromJson(String json, Type typeToken) {
         return GSON.fromJson(json, typeToken);
