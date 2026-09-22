@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
@@ -47,6 +48,10 @@ public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
         if (canManageServer()) {
             Button server = Button.builder(IdentifierUtils.translatable("btn_server"), this::onServerTabClick).width(CONTENT_WIDTH).build();
             layout.addChild(server);
+
+            Component workersLabel = IdentifierUtils.translatable("btn_workers");
+            Button workers = Button.builder(workersLabel, this::onWorkersTabClick).width(CONTENT_WIDTH).build();
+            layout.addChild(workers);
         }
 
         /* ================================================================== */
@@ -63,6 +68,10 @@ public final class UniChatSettingsMenuScreen extends UniChatPanelScreen {
 
     private void onServerTabClick(Button button) {
         minecraft.setScreen(new UniChatServerSettingsScreen(this));
+    }
+
+    private void onWorkersTabClick(Button button) {
+        minecraft.setScreen(new UniChatWorkersSettingsScreen(this));
     }
 
 }

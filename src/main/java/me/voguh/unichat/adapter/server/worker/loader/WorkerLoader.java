@@ -18,7 +18,6 @@ import me.voguh.unichat.adapter.server.worker.WorkerCommand;
 import me.voguh.unichat.adapter.server.worker.WorkerCondition;
 import me.voguh.unichat.adapter.util.JSONParser;
 import me.voguh.unichat.adapter.util.Strings;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -39,10 +38,13 @@ public final class WorkerLoader {
 
     private static final String FILE_NAME = "unichat_adapter-workers.jsonc";
 
+    public static Path file() {
+        return MinecraftServerHolder.getInstance().getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
+    }
+
     public static List<RawWorker> raw() {
         try {
-            MinecraftServer server = MinecraftServerHolder.getInstance();
-            Path file = server.getWorldPath(new LevelResource("serverconfig")).resolve(FILE_NAME);
+            Path file = file();
             if (Files.notExists(file)) {
                 try (InputStream template = WorkerLoader.class.getResourceAsStream("/" + FILE_NAME)) {
                     Files.copy(template, file);

@@ -1,8 +1,9 @@
 {
-    "commands.unichat_adapter.reload": "%s workers carregados",
     "_comment_": "<=======================[ GUI KEYS ]=======================>",
     "gui.unichat_adapter.clear": "Limpar",
-    "gui.unichat_adapter.open_editor": "Abrir editor",
+    "gui.unichat_adapter.new": "Novo",
+    "gui.unichat_adapter.open_file": "Abrir arquivo",
+    "gui.unichat_adapter.reload": "Recarregar",
     "_comment_": "<================[ CONNECTION STATUS KEYS ]================>",
     "gui.unichat_adapter.status_connecting": "Conectando...",
     "gui.unichat_adapter.status_connected": "Conectado",
@@ -43,14 +44,9 @@
     "_comment_": "<===============[ END CLIENT SETTINGS KEYS ]===============>",
     "_comment_": "<=================[ WORKER SETTINGS KEYS ]=================>",
     "gui.unichat_adapter.screen_workers_settings": "Workers",
-    "gui.unichat_adapter.screen_workers_settings.notice": "Como os workers são complexos, eles não são editáveis no jogo. Para editá-los, um editor externo em seu navegador será aberto. Você também pode editá-los manualmente no arquivo de configuração do servidor.",
+    "gui.unichat_adapter.screen_workers_settings.empty": "Nenhum worker carregado",
+    "gui.unichat_adapter.screen_workers_settings.unnamed": "Worker sem nome",
     "gui.unichat_adapter.screen_worker_settings": "Worker",
-    "gui.unichat_adapter.screen_worker_settings.name": "Nome",
-    "gui.unichat_adapter.screen_worker_settings.on_event": "Acionar no evento",
-    "gui.unichat_adapter.screen_worker_settings.conditions": "Condições",
-    "gui.unichat_adapter.screen_worker_settings.condition.property": "Propriedade",
-    "gui.unichat_adapter.screen_worker_settings.condition.operator": "Operador",
-    "gui.unichat_adapter.screen_worker_settings.condition.value": "Valor",
     "_comment_": "<===============[ END WORKER SETTINGS KEYS ]===============>",
     "_comment_": "<=====================[ END GUI KEYS ]=====================>"
 }

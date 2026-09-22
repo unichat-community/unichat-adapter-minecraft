@@ -14,6 +14,7 @@ import me.voguh.unichat.adapter.client.ServerStateHolder;
 import me.voguh.unichat.adapter.client.gui.UniChatToast;
 import me.voguh.unichat.adapter.client.gui.chat.ChatMessages;
 import me.voguh.unichat.adapter.client.store.ClientImageRequests;
+import me.voguh.unichat.adapter.network.packet.client.ReloadWorkersPayload;
 import me.voguh.unichat.adapter.network.packet.client.RequestImagePayload;
 import me.voguh.unichat.adapter.network.packet.client.ToggleWebSocketConnectionPayload;
 import me.voguh.unichat.adapter.network.packet.client.UpdateServerSettingsPayload;
@@ -24,6 +25,7 @@ import me.voguh.unichat.adapter.network.packet.server.SendServerSettingsPayload;
 import me.voguh.unichat.adapter.network.packet.server.SendWorkersPayload;
 import me.voguh.unichat.adapter.server.ServerConfig;
 import me.voguh.unichat.adapter.server.ServerPermissions;
+import me.voguh.unichat.adapter.server.worker.Workers;
 import me.voguh.unichat.adapter.server.ws.UniChatWebSocket;
 import me.voguh.unichat.adapter.util.ConnectionStatus;
 import me.voguh.unichat.adapter.util.ImageRequests;
@@ -52,6 +54,7 @@ public final class NetworkBootstrap {
         channel.playToServer(UpdateServerSettingsPayload.TYPE, UpdateServerSettingsPayload.CODEC, NetworkBootstrap::updateServerSettings);
         channel.playToServer(ToggleWebSocketConnectionPayload.TYPE, ToggleWebSocketConnectionPayload.CODEC, NetworkBootstrap::toggleWebSocketConnection);
         channel.playToServer(RequestImagePayload.TYPE, RequestImagePayload.CODEC, NetworkBootstrap::onImageRequest);
+        channel.playToServer(ReloadWorkersPayload.TYPE, ReloadWorkersPayload.CODEC, NetworkBootstrap::reloadWorkers);
     }
 
     /* <=======================================[ SERVER ]=======================================> */
@@ -81,6 +84,15 @@ public final class NetworkBootstrap {
         } else {
             UniChatWebSocket.INSTANCE.disconnect();
         }
+    }
+
+    private static void reloadWorkers(ReloadWorkersPayload payload, IPayloadContext context) {
+        ServerPlayer player = (ServerPlayer) context.player();
+        if (!ServerPermissions.canManage(player)) {
+            return;
+        }
+
+        Workers.INSTANCE.reload();
     }
 
     private static void onImageRequest(RequestImagePayload payload, IPayloadContext context) {
