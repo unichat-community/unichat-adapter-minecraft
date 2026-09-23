@@ -33,21 +33,23 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
     private String command;
 
     private final List<String> commands;
+    private final Runnable onApply;
     private final int index;
 
     /* ====================================================================== */
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands) {
-        this(parent, commands, NEW_COMMAND, "");
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onApply) {
+        this(parent, commands, onApply, NEW_COMMAND, "");
     }
 
-    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index) {
-        this(parent, commands, index, commands.get(index));
+    public UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onApply, int index) {
+        this(parent, commands, onApply, index, commands.get(index));
     }
 
-    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, int index, String command) {
+    private UniChatWorkerCommandScreen(Screen parent, List<String> commands, Runnable onApply, int index, String command) {
         super(TITLE, parent);
         this.commands = commands;
+        this.onApply = onApply;
         this.index = index;
         this.command = command;
     }
@@ -92,6 +94,7 @@ public final class UniChatWorkerCommandScreen extends UniChatPanelScreen {
             commands.set(index, command);
         }
 
+        onApply.run();
         onClose();
     }
 

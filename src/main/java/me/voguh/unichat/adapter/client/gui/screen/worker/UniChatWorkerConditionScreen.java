@@ -57,21 +57,23 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
 
     private final List<RawCondition> conditions;
     private final List<Property> properties;
+    private final Runnable onApply;
     private final int index;
 
     /* ====================================================================== */
 
-    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions) {
-        this(parent, eventType, conditions, NEW_CONDITION, null);
+    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onApply) {
+        this(parent, eventType, conditions, onApply, NEW_CONDITION, null);
     }
 
-    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, int index) {
-        this(parent, eventType, conditions, index, conditions.get(index));
+    public UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onApply, int index) {
+        this(parent, eventType, conditions, onApply, index, conditions.get(index));
     }
 
-    private UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, int index, @Nullable RawCondition condition) {
+    private UniChatWorkerConditionScreen(Screen parent, String eventType, List<RawCondition> conditions, Runnable onApply, int index, @Nullable RawCondition condition) {
         super(TITLE, parent);
         this.conditions = conditions;
+        this.onApply = onApply;
         this.properties = UniChatEventUtils.getEventProperties(eventType);
         this.index = index;
         this.property = property(condition);
@@ -212,6 +214,7 @@ public final class UniChatWorkerConditionScreen extends UniChatPanelScreen {
             conditions.set(index, condition);
         }
 
+        onApply.run();
         onClose();
     }
 

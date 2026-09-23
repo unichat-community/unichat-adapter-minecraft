@@ -235,6 +235,10 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
 
     /* ====================================================================== */
 
+    private void markTouched() {
+        touched = true;
+    }
+
     private void onNameChange(CustomEditBox editBox, String value) {
         name = value;
         touched = true;
@@ -249,11 +253,11 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     }
 
     private void createCondition(CustomButton button) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions));
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched));
     }
 
     private void editCondition(int index) {
-        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, index));
+        minecraft.setScreen(new UniChatWorkerConditionScreen(this, eventType, conditions, this::markTouched, index));
     }
 
     private void deleteCondition(int index) {
@@ -263,11 +267,11 @@ public final class UniChatWorkerSettingsScreen extends UniChatPanelScreen {
     }
 
     private void createCommand(CustomButton button) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands));
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched));
     }
 
     private void editCommand(int index) {
-        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, index));
+        minecraft.setScreen(new UniChatWorkerCommandScreen(this, commands, this::markTouched, index));
     }
 
     private void deleteCommand(int index) {
