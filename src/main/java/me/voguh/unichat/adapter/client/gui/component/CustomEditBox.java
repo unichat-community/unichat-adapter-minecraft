@@ -59,10 +59,6 @@ public final class CustomEditBox extends LinearLayout {
 
     /* ====================================================================== */
 
-    public void setMaxLength(int maxLength) {
-        editBox.setMaxLength(maxLength);
-    }
-
     public void setFilter(Predicate<String> filter) {
         editBox.setFilter(filter);
     }
